@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\common.props" />
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Chat</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Chat.Domain\Chat.Domain.csproj" />
+    <ProjectReference Include="..\Chat.Application.Contracts\Chat.Application.Contracts.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Minio.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Volo.Abp.Account.Application" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.Identity.Application" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="7.3.0" />
+    <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="7.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Chats\" />
+    <Folder Include="MapperProfile\" />
+    <Folder Include="FileSystem\" />
+  </ItemGroup>
+
+</Project>
