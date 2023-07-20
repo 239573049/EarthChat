@@ -12,4 +12,8 @@ public class FileOptions
     /// </summary>
     public UploadingFileType Type { get; set; }
 
+    /// <summary>
+    /// 上传文件返回的前缀
+    /// </summary>
+    public string Prefix { get; set; }
 }

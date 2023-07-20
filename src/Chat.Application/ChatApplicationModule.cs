@@ -41,11 +41,11 @@ public class ChatApplicationModule : AbpModule
                .WithSSL(options.Value.Secure)
                .Build();
 
-            var getListBucketsTask = await minio.BucketExistsAsync(new BucketExistsArgs().WithBucket("Chat")).ConfigureAwait(false);
+            var getListBucketsTask = await minio.BucketExistsAsync(new BucketExistsArgs().WithBucket(options.Value.Bucket)).ConfigureAwait(false);
 
             if (!getListBucketsTask)
             {
-                await minio.MakeBucketAsync(new MakeBucketArgs().WithBucket("Chat"));
+                await minio.MakeBucketAsync(new MakeBucketArgs().WithBucket(options.Value.Bucket));
             }
             return minio;
         });

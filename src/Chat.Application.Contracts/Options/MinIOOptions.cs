@@ -21,4 +21,9 @@ public class MinIOOptions
     /// 启用/禁用HTTPS支持的布尔值(default=true)
     /// </summary>
     public bool Secure { get; set; }
+
+    /// <summary>
+    /// 存储桶
+    /// </summary>
+    public string Bucket { get; set; }
 }

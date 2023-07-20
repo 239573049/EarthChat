@@ -5,5 +5,5 @@ namespace Chat.FileSystem;
 
 public interface IFileService
 {
-    Task UploadingAsync(IFormFile file);
+    Task<string> UploadingAsync(IFormFile file);
 }
