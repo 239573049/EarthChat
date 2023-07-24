@@ -1,14 +1,22 @@
-﻿namespace Chat.Service.Services;
+﻿using Chat.Contracts.Users;
+using Chat.Service.Application.Users.Queries;
+using FreeRedis;
 
-public abstract class ChatService<T> : ServiceBase where T : class
+namespace Chat.Service.Services;
+
+public class ChatService : BaseService<ChatService>
 {
-    protected ILogger<T> _logger => GetRequiredService<ILogger<T>>();
-    
-    protected IEventBus _eventBus => GetRequiredService<IEventBus>();
-    
-    protected async Task PublishAsync<TEvent>(TEvent @event) where TEvent : IEvent
+    public async Task<IReadOnlyList<GetUserDto>> GetOnlineUsersAsync()
     {
-        await _eventBus.PublishAsync(@event);
+        var redis = GetService<RedisClient>();
+        var query = new GetUserAllQuery();
+        await PublishAsync(query);
+        var users = await redis!.GetAsync<IReadOnlyList<GetUserDto>>("onlineUsers");
+        foreach (var userDto in query.Result)
+        {
+            userDto.OnLine = users?.Any(x => x.Id == userDto.Id) ?? false;
+        }
+
+        return query.Result;
     }
-    
 }

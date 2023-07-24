@@ -3,7 +3,7 @@ using Chat.Service.Options;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Chat.Service.Infrastructure.Expressions;
+namespace Chat.Service.Infrastructure.Extensions;
 
 public static class JwtServiceCollectionExtension
 {
@@ -32,6 +32,24 @@ public static class JwtServiceCollectionExtension
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = false,
                     ValidateAudience = false
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var path = context.HttpContext.Request.Path;
+                        if (!path.StartsWithSegments("/chatHub")) return Task.CompletedTask;
+
+                        var accessToken = context.Request.Query["access_token"];
+
+                        if (!string.IsNullOrEmpty(accessToken))
+                        {
+                            // 从查询字符串中读取令牌
+                            context.Token = accessToken;
+                        }
+
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

@@ -14,11 +14,29 @@ public class ChatHub : Hub
 
     public override async Task OnConnectedAsync()
     {
-        await base.OnConnectedAsync();
+        // 增加在线人数
+        await _redisClient.IncrByAsync("online", 1);
+
+        await _redisClient.LPushAsync("onlineUsers", GetUserId().ToString());
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        await base.OnDisconnectedAsync(exception);
+        // 减少在线人数
+        await _redisClient.IncrByAsync("online", -1);
+        
+        // 移除在线用户
+        await _redisClient.LRemAsync("onlineUsers", 0, GetUserId().ToString());
+    }
+
+    public Guid GetUserId()
+    {
+        var userId = Context.UserIdentifier;
+        if (string.IsNullOrEmpty(userId))
+        {
+            throw new Exception("用户未登录");
+        }
+
+        return Guid.Parse(userId);
     }
 }

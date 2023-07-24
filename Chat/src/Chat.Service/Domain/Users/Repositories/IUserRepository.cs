@@ -3,7 +3,7 @@ using Masa.BuildingBlocks.Ddd.Domain.Repositories;
 
 namespace Chat.Service.Domain.Users.Repositories;
 
-public interface IUserRepository : IRepository<User,int>
+public interface IUserRepository : IRepository<User,Guid>
 {
     
 }

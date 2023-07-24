@@ -36,6 +36,7 @@ public class ChatDbContext : MasaDbContext
 
             options.Property(x => x.Name).HasMaxLength(20).IsRequired();
 
+            // TODO: PGSQL需要先在数据库执行 CREATE EXTENSION hstore;
             options.Property(x => x.Extends).HasConversion(
                 v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
                 v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, new JsonSerializerOptions()));
@@ -47,7 +48,22 @@ public class ChatDbContext : MasaDbContext
             options.HasIndex(x => x.Id);
             
             options.Property(x => x.Cotnent).HasMaxLength(2000);
-            
         });
+
+
+        #region Init Data
+
+        var user = new User(Guid.NewGuid())
+        {
+            Account = "admin",
+            Password = "123456",
+            Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
+            Name = "管理员",
+
+        };
+
+        builder.Entity<User>().HasData(user);
+
+        #endregion
     }
 }

@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-  	<TargetFramework>net6.0</TargetFramework>
+  	<TargetFramework>net7.0</TargetFramework>
   	<Nullable>enable</Nullable>
   	<ImplicitUsings>enable</ImplicitUsings>
+  	<UserSecretsId>8bfcd97a-e866-42d4-a3a6-31f02975d75c</UserSecretsId>
   </PropertyGroup>
   
   <ItemGroup>
@@ -11,21 +12,25 @@
   	<PackageReference Include="Masa.Contrib.Authentication.Identity" Version="1.0.0-rc.4.4" />
   	<PackageReference Include="Masa.Contrib.Data.EFCore.PostgreSql" Version="1.0.0-rc.4.4" />
   	<PackageReference Include="Masa.Contrib.Data.Mapping.Mapster" Version="1.0.0-rc.4.4" />
+  	<PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.0-rc.4.4" />
   	<PackageReference Include="Masa.Contrib.Ddd.Domain" Version="1.0.0-rc.4.4" />
-  	<PackageReference Include="Masa.Contrib.Ddd.Domain.Repository.EF" Version="0.6.0-preview.1" />
   	<PackageReference Include="Masa.Contrib.Ddd.Domain.Repository.EFCore" Version="1.0.0-rc.4.4" />
   	<PackageReference Include="Masa.Contrib.Dispatcher.Events" Version="1.0.0-rc.4.4" />
   	<PackageReference Include="Masa.Contrib.Exceptions" Version="$(MASAFrameworkVersion)" />
   	<PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0-rc.4.4" />
-  	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.20" />
+  	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
+  	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+  	  <PrivateAssets>all</PrivateAssets>
+  	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+  	</PackageReference>
+  	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
+  	  <PrivateAssets>all</PrivateAssets>
+  	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+  	</PackageReference>
   	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
   
   <ItemGroup>
   	<ProjectReference Include="..\Chat.Contracts\Chat.Contracts.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Application\Users\Commands\" />
   </ItemGroup>
 </Project>

@@ -1,7 +1,6 @@
-﻿using Masa.BuildingBlocks.Ddd.Domain.Entities.Auditing;
-namespace Chat.Service.Domain.Users.Aggregates;
+﻿namespace Chat.Service.Domain.Users.Aggregates;
 
-public class User : AuditAggregateRoot<int, int>
+public class User : AuditAggregateRoot<Guid, Guid>
 {
     /// <summary>
     /// 账号
@@ -23,15 +22,24 @@ public class User : AuditAggregateRoot<int, int>
     /// </summary>
     public string Name { get; set; }
 
-    public Dictionary<string,string> Extends { get; set; }
+    public Dictionary<string, string> Extends { get; set; }
 
     protected User()
     {
         Extends = new Dictionary<string, string>();
     }
 
-    public User(int id) : base(id)
+    public User(Guid id) : base(id)
     {
         Extends = new Dictionary<string, string>();
+    }
+
+    public User(string account, string password, string avatar, string name) : this()
+    {
+        Id = Guid.NewGuid();
+        Account = account;
+        Password = password;
+        Avatar = avatar;
+        Name = name;
     }
 }

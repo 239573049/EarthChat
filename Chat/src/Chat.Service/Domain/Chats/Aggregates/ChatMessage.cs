@@ -19,7 +19,7 @@ public class ChatMessage : AuditAggregateRoot<int, int>
     /// <summary>
     /// id
     /// </summary>
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     [NotMapped]
     public virtual User User { get; set; }

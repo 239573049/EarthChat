@@ -2,6 +2,7 @@
 using Chat.Contracts.Users;
 using Chat.Service.Application.Users.Queries;
 using Chat.Service.Domain.Users.Repositories;
+using FreeRedis;
 
 namespace Chat.Service.Application.Users;
 
@@ -9,11 +10,13 @@ public class UserQueryHandler
 {
     private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
+    private readonly RedisClient _redisClient;
 
-    public UserQueryHandler(IUserRepository userRepository, IMapper mapper)
+    public UserQueryHandler(IUserRepository userRepository, IMapper mapper, RedisClient redisClient)
     {
         _userRepository = userRepository;
         _mapper = mapper;
+        _redisClient = redisClient;
     }
 
     [EventHandler]
@@ -32,5 +35,22 @@ public class UserQueryHandler
         }
 
         query.Result = _mapper.Map<UserDto>(user);
+    }
+
+    [EventHandler]
+    public async Task AuthTypeAsync(AuthTypeQuery query)
+    {
+        var user = await _userRepository.FindAsync(x => x.Extends.Any(x => x.Key == query.type && x.Value == query.id));
+
+        query.Result = user is null ? null : _mapper.Map<UserDto>(user);
+    }
+
+    [EventHandler]
+    public async Task GetUserAllAsync(GetUserAllQuery query)
+    {
+        var users = await _redisClient.GetAsync<IReadOnlyList<GetUserDto>>("allUsers") ??
+                    _mapper.Map<IReadOnlyList<GetUserDto>>(await _userRepository.GetListAsync());
+
+        query.Result = users;
     }
 }
