@@ -12,7 +12,8 @@ public class UserProfile : Profile
             .ReverseMap();
 
         CreateMap<GetUserDto, User>();
-        
-        
+
+        CreateMap<User, GetUserDto>();
+
     }
 }

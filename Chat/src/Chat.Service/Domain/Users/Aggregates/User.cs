@@ -22,16 +22,16 @@ public class User : AuditAggregateRoot<Guid, Guid>
     /// </summary>
     public string Name { get; set; }
 
-    public Dictionary<string, string> Extends { get; set; }
+    public string? GiteeId { get; set; }
 
+    public string? GithubId { get; set; }
+    
     protected User()
     {
-        Extends = new Dictionary<string, string>();
     }
 
     public User(Guid id) : base(id)
     {
-        Extends = new Dictionary<string, string>();
     }
 
     public User(string account, string password, string avatar, string name) : this()

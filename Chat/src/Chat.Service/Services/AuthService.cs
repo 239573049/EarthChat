@@ -34,16 +34,17 @@ public class AuthService : BaseService<AuthService>
     {
         using var http = new HttpClient();
         var github = GetOptions<GithubOptions>();
+        http.DefaultRequestHeaders.Add("User-Agent", "Chat");
+        http.DefaultRequestHeaders.Add("Accept", "application/json");
         var response =
-            await http.GetAsync(
-                $"https://api.github.com/user?access_token={accessToken}&client_id={github?.ClientId}&client_secret={github?.ClientSecrets}");
+            await http.PostAsync(
+                $"https://github.com/login/oauth/access_token?code={accessToken}&client_id={github?.ClientId}&client_secret={github?.ClientSecrets}",null);
         var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
         if (result is null)
         {
             throw new Exception("Github授权失败");
         }
 
-        http.DefaultRequestHeaders.Add("User-Agent", "Chat");
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.access_token);
         var githubUser = await http.GetFromJsonAsync<GithubUserDto>("https://api.github.com/user");
         if (githubUser is null)
@@ -60,8 +61,9 @@ public class AuthService : BaseService<AuthService>
             {
                 Account = "guest_" + StringHelper.RandomString(8),
                 Avatar = githubUser.avatar_url,
+                Password = "Aa123456",
                 Name = githubUser.name,
-                Extends = new Dictionary<string, string> { { "Github", githubUser.id.ToString() } }
+                GithubId = githubUser.id.ToString()
             });
 
             await _eventBus.PublishAsync(command);
@@ -88,8 +90,8 @@ public class AuthService : BaseService<AuthService>
         using var http = new HttpClient();
         var gitee = GetOptions<GiteeOptions>();
         var response =
-            await http.GetAsync(
-                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri={redirect_uri}&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}");
+            await http.PostAsync(
+                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:5173?type=gitee&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}",null);
         var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
         if (result is null)
         {
@@ -113,7 +115,8 @@ public class AuthService : BaseService<AuthService>
                 Account = "guest_" + StringHelper.RandomString(8),
                 Avatar = githubUser.avatar_url,
                 Name = githubUser.name,
-                Extends = new Dictionary<string, string> { { "Gitee", githubUser.id.ToString() } }
+                Password = "Aa123456",
+                GiteeId = githubUser.id.ToString()
             });
 
             await _eventBus.PublishAsync(command);

@@ -22,5 +22,9 @@ public class CreateUserDto
     /// </summary>
     public string Name { get; set; }
 
-    public Dictionary<string,string> Extends { get; set; }
+    
+    public string? GiteeId { get; set; }
+
+    public string? GithubId { get; set; }
+    
 }

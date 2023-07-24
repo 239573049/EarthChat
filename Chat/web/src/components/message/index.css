@@ -1,6 +1,6 @@
 .message{
     float: left;
-    width: 70%;
+    width: 75%;
     height: 100%;
 }
 
@@ -26,4 +26,16 @@
     width: 100%;
     border: none;
     max-height: calc(100% - 90px);
+}
+
+.message-item-content{
+    border: #ccc solid 1px;
+    margin-top: 5px;
+    padding: 8px;
+    border-radius: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+.message-item-content-user{
+    background-color: #95EC69;
 }

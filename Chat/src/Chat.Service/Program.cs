@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Chat.Service.Hubs;
 using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Options;
@@ -9,10 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
-    .AddStackExchangeRedis(builder.Configuration["Redis"], options =>
-    {
-        options.Configuration.ChannelPrefix = "Chat:";
-    });
+    .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
+        options => { options.Configuration.ChannelPrefix = "Chat:"; });
 
 #region Options
 
@@ -38,7 +37,13 @@ var app = builder.Services
     .AddEndpointsApiExplorer()
     .AddAutoMapper(typeof(Program))
     .AddJwtBearerAuthentication(jwtSection.Get<JwtOptions>())
-    .AddSingleton(_ => new RedisClient(builder.Configuration["Redis"]))
+    .AddSingleton(_ =>
+    {
+        var client = new RedisClient(builder.Configuration["Redis"]);
+        client.Serialize = o => JsonSerializer.Serialize(o);
+        client.Deserialize = (s, t) => JsonSerializer.Deserialize(s, t);
+        return client;
+    })
     .AddSwaggerGen(options =>
     {
         options.SwaggerDoc("v1",
@@ -55,6 +60,14 @@ var app = builder.Services
     .AddMasaDbContext<ChatDbContext>(opt =>
     {
         opt.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+    })
+    .AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy", corsBuilder =>
+        {
+            corsBuilder.SetIsOriginAllowed((string _) => true).AllowAnyMethod().AllowAnyHeader()
+                .AllowCredentials();
+        });
     })
     .AddDomainEventBus(options =>
     {
@@ -81,7 +94,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthorization().UseCors("CorsPolicy");
 app.MapHub<ChatHub>("/chatHub");
 
 // 解决pgsql的时间戳问题

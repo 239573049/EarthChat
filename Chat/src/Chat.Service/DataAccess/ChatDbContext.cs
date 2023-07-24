@@ -36,10 +36,6 @@ public class ChatDbContext : MasaDbContext
 
             options.Property(x => x.Name).HasMaxLength(20).IsRequired();
 
-            // TODO: PGSQL需要先在数据库执行 CREATE EXTENSION hstore;
-            options.Property(x => x.Extends).HasConversion(
-                v => JsonSerializer.Serialize(v, new JsonSerializerOptions()),
-                v => JsonSerializer.Deserialize<Dictionary<string, string>>(v, new JsonSerializerOptions()));
         });
 
         builder.Entity<ChatMessage>(options =>

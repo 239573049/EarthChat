@@ -1,4 +1,6 @@
-﻿namespace Chat.Contracts.Chats;
+﻿using Chat.Contracts.Users;
+
+namespace Chat.Contracts.Chats;
 
 public class CreateChatMessageDto
 {
@@ -13,7 +15,14 @@ public class CreateChatMessageDto
     public ChatType Type { get; set; }
     
     /// <summary>
+    /// id
+    /// </summary>
+    public Guid UserId { get; set; }
+
+    /// <summary>
     /// 扩展参数
     /// </summary>
     public Dictionary<string, string> Extends { get; set; }
+    
+    public GetUserDto User { get; set; }
 }

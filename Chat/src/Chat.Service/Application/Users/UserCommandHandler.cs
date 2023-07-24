@@ -31,7 +31,8 @@ public class UserCommandHandler
         var user = new User(command.CreateUserDto.Account, command.CreateUserDto.Password, command.CreateUserDto.Avatar,
             command.CreateUserDto.Name)
         {
-            Extends = command.CreateUserDto.Extends
+            GiteeId = command.CreateUserDto.GiteeId,
+            GithubId = command.CreateUserDto.GithubId,
         };
 
         await _userRepository.AddAsync(user);

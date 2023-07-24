@@ -14,13 +14,13 @@ public class ChatService : BaseService<ChatService>
         var redis = GetService<RedisClient>();
         var query = new GetUserAllQuery();
         await PublishAsync(query);
-        var users = await redis!.GetAsync<IReadOnlyList<GetUserDto>>("onlineUsers");
+        var users = await redis?.LRangeAsync<Guid>("onlineUsers",0, -1);
         foreach (var userDto in query.Result)
         {
-            userDto.OnLine = users?.Any(x => x.Id == userDto.Id) ?? false;
+            userDto.OnLine = users?.Any(x => x == userDto.Id) ?? false;
         }
 
-        return new ResultDto<IReadOnlyList<GetUserDto>>(query.Result);
+        return new ResultDto<IReadOnlyList<GetUserDto>>(query.Result.OrderByDescending(x=>x.OnLine).ToArray());
     }
 
     public async Task<ResultDto<PaginatedListBase<ChatMessageDto>>> GetListAsync(int page, int pageSize)

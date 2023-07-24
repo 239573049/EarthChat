@@ -2,7 +2,7 @@
 
 public class UserDto
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     
     /// <summary>
     /// 账号

@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using AutoMapper;
 using Chat.Contracts.Users;
 using Chat.Service.Application.Users.Queries;
 using Chat.Service.Domain.Users.Repositories;
@@ -40,9 +41,19 @@ public class UserQueryHandler
     [EventHandler]
     public async Task AuthTypeAsync(AuthTypeQuery query)
     {
-        var user = await _userRepository.FindAsync(x => x.Extends.Any(x => x.Key == query.type && x.Value == query.id));
-
-        query.Result = user is null ? null : _mapper.Map<UserDto>(user);
+        switch (query.type)
+        {
+            case "Github":
+                var user = await _userRepository.FindAsync(x => x.GithubId == query.id);
+                query.Result = user is null ? null : _mapper.Map<UserDto>(user);
+                break;
+            case "Gitee":
+                user = await _userRepository.FindAsync(x => x.GiteeId == query.id);
+                query.Result = user is null ? null : _mapper.Map<UserDto>(user);
+                break;
+            default:
+                throw new Exception("未知的授权类型");
+        }
     }
 
     [EventHandler]

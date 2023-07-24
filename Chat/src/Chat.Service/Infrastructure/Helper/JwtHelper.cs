@@ -36,6 +36,7 @@ public class JwtHelper
         return new ClaimsIdentity(new Claim[]
         {
             new(ClaimType.DEFAULT_USER_ID, user.Id.ToString()),
+            new("avatar", user.Avatar),
             new(ClaimType.DEFAULT_USER_NAME, user.Name),
         });
     }

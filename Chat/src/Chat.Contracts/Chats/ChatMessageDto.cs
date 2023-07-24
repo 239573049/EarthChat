@@ -4,10 +4,12 @@ namespace Chat.Contracts.Chats;
 
 public class ChatMessageDto
 {
+    public Guid Id { get; set; }
+    
     /// <summary>
     /// 内容
     /// </summary>
-    public string Cotnent { get; set; }
+    public string Content { get; set; }
 
     /// <summary>
     /// 类型
@@ -20,4 +22,7 @@ public class ChatMessageDto
     public Guid UserId { get; set; }
 
     public GetUserDto User { get; set; }
+
+    
+    public DateTime CreationTime { get; set; }
 }

@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/signalr": "^7.0.9",
+    "@microsoft/signalr-protocol-msgpack": "^7.0.9",
     "antd": "^5.7.2",
     "axios": "^1.4.0",
     "react": "^18.2.0",
