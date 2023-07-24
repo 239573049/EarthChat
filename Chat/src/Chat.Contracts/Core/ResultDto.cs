@@ -16,6 +16,15 @@ public class ResultDto<T> where T : class
     /// 如果有错误，返回错误信息
     /// </summary>
     public string Message { get; set; }
+
+    public ResultDto()
+    {
+    }
+
+    public ResultDto(T data)
+    {
+        Data = data;
+    }
 }
 
 public class ResultDto

@@ -4,7 +4,7 @@ using Chat.Service.Domain.Users.Aggregates;
 
 namespace Chat.Service.Domain.Chats.Aggregates;
 
-public class ChatMessage : AuditAggregateRoot<int, int>
+public class ChatMessage : AuditAggregateRoot<Guid, Guid>
 {
     /// <summary>
     /// 内容
@@ -21,8 +21,7 @@ public class ChatMessage : AuditAggregateRoot<int, int>
     /// </summary>
     public Guid UserId { get; set; }
 
-    [NotMapped]
-    public virtual User User { get; set; }
+    [NotMapped] public virtual User User { get; set; }
 
     /// <summary>
     /// 扩展参数
@@ -34,7 +33,7 @@ public class ChatMessage : AuditAggregateRoot<int, int>
         Extends = new Dictionary<string, string>();
     }
 
-    public ChatMessage(int id) : base(id)
+    public ChatMessage(Guid id) : base(id)
     {
         Extends = new Dictionary<string, string>();
     }

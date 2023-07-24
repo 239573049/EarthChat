@@ -5,8 +5,6 @@ global using Masa.BuildingBlocks.Dispatcher.Events;
 global using Masa.BuildingBlocks.ReadWriteSplitting.Cqrs.Commands;
 global using Masa.BuildingBlocks.ReadWriteSplitting.Cqrs.Queries;
 global using Chat.Contracts.Example;
-global using Chat.Service.Application.Example.Commands;
-global using Chat.Service.Application.Example.Queries;
 global using Chat.Contracts;
 global using Chat.Service.DataAccess;
 global using Masa.Utils.Models;

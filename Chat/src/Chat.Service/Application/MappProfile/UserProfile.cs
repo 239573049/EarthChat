@@ -10,5 +10,9 @@ public class UserProfile : Profile
     {
         CreateMap<UserDto, User>()
             .ReverseMap();
+
+        CreateMap<GetUserDto, User>();
+        
+        
     }
 }

@@ -1,0 +1,29 @@
+.message{
+    float: left;
+    width: 70%;
+    height: 100%;
+}
+
+.chat-send{
+    /* 边框 */
+    border: 1px solid #ccc;
+    /* 边框圆角 */
+    border-radius: 5px;
+    /* 高度 */
+    float: left;
+    width: 100%;
+    height: 240px;
+}
+
+.chat-tools{
+    height: 40px;
+    padding: 8px;
+    width: 100%;
+}
+
+.chat-input{
+    height: calc(100% - 90px);
+    width: 100%;
+    border: none;
+    max-height: calc(100% - 90px);
+}

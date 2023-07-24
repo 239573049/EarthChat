@@ -16,6 +16,10 @@ public static class JwtServiceCollectionExtension
     {
         //使用应用密钥得到一个加密密钥字节数组
         var key = Encoding.ASCII.GetBytes(options.Secret);
+
+        services.AddMasaIdentity(options =>
+        {
+        });
         services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
