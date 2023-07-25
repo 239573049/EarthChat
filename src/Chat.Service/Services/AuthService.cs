@@ -74,7 +74,7 @@ public class AuthService : BaseService<AuthService>
         var gitee = GetOptions<GiteeOptions>();
         var response =
             await http.PostAsync(
-                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:5173?type=gitee&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}",
+                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri=http://124.222.89.53/?type=gitee&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}",
                 null);
         var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
         if (result is null) throw new Exception("Gitee授权失败");
