@@ -68,23 +68,25 @@ public class AuthService : BaseService<AuthService>
     }
 
 
-    public async Task<ResultDto<string>> GiteeAuthAsync(string accessToken,
-        string redirect_uri = "http://localhost:3000/login?type=gitee")
+    public async Task<ResultDto<string>> GiteeAuthAsync(string accessToken)
     {
         try
         {
             using var http = new HttpClient();
             var gitee = GetOptions<GiteeOptions>();
+            var url =
+                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri={gitee.redirectUri}&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}";
+
             var response =
-                await http.PostAsync(
-                    $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri=http://124.222.89.53/?type=gitee&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}",
+                await http.PostAsync(url,
                     null);
 
             var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
             if (result is null) throw new Exception("Gitee授权失败");
 
             var githubUser =
-                await http.GetFromJsonAsync<GiteeDto>("https://gitee.com/api/v5/user?access_token=" + result.access_token);
+                await http.GetFromJsonAsync<GiteeDto>("https://gitee.com/api/v5/user?access_token=" +
+                                                      result.access_token);
             if (githubUser is null) throw new Exception("Gitee授权失败");
 
             var query = new AuthTypeQuery("Gitee", githubUser.id.ToString());
@@ -114,9 +116,8 @@ public class AuthService : BaseService<AuthService>
         }
         catch (Exception e)
         {
-            Console.WriteLine(e.Message);
-
-            return "".CreateResult("500",e.Message);
+            _logger.LogError("Gitee授权失败 {e}", e);
+            return "".CreateResult("500", e.Message);
         }
     }
 }
