@@ -14,3 +14,7 @@ global using Microsoft.EntityFrameworkCore.Infrastructure;
 global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.OpenApi.Models;
 global using Masa.BuildingBlocks.Ddd.Domain.Entities.Auditing;
+global using Chat.Contracts.Core;
+global using Chat.Contracts.Users;
+global using Chat.Service.Application.Users.Queries;
+global using Masa.BuildingBlocks.Authentication.Identity;

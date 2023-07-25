@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AspNetCoreRateLimit;
 using Chat.Service.Hubs;
 using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Options;
@@ -26,6 +27,16 @@ builder.Services.Configure<GiteeOptions>(gitee);
 
 #endregion
 
+builder.Services.AddMemoryCache();
+
+builder.Services.Configure<IpRateLimitOptions>
+    (builder.Configuration.GetSection("IpRateLimit"));
+
+builder.Services.AddSingleton<IRateLimitConfiguration,
+    RateLimitConfiguration>();
+
+builder.Services.AddInMemoryRateLimiting();
+
 builder.Services
     .AddHttpClient("Github", c =>
     {
@@ -50,7 +61,7 @@ var app = builder.Services
             new OpenApiInfo
             {
                 Title = "ChatApp", Version = "v1",
-                Contact = new OpenApiContact { Name = "ChatApp", }
+                Contact = new OpenApiContact { Name = "ChatApp" }
             });
         foreach (var item in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml"))
             options.IncludeXmlComments(item, true);
@@ -65,7 +76,7 @@ var app = builder.Services
     {
         options.AddPolicy("CorsPolicy", corsBuilder =>
         {
-            corsBuilder.SetIsOriginAllowed((string _) => true).AllowAnyMethod().AllowAnyHeader()
+            corsBuilder.SetIsOriginAllowed(_ => true).AllowAnyMethod().AllowAnyHeader()
                 .AllowCredentials();
         });
     })
@@ -76,6 +87,9 @@ var app = builder.Services
     })
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
+
+
+app.UseIpRateLimiting();
 
 app.UseMasaExceptionHandler();
 

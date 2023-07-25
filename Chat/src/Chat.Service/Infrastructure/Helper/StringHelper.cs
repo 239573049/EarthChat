@@ -3,7 +3,7 @@
 public static class StringHelper
 {
     private const string Key = "qwertyuiopasdfghjklzxcvbnm1234567890";
-    
+
     public static string RandomString(int size)
     {
         var random = new Random();
@@ -13,5 +13,4 @@ public static class StringHelper
 
         return result;
     }
-
 }

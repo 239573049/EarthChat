@@ -3,6 +3,6 @@
 public class GithubOptions
 {
     public string ClientId { get; set; }
-    
+
     public string ClientSecrets { get; set; }
 }

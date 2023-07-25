@@ -20,9 +20,9 @@ public class QueryHandler
     public async Task GetListAsync(GeChatMessageListQuery query)
     {
         var list = await _chatMessageRepository.GetListAsync(query.page, query.pageSize);
-        query.Result = new PaginatedListBase<ChatMessageDto>()
+        query.Result = new PaginatedListBase<ChatMessageDto>
         {
-            Result = _mapper.Map<List<ChatMessageDto>>(list),
+            Result = _mapper.Map<List<ChatMessageDto>>(list.OrderBy(x => x.CreationTime)),
             Total = await _chatMessageRepository.GetCountAsync()
         };
     }

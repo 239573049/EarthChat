@@ -1,8 +1,6 @@
 ﻿using System.Net.Http.Headers;
-using Chat.Contracts.Core;
-using Chat.Contracts.Users;
 using Chat.Service.Application.Users.Commands;
-using Chat.Service.Application.Users.Queries;
+using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Infrastructure.Helper;
 using Chat.Service.Options;
 using Microsoft.Extensions.Options;
@@ -22,12 +20,7 @@ public class AuthService : BaseService<AuthService>
 
         var token = JwtHelper.GeneratorAccessToken(claims, jwt);
 
-        return new ResultDto<string>
-        {
-            Code = "200",
-            Message = "登录成功",
-            Data = token
-        };
+        return token.CreateResult();
     }
 
     public async Task<ResultDto<string>> GithubAuthAsync(string accessToken)
@@ -38,26 +31,21 @@ public class AuthService : BaseService<AuthService>
         http.DefaultRequestHeaders.Add("Accept", "application/json");
         var response =
             await http.PostAsync(
-                $"https://github.com/login/oauth/access_token?code={accessToken}&client_id={github?.ClientId}&client_secret={github?.ClientSecrets}",null);
+                $"https://github.com/login/oauth/access_token?code={accessToken}&client_id={github?.ClientId}&client_secret={github?.ClientSecrets}",
+                null);
         var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
-        if (result is null)
-        {
-            throw new Exception("Github授权失败");
-        }
+        if (result is null) throw new Exception("Github授权失败");
 
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.access_token);
         var githubUser = await http.GetFromJsonAsync<GithubUserDto>("https://api.github.com/user");
-        if (githubUser is null)
-        {
-            throw new Exception("Github授权失败");
-        }
+        if (githubUser is null) throw new Exception("Github授权失败");
 
         var query = new AuthTypeQuery("Github", githubUser.id.ToString());
         await _eventBus.PublishAsync(query);
 
         if (query.Result is null)
         {
-            var command = new CreateUserCommand(new CreateUserDto()
+            var command = new CreateUserCommand(new CreateUserDto
             {
                 Account = "guest_" + StringHelper.RandomString(8),
                 Avatar = githubUser.avatar_url,
@@ -75,12 +63,7 @@ public class AuthService : BaseService<AuthService>
 
         var token = JwtHelper.GeneratorAccessToken(claims, jwt);
 
-        return new ResultDto<string>
-        {
-            Code = "200",
-            Message = "登录成功",
-            Data = token
-        };
+        return token.CreateResult();
     }
 
 
@@ -91,26 +74,21 @@ public class AuthService : BaseService<AuthService>
         var gitee = GetOptions<GiteeOptions>();
         var response =
             await http.PostAsync(
-                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:5173?type=gitee&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}",null);
+                $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri=http://localhost:5173?type=gitee&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}",
+                null);
         var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
-        if (result is null)
-        {
-            throw new Exception("Gitee授权失败");
-        }
+        if (result is null) throw new Exception("Gitee授权失败");
 
         var githubUser =
             await http.GetFromJsonAsync<GiteeDto>("https://gitee.com/api/v5/user?access_token=" + result.access_token);
-        if (githubUser is null)
-        {
-            throw new Exception("Gitee授权失败");
-        }
+        if (githubUser is null) throw new Exception("Gitee授权失败");
 
         var query = new AuthTypeQuery("Gitee", githubUser.id.ToString());
         await _eventBus.PublishAsync(query);
 
         if (query.Result is null)
         {
-            var command = new CreateUserCommand(new CreateUserDto()
+            var command = new CreateUserCommand(new CreateUserDto
             {
                 Account = "guest_" + StringHelper.RandomString(8),
                 Avatar = githubUser.avatar_url,
@@ -128,11 +106,6 @@ public class AuthService : BaseService<AuthService>
 
         var token = JwtHelper.GeneratorAccessToken(claims, jwt);
 
-        return new ResultDto<string>
-        {
-            Code = "200",
-            Message = "登录成功",
-            Data = token
-        };
+        return token.CreateResult();
     }
 }

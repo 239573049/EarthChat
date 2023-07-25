@@ -10,7 +10,5 @@ public class ChatMessageProfile : Profile
     {
         CreateMap<ChatMessageDto, ChatMessage>();
         CreateMap<ChatMessage, ChatMessageDto>();
-        
-        
     }
 }

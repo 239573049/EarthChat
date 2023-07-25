@@ -8,7 +8,7 @@ namespace Chat.Service.Infrastructure.Extensions;
 public static class JwtServiceCollectionExtension
 {
     /// <summary>
-    /// 注册JWT Bearer认证服务的静态扩展方法
+    ///     注册JWT Bearer认证服务的静态扩展方法
     /// </summary>
     /// <param name="services"></param>
     /// <param name="options">JWT授权的配置项</param>
@@ -17,9 +17,7 @@ public static class JwtServiceCollectionExtension
         //使用应用密钥得到一个加密密钥字节数组
         var key = Encoding.ASCII.GetBytes(options.Secret);
 
-        services.AddMasaIdentity(options =>
-        {
-        });
+        services.AddMasaIdentity(options => { });
         services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,10 +45,8 @@ public static class JwtServiceCollectionExtension
                         var accessToken = context.Request.Query["access_token"];
 
                         if (!string.IsNullOrEmpty(accessToken))
-                        {
                             // 从查询字符串中读取令牌
                             context.Token = accessToken;
-                        }
 
                         return Task.CompletedTask;
                     }

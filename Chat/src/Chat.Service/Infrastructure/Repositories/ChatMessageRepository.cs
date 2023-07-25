@@ -16,9 +16,9 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
         // 查询ChatMessage指定数量
         return await Context.ChatMessages
             .OrderByDescending(x => x.CreationTime)
+            .Include(x => x.User)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Include(x => x.User)
             .ToListAsync();
     }
 }

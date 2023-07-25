@@ -1,18 +1,17 @@
-﻿using System.Text.Json;
-using Chat.Service.Domain.Chats.Aggregates;
+﻿using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Users.Aggregates;
 
 namespace Chat.Service.DataAccess;
 
 public class ChatDbContext : MasaDbContext
 {
-    public DbSet<User> Users { get; set; } = null!;
-
-    public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
-
     public ChatDbContext(MasaDbContextOptions<ChatDbContext> options) : base(options)
     {
     }
+
+    public DbSet<User> Users { get; set; } = null!;
+
+    public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
 
     protected override void OnModelCreatingExecuting(ModelBuilder modelBuilder)
     {
@@ -35,15 +34,14 @@ public class ChatDbContext : MasaDbContext
             options.Property(x => x.Avatar).HasMaxLength(200).IsRequired();
 
             options.Property(x => x.Name).HasMaxLength(20).IsRequired();
-
         });
 
         builder.Entity<ChatMessage>(options =>
         {
             options.TryConfigureConcurrencyStamp();
             options.HasIndex(x => x.Id);
-            
-            options.Property(x => x.Cotnent).HasMaxLength(2000);
+
+            options.Property(x => x.Content).HasMaxLength(2000);
         });
 
 
@@ -54,8 +52,7 @@ public class ChatDbContext : MasaDbContext
             Account = "admin",
             Password = "123456",
             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-            Name = "管理员",
-
+            Name = "管理员"
         };
 
         builder.Entity<User>().HasData(user);

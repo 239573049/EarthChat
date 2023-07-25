@@ -11,7 +11,9 @@ public abstract class BaseService<T> : ServiceBase where T : class
         => GetRequiredService<IEventBus>();
 
     protected TOptions? GetOptions<TOptions>() where TOptions : class
-        => GetService<IOptions<TOptions>>()?.Value;
+    {
+        return GetService<IOptions<TOptions>>()?.Value;
+    }
 
     protected async Task PublishAsync<TEvent>(TEvent @event) where TEvent : IEvent
     {

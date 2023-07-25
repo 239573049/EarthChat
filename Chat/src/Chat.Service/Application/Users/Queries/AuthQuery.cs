@@ -1,6 +1,4 @@
-﻿using Chat.Contracts.Users;
-
-namespace Chat.Service.Application.Users.Queries;
+﻿namespace Chat.Service.Application.Users.Queries;
 
 public record AuthQuery(string Account, string Password) : Query<UserDto>
 {
