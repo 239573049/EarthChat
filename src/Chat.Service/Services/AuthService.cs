@@ -116,7 +116,7 @@ public class AuthService : BaseService<AuthService>
         {
             Console.WriteLine(e.Message);
 
-            return "".CreateResult("500",e);
+            return "".CreateResult("500",e.Message);
         }
     }
 }
