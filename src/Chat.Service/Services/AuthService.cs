@@ -86,7 +86,10 @@ public class AuthService : BaseService<AuthService>
             var json = await response.Content.ReadAsStringAsync();
             
             _logger.LogWarning("Gitee授权 {json}", json);
-            var result = JsonSerializer.Deserialize<GitTokenDto>(json);
+            var result = JsonSerializer.Deserialize<GitTokenDto>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
             if (result is null) throw new Exception("Gitee授权失败");
 
             var githubUser =
