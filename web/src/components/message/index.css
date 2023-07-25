@@ -1,0 +1,41 @@
+.message{
+    float: left;
+    width: 75%;
+    height: 100%;
+}
+
+.chat-send{
+    /* 边框 */
+    border: 1px solid #ccc;
+    /* 边框圆角 */
+    border-radius: 5px;
+    /* 高度 */
+    float: left;
+    width: 100%;
+    height: 240px;
+}
+
+.chat-tools{
+    height: 40px;
+    padding: 8px;
+    width: 100%;
+}
+
+.chat-input{
+    height: calc(100% - 90px);
+    width: 100%;
+    border: none;
+    max-height: calc(100% - 90px);
+}
+
+.message-item-content{
+    border: #ccc solid 1px;
+    margin-top: 5px;
+    padding: 8px;
+    border-radius: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+.message-item-content-user{
+    background-color: #95EC69;
+}

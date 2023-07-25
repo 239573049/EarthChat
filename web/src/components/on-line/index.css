@@ -1,0 +1,21 @@
+.on-line{
+    height: 100%;
+    width: 25%;
+    float: right;
+    padding: 8px;
+}
+
+.user-list-item{
+    transition: 0.8s;
+    height: 100%;
+    margin: 5px;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.user-list-item:hover{
+    transition: 0.8s;
+    background-color: #ccc;
+    /* // 鼠标悬浮时的样式手指 */
+    cursor: pointer;
+}
