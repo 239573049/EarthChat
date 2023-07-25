@@ -4,6 +4,7 @@ using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Infrastructure.Helper;
 using Chat.Service.Options;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace Chat.Service.Services;
 
@@ -114,6 +115,8 @@ public class AuthService : BaseService<AuthService>
         catch (Exception e)
         {
             Console.WriteLine(e.Message);
+
+            return "".CreateResult("500",e);
         }
     }
 }
