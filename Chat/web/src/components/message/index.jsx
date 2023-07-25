@@ -1,6 +1,6 @@
-import './index.css'
-import { FixedSizeList } from 'react-window';
-import React from 'react'
+import './index.css';
+import { FixedSizeList as List } from 'react-window';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button, Mentions, Avatar } from 'antd';
 import {
     SmileOutlined,
@@ -8,176 +8,141 @@ import {
     FileImageOutlined
 } from '@ant-design/icons';
 
-class Message extends React.Component {
+import AutoSizer from "react-virtualized-auto-sizer";
 
-    state = {
-        message: [],
-        value: '',
-        height: 200
-    }
+let rowHeights = 0;
 
-    constructor(props) {
-        super(props)
-    }
+const Message = () => {
+    const [message, setMessage] = useState([]);
+    const [value, setValue] = useState('');
+    const [listRef, setListRef] = useState(useRef());
+    //   const rowHeights = useRef([]);
 
-    componentDidMount() {
-
+    useEffect(() => {
         // 监听消息
         window.connection.on('ReceiveMessage', (message) => {
-            const { message: oldMessage } = this.state
-            oldMessage.push(message)
-            console.log('收到消息', message)
-            this.setState({
-                message: [...oldMessage]
-            })
+            setMessage(oldMessage => [...oldMessage, message]);
+            console.log('收到消息', message);
         });
 
-        window.addEventListener('resize', () => {
-            const { height } = this.state;
-            console.log('resize');
-            const messageid = document.getElementById('message');
-            if (messageid && messageid.clientHeight !== height) {
-                this.setState({
-                    height: messageid.clientHeight
-                })
-            }
-        });
+        return () => {
+            window.connection.off('ReceiveMessage');
+        };
+    }, []);
 
-        // 等待dom渲染完成
-        setTimeout(() => {
-            const messageid = document.getElementById('message');
+    const onScroll = (ListOnScrollProps) => {
+        console.log(ListOnScrollProps);
+    };
 
-            this.setState({
-                height: messageid.clientHeight
-            })
-        }, 50);
-    }
+    const sendMessage = async () => {
+        // if (value === '') {
+        //     return;
+        // }
+        // console.log('发送消息');
+        await window.connection.send('SendMessage', value, 0);
 
-    componentWillUnmount() {
-        window.connection.off('ReceiveMessage')
-    }
+        setValue('');
+    };
 
-    onScroll(ListOnScrollProps) {
-        console.log(ListOnScrollProps)
-    }
-
-    async sendMessage() {
-        const { value } = this.state;
-        if (value === '') {
-            return;
+    const setRowHeight = useCallback((index, size) => {
+        if (typeof listRef.current.resetAfterIndex === "function") {
+            listRef.current.resetAfterIndex(index);
         }
-        console.log('发送消息');
-        await window.connection.send('SendMessage', value, 0)
+        // rowHeights = { ...rowHeights, [index]: size };
+        rowHeights += size;
+    }, [listRef]);
 
-        this.setState({
-            value: ''
-        })
+    const renderRow = ({ index: i, style }) => {
+        const item = message[i];
+        const rowRef = useRef();
 
-    }
+        useEffect(() => {
+            if (rowRef.current) {
+                setRowHeight(i, rowRef.current.getBoundingClientRect().height);
+                if (i === 0) {
+                    rowHeights = rowRef.current.getBoundingClientRect().height;
+                    return;
+                }
+                rowRef.current.style.top = `${rowHeights - rowRef.current.getBoundingClientRect().height }px`;
+                console.log(rowRef.current.style.top, `${rowHeights}px`);
+            }
+        }, [rowRef.current, setRowHeight]);
 
-    render() {
-
-        const { message, height, value } = this.state
-
-
-        const renderItem = ({ index }) => {
-            const item = message[index];
-            return <div key={item.id} style={{
-                width: '100%'
-            }}>
-                <Avatar size='large' style={{
-                    float: 'left',
-                }} src={<img src={item.User.Avatar} alt="avatar" />} />
-                <div style={{
-                    float: 'left',
-                    marginLeft: '10px',
-                    width: 'calc(100% - 50px)',
-                    display: "inline-block"
-                }}>{item.User.Name}
+        return (
+            <div ref={rowRef} key={item.id} style={{ ...style, height: "auto" }}>
+                <Avatar size='large' style={{ float: 'left' }} src={<img src={item.User.Avatar} alt="avatar" />} />
+                <div style={{ float: 'left', marginLeft: '10px', width: 'calc(100% - 50px)', display: "inline-block" }}>
+                    {item.User.Name}
                 </div>
-                <div className='message-item-content message-item-content-user' style={{
-                    display: 'inline-block',
-                    marginBottom: '20px',
-                    marginLeft: '10px',
-                }}>
+                <div className='message-item-content message-item-content-user' style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}>
                     {item.Content}
                 </div>
             </div>
-        };
+        );
+    };
 
+
+    const ListComponent = () => {
         return (
-            <>
-                <div className='message'>
-                    <div style={{
-                        height: 'calc(100% - 240px)',
-                    }} id='message'>
-                        <FixedSizeList
-                            height={height - 20} // 列表可视区域的高度
-                            itemCount={message.length} // 列表数据长度
-                            itemSize={35} // 列表行高
-                            width={'100%'} //列表可视区域的宽度
-                            initialScrollOffset={999999}
-                            style={{
-                                margin:'10px'
-                            }}
-                            overscanCount={50}
-                            layout='vertical'
+            <div style={{ height: 'calc(100% - 240px)' }}>
+                <AutoSizer>
+                    {({ height, width }) => (
+                        <List
+                            ref={listRef}
+                            height={height}
+                            className="List"
+                            itemCount={message.length}
+                            itemSize={70}
+                            width={width}
+                            overscanCount={20}
                         >
-                            {renderItem}
-                        </FixedSizeList>
+                            {renderRow}
+                        </List>
+                    )}
+                </AutoSizer>
+            </div>
+        );
+    };
+
+    return (
+        <>
+            <div className='message'>
+                {ListComponent()}
+                <div className='chat-send'>
+                    <div className='chat-tools'>
+                        <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<SmileOutlined />} />
+                        <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileOutlined />} />
+                        <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileImageOutlined />} />
                     </div>
-                    <div className='chat-send'>
-                        <div className='chat-tools'>
-                            <Button size='small' style={{
-                                marginLeft: '10px',
-                                border: 'none',
-                            }} icon={<SmileOutlined />} />
-
-                            <Button size='small' style={{
-                                marginLeft: '10px',
-                                border: 'none',
-                            }} icon={<FileOutlined />} />
-                            <Button size='small' style={{
-                                marginLeft: '10px',
-                                border: 'none',
-                            }} icon={<FileImageOutlined />} />
-
-                        </div>
-                        <Mentions
-                            autoSize
-                            rows={5}
-                            value={value}
-                            onChange={(v) => this.setState({
-                                value: v
-                            })}
-                            className='chat-input'
-                            placeholder="开始聊天吧"
-                            options={[
-                                {
-                                    value: 'afc163',
-                                    label: 'afc163',
-                                },
-                                {
-                                    value: 'zombieJ',
-                                    label: 'zombieJ',
-                                },
-                                {
-                                    value: 'yesmeck',
-                                    label: 'yesmeck',
-                                },
-                            ]}
-                        />
-                        <div style={{
-                            float: "right",
-                            marginRight: '10px',
-                        }}>
-                            <Button onClick={async () => await this.sendMessage()} type='primary' >发送</Button>
-                        </div>
+                    <Mentions
+                        autoSize
+                        rows={5}
+                        value={value}
+                        onChange={(v) => setValue(v)}
+                        className='chat-input'
+                        placeholder="开始聊天吧"
+                        options={[
+                            {
+                                value: 'afc163',
+                                label: 'afc163',
+                            },
+                            {
+                                value: 'zombieJ',
+                                label: 'zombieJ',
+                            },
+                            {
+                                value: 'yesmeck',
+                                label: 'yesmeck',
+                            },
+                        ]}
+                    />
+                    <div style={{ float: "right", marginRight: '10px' }}>
+                        <Button onClick={async () => await sendMessage()} type='primary'>发送</Button>
                     </div>
                 </div>
-            </>
-        )
-    }
-}
+            </div>
+        </>
+    );
+};
 
-export default Message
+export default Message;

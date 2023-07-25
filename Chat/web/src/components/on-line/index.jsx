@@ -24,24 +24,24 @@ class OnLine extends Component {
 
     componentDidMount() {
         this.loadOnlineUsers()
-        window.addEventListener('resize', () => {
-            const { height } = this.state
-            const messageid = document.getElementById('user-list');
-            if (messageid && messageid.clientHeight !== height) {
-                this.setState({
-                    height: messageid.clientHeight
-                })
-            }
-        });
+        // window.addEventListener('resize', () => {
+        //     const { height } = this.state
+        //     const messageid = document.getElementById('user-list');
+        //     if (messageid && messageid.clientHeight !== height) {
+        //         this.setState({
+        //             height: messageid.clientHeight
+        //         })
+        //     }
+        // });
 
         // 等待dom渲染完成
-        setTimeout(() => {
-            const messageid = document.getElementById('user-list');
+        // setTimeout(() => {
+        //     const messageid = document.getElementById('user-list');
 
-            this.setState({
-                height: messageid.clientHeight
-            })
-        }, 50);
+        //     this.setState({
+        //         height: messageid.clientHeight
+        //     })
+        // }, 50);
     }
 
     render() {
