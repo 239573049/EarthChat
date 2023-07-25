@@ -13,7 +13,7 @@ import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack';
 dayjs.locale('zh-cn');
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5218/chatHub", { accessTokenFactory: () => localStorage.getItem('token') })
+    .withUrl("http://124.222.89.53/chatHub", { accessTokenFactory: () => localStorage.getItem('token') })
     .withHubProtocol(new MessagePackHubProtocol())
     .configureLogging(signalR.LogLevel.Information)
     .build();

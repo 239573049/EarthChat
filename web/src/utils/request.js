@@ -116,4 +116,4 @@ class Http {
 
 
 
-export default new Http('http://localhost:5218/api/v1/');
+export default new Http('http://124.222.89.53/api/v1/');
