@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using Chat.Service.Application.Users.Commands;
 using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Infrastructure.Helper;
@@ -77,11 +78,15 @@ public class AuthService : BaseService<AuthService>
             var url =
                 $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri={gitee.redirectUri}&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}";
 
+            _logger.LogWarning("Gitee授权 {url}", url);
             var response =
                 await http.PostAsync(url,
                     null);
 
-            var result = await response.Content.ReadFromJsonAsync<GitTokenDto>();
+            var json = await response.Content.ReadAsStringAsync();
+            
+            _logger.LogWarning("Gitee授权 {json}", json);
+            var result = JsonSerializer.Deserialize<GitTokenDto>(json);
             if (result is null) throw new Exception("Gitee授权失败");
 
             var githubUser =
