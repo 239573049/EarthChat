@@ -50,7 +50,7 @@ var app = builder.Services
     .AddJwtBearerAuthentication(jwtSection.Get<JwtOptions>())
     .AddSingleton(_ =>
     {
-        var client = new RedisClient(builder.Configuration["Redis"]);
+        var client = new RedisClient(builder.Configuration["ConnectionStrings:Redis"]);
         client.Serialize = o => JsonSerializer.Serialize(o);
         client.Deserialize = (s, t) => JsonSerializer.Deserialize(s, t);
         return client;
