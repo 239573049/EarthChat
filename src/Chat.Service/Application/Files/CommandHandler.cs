@@ -16,7 +16,7 @@ public class CommandHandler
     public async Task LocalAsync(UploadCommand command)
     {
         var fileName =
-            $"files/{DateTime.Now:yyyyMMdd}/{StringHelper.RandomString(8)}/{Path.GetExtension(command.FileName)}";
+            $"files/{DateTime.Now:yyyyMMdd}/{StringHelper.RandomString(8)}{Path.GetExtension(command.FileName)}";
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
         var info = new FileInfo(filePath);
         if (!info.Directory.Exists)
