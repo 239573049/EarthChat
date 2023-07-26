@@ -58,6 +58,11 @@ public class ChatHub : Hub
 
     public async Task SendMessage(string value, int type)
     {
+        if (value.IsNullOrWhiteSpace())
+        {
+            return;
+        }
+        
         var userId = GetUserId();
         // 未登录用户不允许发送消息
         if (userId == null) return;
