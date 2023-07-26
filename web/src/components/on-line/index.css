@@ -19,3 +19,7 @@
     /* // 鼠标悬浮时的样式手指 */
     cursor: pointer;
 }
+
+.ant-badge-dot{
+    background-color: #52c41a !important;
+}

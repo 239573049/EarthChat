@@ -17,6 +17,7 @@ const connection = new signalR.HubConnectionBuilder()
   .withUrl(config.API_URL + "/chatHub", { accessTokenFactory: () => localStorage.getItem('token') })
   .withHubProtocol(new MessagePackHubProtocol())
   .configureLogging(signalR.LogLevel.Information)
+  .withAutomaticReconnect()
   .build();
 
 window.connection = connection;
@@ -34,19 +35,19 @@ let i = 0;
 
 connection.onclose(async () => {
   message.error('连接已断开，正在重连...', 5);
-  i++;
-  if (i === 10) {
-    return;
-  }
-  await connection.start()
-    .then(() => {
-      // 重新连接成功
-      message.success('重连成功', 3);
-    })
-    .catch(x => {
-      // 重新连接失败
-      message.error('重连失败，请刷新页面', 5);
-    });
+  // 等待3s
+  setTimeout(async () => {
+    await connection.start()
+      .then(() => {
+        // 重新连接成功
+        message.success('重连成功', 3);
+      })
+      .catch(x => {
+        // 重新连接失败
+        message.error('重连失败，请刷新页面', 5);
+      });
+  }, 3000)
+
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
