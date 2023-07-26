@@ -97,7 +97,7 @@ const Message = () => {
         if (value === '') {
             return;
         }
-        await send('SendMessage', value, 0);
+        await send(value, 0);
 
         setTimeout(() => {
             var messageList = document.getElementById('message-list');
@@ -114,6 +114,7 @@ const Message = () => {
         if (value === '') {
             return;
         }
+        console.log('发送消息', value, type);
         await window.connection.send('SendMessage', value, type);
     }
 
