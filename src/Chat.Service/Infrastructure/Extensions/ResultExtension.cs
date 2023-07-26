@@ -7,6 +7,15 @@ public static class ResultExtension
         return new(data);
     }
     
+    public static ResultDto<T> Fail<T>(this T data, string code = "400") where T : class
+    {
+        return new()
+        {
+            Data = data,
+            Code = code
+        };
+    }
+
     public static ResultDto<T> CreateResult<T>(this T data, string code) where T : class
     {
         return new()

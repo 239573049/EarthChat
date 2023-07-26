@@ -1,4 +1,5 @@
 import axios from "axios";
+import config from "../config";
 
 class Http {
 
@@ -116,4 +117,4 @@ class Http {
 
 
 
-export default new Http('http://124.222.89.53/api/v1/');
+export default new Http(config.API_URL + '/api/v1/');

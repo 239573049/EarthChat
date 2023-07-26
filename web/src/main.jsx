@@ -9,11 +9,12 @@ import './index.css';
 
 import * as signalR from '@microsoft/signalr';
 import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack';
+import config from './config';
 
 dayjs.locale('zh-cn');
 
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://124.222.89.53/chatHub", { accessTokenFactory: () => localStorage.getItem('token') })
+    .withUrl(config.API_URL+"/chatHub", { accessTokenFactory: () => localStorage.getItem('token') })
     .withHubProtocol(new MessagePackHubProtocol())
     .configureLogging(signalR.LogLevel.Information)
     .build();

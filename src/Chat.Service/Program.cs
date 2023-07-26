@@ -115,6 +115,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseSerilogRequestLogging();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization().UseCors("CorsPolicy");
 app.MapHub<ChatHub>("/chatHub");

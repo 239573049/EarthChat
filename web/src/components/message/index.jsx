@@ -1,13 +1,14 @@
 import './index.css';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import React, { useState, useEffect } from 'react';
-import { Button, Mentions, Avatar, Spin, FloatButton } from 'antd';
+import { Button, Mentions, Avatar, Spin, message, FloatButton, Image, Upload } from 'antd';
 import {
     SmileOutlined,
     FileOutlined,
     MessageOutlined,
     FileImageOutlined
 } from '@ant-design/icons';
+import config from '../../config';
 
 import { GetList } from '../../services/chatService';
 
@@ -18,6 +19,10 @@ const cache = new CellMeasurerCache({
     defaultHeight: 100,
     fixedWidth: true,
 });
+
+let user = {
+
+};
 
 const Message = () => {
     const [chatMessage, setChatMessage] = useState([]);
@@ -92,9 +97,7 @@ const Message = () => {
         if (value === '') {
             return;
         }
-        // console.log('发送消息');
         await window.connection.send('SendMessage', value, 0);
-
 
         setTimeout(() => {
             var messageList = document.getElementById('message-list');
@@ -105,6 +108,36 @@ const Message = () => {
 
         setValue('');
     };
+
+
+    let userJson = localStorage.getItem('user');
+    if (userJson) {
+        try {
+            user = JSON.parse(userJson);
+        } catch (e) {
+
+        }
+    }
+
+    const rendetContent = (item) => {
+        const className = user?.id === item.user.id ? ' message-item-content-user' : '';
+        if (item.type === 0) {
+            return (
+                <div className={'message-item-content' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}>
+                    {item.content}
+                </div>
+            )
+        } else if (item.type === 1) {
+            return (
+                <div className={'message-item-content ' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}>
+                    <Image
+                        width={200}
+                        src={item.content}
+                    />
+                </div>
+            )
+        }
+    }
 
     function rowRenderer({
         key, // Unique key within array of rows
@@ -129,9 +162,7 @@ const Message = () => {
                         <div style={{ float: 'left', marginLeft: '10px', width: 'calc(100% - 50px)', display: "inline-block" }}>
                             {item.user.name}
                         </div>
-                        <div className='message-item-content message-item-content-user' style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}>
-                            {item.content}
-                        </div>
+                        {rendetContent(item)}
                     </div>
                 )}
             </CellMeasurer>
@@ -168,6 +199,29 @@ const Message = () => {
         );
     };
 
+    const onKeyDown = (e) => {
+        // 按下enter键发送消息
+        if (e.keyCode === 13) {
+            if (value === '') {
+                return;
+            }
+            sendMessage();
+        }
+
+    }
+
+    const onFile = async ({
+        file
+    }) => {
+        if (file.response) {
+            if (file.response.code === '200') {
+                await window.connection.send('SendMessage', file.response.data, 1);
+            } else {
+                message.error(file.response.message);
+            }
+        }
+    }
+
     return (
         <>
             <div className='message'>
@@ -177,7 +231,14 @@ const Message = () => {
                     <div className='chat-tools'>
                         <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<SmileOutlined />} />
                         <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileOutlined />} />
-                        <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileImageOutlined />} />
+                        <Upload
+                            listType='image'
+                            headers={{ Authorization: 'Bearer ' + localStorage.getItem('token') }}
+                            onChange={onFile}
+                            action={config.API_URL + '/api/v1/Files/Upload'}
+                            showUploadList={false}>
+                            <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileImageOutlined />} />
+                        </Upload>
                     </div>
                     <Mentions
                         autoSize
@@ -187,6 +248,7 @@ const Message = () => {
                         maxLength={2000}
                         onChange={(v) => setValue(v)}
                         className='chat-input'
+                        onKeyDown={onKeyDown}
                         placeholder="开始聊天吧"
                         options={[
                             {

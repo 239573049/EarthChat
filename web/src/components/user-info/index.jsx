@@ -18,8 +18,8 @@ const UserInfo = () => {
             get()
                 .then(res => {
                     if (res.code === '200') {
+                        localStorage.setItem('user', JSON.stringify(res.data))
                         setUser(res.data)
-                        window.user = res.data
                     }
                 })
         }
@@ -52,7 +52,7 @@ const UserInfo = () => {
         }}>
             {/* 使用if渲染 */}
 
-            {user.avatar ? renderUser() : null}
+            {user?.avatar ? renderUser() : null}
         </div>
     )
 }

@@ -18,3 +18,4 @@ global using Chat.Contracts.Core;
 global using Chat.Contracts.Users;
 global using Chat.Service.Application.Users.Queries;
 global using Masa.BuildingBlocks.Authentication.Identity;
+global using Chat.Service.Infrastructure.Extensions;

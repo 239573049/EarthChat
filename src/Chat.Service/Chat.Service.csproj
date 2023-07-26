@@ -42,4 +42,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Chat.Contracts\Chat.Contracts.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
 </Project>
