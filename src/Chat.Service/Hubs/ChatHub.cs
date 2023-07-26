@@ -22,23 +22,28 @@ public class ChatHub : Hub
     {
         // 增加在线人数
         await _redisClient.IncrByAsync("online", 1);
+        var userId = GetUserId();
+        
+        await _redisClient.LRemAsync("onlineUsers", 1, userId.ToString());
+
+        if (userId != null) await _redisClient.LPushAsync("onlineUsers", userId);
+        
         // 更新在线人数
         await UpdateOnlineAsync();
-        var userId = GetUserId();
-        if (userId != null) await _redisClient.LPushAsync("onlineUsers", userId);
     }
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         // 减少在线人数
         await _redisClient.IncrByAsync("online", -1);
-        
-        // 更新在线人数
-        await UpdateOnlineAsync();
 
         // 移除在线用户
         var userId = GetUserId().ToString();
         if (userId != null) await _redisClient.LRemAsync("onlineUsers", 0, GetUserId().ToString());
+        
+        // 更新在线人数
+        await UpdateOnlineAsync();
+
     }
 
     /// <summary>
@@ -46,7 +51,8 @@ public class ChatHub : Hub
     /// </summary>
     private async Task UpdateOnlineAsync()
     {
-        var count = await _redisClient.GetAsync<int>("online");
+        // 获取onlineUsers数量
+        var count = await _redisClient.LLenAsync("onlineUsers");
         await Clients.All.SendAsync("UpdateOnline", count);
     }
 
@@ -55,7 +61,7 @@ public class ChatHub : Hub
         var userId = GetUserId();
         // 未登录用户不允许发送消息
         if (userId == null) return;
-        
+
         string key = $"user:{userId}:count";
 
         // 限制用户发送消息频率
@@ -102,9 +108,8 @@ public class ChatHub : Hub
             await _redisClient.IncrByAsync(key, 1);
             await _redisClient.ExpireAsync(key, 60);
         }
-        
-        
-        
+
+
         await _eventBus.PublishAsync(createChat);
     }
 
