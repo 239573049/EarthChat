@@ -22,7 +22,8 @@ public class ChatHub : Hub
     {
         // 增加在线人数
         await _redisClient.IncrByAsync("online", 1);
-
+        // 更新在线人数
+        await UpdateOnlineAsync();
         var userId = GetUserId();
         if (userId != null) await _redisClient.LPushAsync("onlineUsers", userId);
     }
@@ -31,10 +32,22 @@ public class ChatHub : Hub
     {
         // 减少在线人数
         await _redisClient.IncrByAsync("online", -1);
+        
+        // 更新在线人数
+        await UpdateOnlineAsync();
 
         // 移除在线用户
         var userId = GetUserId().ToString();
         if (userId != null) await _redisClient.LRemAsync("onlineUsers", 0, GetUserId().ToString());
+    }
+
+    /// <summary>
+    /// 通知在线人数变更
+    /// </summary>
+    private async Task UpdateOnlineAsync()
+    {
+        var count = await _redisClient.GetAsync<int>("online");
+        await Clients.All.SendAsync("UpdateOnline", count);
     }
 
     public async Task SendMessage(string value, int type)

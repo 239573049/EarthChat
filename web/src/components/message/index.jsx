@@ -1,7 +1,7 @@
 import './index.css';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import React, { useState, useEffect } from 'react';
-import { Button, Mentions, Avatar, Spin, message, FloatButton, Image, Upload } from 'antd';
+import { Button, Mentions, Avatar, Spin, message, FloatButton, Image, Upload, Card } from 'antd';
 import {
     SmileOutlined,
     FileOutlined,
@@ -119,6 +119,15 @@ const Message = () => {
         }
     }
 
+    const download = (url) => {
+        // 打开新标签下载
+        var a = document.createElement('a');
+        a.href = url;
+        a.target = '_blank';
+        a.click();
+        
+    }
+
     const rendetContent = (item) => {
         const className = user?.id === item.user.id ? ' message-item-content-user' : '';
         if (item.type === 0) {
@@ -135,6 +144,23 @@ const Message = () => {
                         src={item.content}
                     />
                 </div>
+            )
+        } else if (item.type === 2) {
+            var name = item.content.split('/')[item.content.split('/').length - 1];
+            return (
+                <Card
+                    hoverable
+                    className='message-item-content '
+                    title={name}
+                    style={{ width: 300, display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}
+                >
+                    <Avatar>
+                        <FileOutlined />
+                    </Avatar>
+                    <Button onClick={()=>download(item.content)} style={{
+                        float: 'right'
+                    }}>下载</Button>
+                </Card>
             )
         }
     }
@@ -210,12 +236,25 @@ const Message = () => {
 
     }
 
-    const onFile = async ({
+    const onImage = async ({
         file
     }) => {
         if (file.response) {
             if (file.response.code === '200') {
                 await window.connection.send('SendMessage', file.response.data, 1);
+            } else {
+                message.error(file.response.message);
+            }
+        }
+    }
+
+
+    const onFile = async ({
+        file
+    }) => {
+        if (file.response) {
+            if (file.response.code === '200') {
+                await window.connection.send('SendMessage', file.response.data, 2);
             } else {
                 message.error(file.response.message);
             }
@@ -230,11 +269,19 @@ const Message = () => {
                 <div className='chat-send'>
                     <div className='chat-tools'>
                         <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<SmileOutlined />} />
-                        <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileOutlined />} />
                         <Upload
                             listType='image'
                             headers={{ Authorization: 'Bearer ' + localStorage.getItem('token') }}
                             onChange={onFile}
+                            action={config.API_URL + '/api/v1/Files/Upload'}
+                            showUploadList={false}>
+                            <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileOutlined />} />
+                        </Upload>
+                        <Upload
+                            listType='image'
+                            accept='image/*'
+                            headers={{ Authorization: 'Bearer ' + localStorage.getItem('token') }}
+                            onChange={onImage}
                             action={config.API_URL + '/api/v1/Files/Upload'}
                             showUploadList={false}>
                             <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileImageOutlined />} />

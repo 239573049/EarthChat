@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import zhCN from 'antd/locale/zh_CN';
 import './index.css';
-
+import PubSub from 'pubsub-js';
 import * as signalR from '@microsoft/signalr';
 import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack';
 import config from './config';
@@ -23,6 +23,12 @@ window.connection = connection;
 
 
 await connection.start();
+
+connection.on("UpdateOnline",(i)=>{
+  console.log('更新在线', i);
+  // 发布事件
+  PubSub.publish('UpdateOnline', i);
+})
 
 connection.onclose(async () => {
   message.error('连接已断开，正在重连...');

@@ -1,4 +1,5 @@
 ﻿using Chat.Service.Application.Files.Commands;
+using Chat.Service.Infrastructure.Helper;
 
 namespace Chat.Service.Application.Files;
 
@@ -14,19 +15,21 @@ public class CommandHandler
     [EventHandler]
     public async Task LocalAsync(UploadCommand command)
     {
-        var fileName = $"files/{DateTime.Now:yyyyMMdd}/{Guid.NewGuid()}{Path.GetExtension(command.FileName)}";
+        var fileName =
+            $"files/{DateTime.Now:yyyyMMdd}/{StringHelper.RandomString(8)}/{Path.GetExtension(command.FileName)}";
         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
         var info = new FileInfo(filePath);
         if (!info.Directory.Exists)
         {
             info.Directory.Create();
         }
+
         await using var stream = new FileStream(filePath, FileMode.Create);
         await command.Stream.CopyToAsync(stream);
-        
+
         // 回去当前请求的域名
         var host = _contextAccessor.HttpContext.Request.Host.Value;
-        
+
         // 判断是否https
         if (_contextAccessor.HttpContext.Request.IsHttps)
         {
@@ -36,8 +39,7 @@ public class CommandHandler
         {
             host = $"http://{host}";
         }
-        
-        command.Result = $"{host}/{fileName}";
 
+        command.Result = $"{host}/{fileName}";
     }
 }

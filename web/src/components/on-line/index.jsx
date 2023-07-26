@@ -4,14 +4,17 @@ import { useEffect, useState } from 'react'
 import {
     getOnlineUsers,
 } from '../../services/chatService'
-
+import PubSub from 'pubsub-js';
 import { List } from 'react-virtualized';
 
 import AutoSizer from "react-virtualized-auto-sizer";
 
+const updateOnline = 'UpdateOnline';
+
 const OnLine = () => {
 
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [onlineSize, setOnlineSize] = useState(0);
 
     const loadOnlineUsers = () => {
         getOnlineUsers()
@@ -22,7 +25,18 @@ const OnLine = () => {
 
     useEffect(() => {
         loadOnlineUsers();
+        PubSub.subscribe(updateOnline, UpdateOnline);
+        return () => {
+            PubSub.unsubscribe(updateOnline);
+        }
     }, []);
+
+    // 监听OnLine消耗的事件
+
+    const UpdateOnline = (name,i) => {
+        loadOnlineUsers();
+        setOnlineSize(i);
+    }
 
     const rowRenderer = ({ index, style }) => {
         var item = onlineUsers[index];
@@ -73,7 +87,7 @@ const OnLine = () => {
                 textAlign: 'center',
                 fontSize: '20px',
                 fontWeight: 'bold',
-            }}>人员列表</div>
+            }}>在线人数({onlineSize})</div>
             <Divider></Divider>
             <div id='user-list' style={{
                 height: 'calc(100vh - 200px)',
