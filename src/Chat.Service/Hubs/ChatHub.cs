@@ -73,7 +73,9 @@ public class ChatHub : Hub
         if (await _redisClient.ExistsAsync(key))
         {
             var count = await _redisClient.GetAsync<int>(key);
-            if (count > 5) return;
+            
+            // 限制用户发送消息频率每分钟20条
+            if (count > 20) return;
         }
 
         var message = new ChatMessageDto
