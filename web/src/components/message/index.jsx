@@ -97,7 +97,7 @@ const Message = () => {
         if (value === '') {
             return;
         }
-        await window.connection.send('SendMessage', value, 0);
+        await send('SendMessage', value, 0);
 
         setTimeout(() => {
             var messageList = document.getElementById('message-list');
@@ -109,6 +109,13 @@ const Message = () => {
         setValue('');
     };
 
+
+    const send = async (value, type) => {
+        if (value === '') {
+            return;
+        }
+        await window.connection.send('SendMessage', value, type);
+    }
 
     let userJson = localStorage.getItem('user');
     if (userJson) {
@@ -125,7 +132,7 @@ const Message = () => {
         a.href = url;
         a.target = '_blank';
         a.click();
-        
+
     }
 
     const rendetContent = (item) => {
@@ -157,7 +164,7 @@ const Message = () => {
                     <Avatar>
                         <FileOutlined />
                     </Avatar>
-                    <Button onClick={()=>download(item.content)} style={{
+                    <Button onClick={() => download(item.content)} style={{
                         float: 'right'
                     }}>下载</Button>
                 </Card>
@@ -241,7 +248,7 @@ const Message = () => {
     }) => {
         if (file.response) {
             if (file.response.code === '200') {
-                await window.connection.send('SendMessage', file.response.data, 1);
+                await send(file.response.data, 1);
             } else {
                 message.error(file.response.message);
             }

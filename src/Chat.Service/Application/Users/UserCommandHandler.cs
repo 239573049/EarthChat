@@ -36,4 +36,21 @@ public class UserCommandHandler
         await _unitOfWork.SaveChangesAsync();
         command.Result = _mapper.Map<UserDto>(user);
     }
+
+    [EventHandler]
+    public async Task AuthUpdateAsync(AuthUpdateCommand command)
+    {
+        var user = await _userRepository.FindAsync(x => x.Id == command.userId);
+        if (user == null)
+        {
+            return;
+        }
+        
+        user.Name = command.name;
+        user.Avatar = command.avatar;
+
+        await _userRepository.UpdateAsync(user);
+        await _unitOfWork.SaveChangesAsync();
+
+    }
 }
