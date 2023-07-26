@@ -67,7 +67,8 @@ var app = builder.Services
         options.SwaggerDoc("v1",
             new OpenApiInfo
             {
-                Title = "ChatApp", Version = "v1",
+                Title = "ChatApp",
+                Version = "v1",
                 Contact = new OpenApiContact { Name = "ChatApp" }
             });
         foreach (var item in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml"))
@@ -104,15 +105,27 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger().UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "ChatApp"));
 
-    #region MigrationDb
-
-    await using var context = app.Services.CreateScope().ServiceProvider.GetService<ChatDbContext>();
-    {
-        context!.Database.EnsureCreated();
-    }
-
-    #endregion
 }
+
+#region MigrationDb
+
+await using var context = app.Services.CreateScope().ServiceProvider.GetService<ChatDbContext>();
+{
+    try
+    {
+        // 执行sql
+        await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
+    }
+    catch (Exception e)
+    {
+        Console.WriteLine(e);
+    }
+ 
+    // 判断是否需要创建数据库
+    context!.Database.EnsureCreated();
+}
+
+#endregion
 
 app.UseSerilogRequestLogging();
 app.UseStaticFiles();

@@ -42,4 +42,10 @@ public class CommandHandler
 
         command.Result = $"{host}/{fileName}";
     }
+
+    // [EventHandler]
+    // public async Task MinIoAsync(UploadCommand command)
+    // {
+    //     
+    // }
 }

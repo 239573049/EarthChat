@@ -1,26 +1,62 @@
-version: '3'
 services:
   postgres:
-    image: postgres
+    image: postgres:15.3-alpine3.18
     restart: always
+    container_name: postgres
+    networks:
+      - chat
     environment:
-      POSTGRES_USER: your_username
-      POSTGRES_PASSWORD: your_password
-      POSTGRES_DB: your_database
+      POSTGRES_USER: token
+      POSTGRES_PASSWORD: dd666666
+      POSTGRES_DB: Chat
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
 
   redis:
-    image: redis
+    image: redis:alpine3.16
     restart: always
+    container_name: redis
+    networks:
+      - chat
     command: redis-server --appendonly yes
     volumes:
       - ./redisdata:/data
 
   nginx:
-    image: nginx
+    image: nginx:stable-alpine
     restart: always
+    container_name: nginx
+    networks:
+      - chat
     ports:
-      - 80:80
+      - 1080:80
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+  chat-web:
+    build:
+      context: ./web
+      dockerfile: ./Dockerfile
+    container_name: chat-web
+    restart: always
+    depends_on:
+     - redis
+     - postgres
+    networks:
+      - chat
+
+  chat-api:
+    build:
+      context: ./
+      dockerfile: ./src/Chat.Service/Dockerfile
+    container_name: chat-api
+    restart: always
+    depends_on:
+     - redis
+     - postgres
+    networks:
+      - chat
+
+networks:
+  chat:
+    driver: bridge

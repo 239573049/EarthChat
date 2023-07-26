@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{16EB5FD0-8400-4F4D-985D-C506AA5A0544}"
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrameworkServiceCqrs.Service", "src\Chat.Service\Chat.Service.csproj", "{4718329F-DA45-47D4-904E-99246E4F6681}"
