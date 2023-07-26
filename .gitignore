@@ -480,3 +480,5 @@ $RECYCLE.BIN/
 *.swp
 /Chat/.idea/.idea.Chat/.idea
 /.vscode
+/postgres_data
+/redisdata
