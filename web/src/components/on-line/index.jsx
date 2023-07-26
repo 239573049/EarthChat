@@ -19,6 +19,7 @@ const OnLine = () => {
     const loadOnlineUsers = () => {
         getOnlineUsers()
             .then(x => {
+                PubSub.publish("userLists", x.data)
                 setOnlineUsers(x.data);
             })
     }

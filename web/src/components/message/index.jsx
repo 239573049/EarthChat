@@ -32,11 +32,24 @@ const Message = () => {
     const [loading, setLoading] = useState(false);
     const [unread, setUnread] = useState(0);
     const listRef = useRef([]);
+    const [userLists, setUserLists] = useState([]);
 
 
     useEffect(() => {
 
         getlist();
+
+        PubSub.subscribe('userLists', (name, data) => {
+            // 将data转换value和label
+            const users = [];
+            data.forEach(item => {
+                users.push({
+                    value: item.id,
+                    label: item.name
+                })
+            });
+            setUserLists(users)
+        })
 
         // 监听消息
         window.connection.on('ReceiveMessage', (message) => {
@@ -51,6 +64,8 @@ const Message = () => {
         });
 
         return () => {
+            PubSub.unsubscribe('userLists');
+
             window.connection.off('ReceiveMessage');
         };
     }, []);
@@ -234,14 +249,15 @@ const Message = () => {
     };
 
     const onKeyDown = (e) => {
-        // 按下enter键发送消息
-        if (e.keyCode === 13) {
-            if (value === '') {
+        if (e.shiftKey && e.keyCode === 13) {
+            console.log('Shift+Enter 组合键被按下');
+            // 执行你的操作
+        }else if(e.keyCode === 13){
+            if (!value) {
                 return;
             }
             sendMessage();
         }
-
     }
 
     const onImage = async ({
@@ -296,29 +312,15 @@ const Message = () => {
                         </Upload>
                     </div>
                     <Mentions
-                        autoSize
                         onFocus={() => setUnread(0)}
-                        rows={5}
+                        rows={6}
                         value={value}
                         maxLength={2000}
                         onChange={(v) => setValue(v)}
                         className='chat-input'
                         onKeyDown={onKeyDown}
                         placeholder="开始聊天吧"
-                        options={[
-                            {
-                                value: 'afc163',
-                                label: 'afc163',
-                            },
-                            {
-                                value: 'zombieJ',
-                                label: 'zombieJ',
-                            },
-                            {
-                                value: 'yesmeck',
-                                label: 'yesmeck',
-                            },
-                        ]}
+                        options={userLists}
                     />
                     <div style={{ float: "right", marginRight: '10px' }}>
                         <Button onClick={async () => await sendMessage()} type='primary'>发送</Button>
