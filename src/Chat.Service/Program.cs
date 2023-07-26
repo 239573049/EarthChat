@@ -6,8 +6,15 @@ using Chat.Service.Options;
 using FreeRedis;
 using Masa.BuildingBlocks.Data.UoW;
 using Masa.BuildingBlocks.Ddd.Domain.Repositories;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
@@ -107,6 +114,7 @@ if (app.Environment.IsDevelopment())
     #endregion
 }
 
+app.UseSerilogRequestLogging();
 app.UseAuthentication();
 app.UseAuthorization().UseCors("CorsPolicy");
 app.MapHub<ChatHub>("/chatHub");
@@ -115,3 +123,4 @@ app.MapHub<ChatHub>("/chatHub");
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 await app.RunAsync();
+Log.CloseAndFlush();
