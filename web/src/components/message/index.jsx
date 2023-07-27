@@ -12,9 +12,10 @@ import config from '../../config';
 
 import PubSub from 'pubsub-js';
 import { GetList } from '../../services/chatService';
-
+import { uploadBase64 } from '../../services/fileService'
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useRef } from 'react';
+import Mention from '../Mention/index.jsx'
 
 const cache = new CellMeasurerCache({
     defaultHeight: 100,
@@ -31,6 +32,7 @@ const Message = () => {
     const listRef = useRef([]);
     const [userLists, setUserLists] = useState([]);
     const [user, setUser] = useState({});
+    const mentionRef = useRef(Mention);
 
 
     useEffect(() => {
@@ -111,12 +113,17 @@ const Message = () => {
 
 
     const sendMessage = async () => {
+        // 掉用mentionRef的方法
+        const mention = mentionRef.current;
+        const value = mention.getValue();
+
+
         if (user.avatar) {
-            if (value === '') {
+            if (value.content === '') {
                 return;
             }
 
-            await send(value, 0);
+            await send(value.content, 0);
 
             setTimeout(() => {
                 var messageList = document.getElementById('message-list');
@@ -125,8 +132,17 @@ const Message = () => {
                 }
             }, 100);
 
-            setValue('');
-        }else{
+            mention.setValue(null);
+            for (let i = 0; i < value.base64.length; i++) {
+                uploadBase64(value.base64[i], "image")
+                    .then(res => {
+                        if (res.code === '200') {
+                            send(res.data, 1);
+                        }
+                    })
+            }
+
+        } else {
             message.error('请先登录账号');
         }
 
@@ -311,7 +327,7 @@ const Message = () => {
                             <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileImageOutlined />} />
                         </Upload>
                     </div>
-                    <Mentions
+                    {/* <Mentions
                         onFocus={() => setUnread(0)}
                         rows={6}
                         value={value}
@@ -321,7 +337,8 @@ const Message = () => {
                         onKeyDown={onKeyDown}
                         placeholder="开始聊天吧"
                         options={userLists}
-                    />
+                    /> */}
+                    <Mention ref={mentionRef} />
                     <div style={{ float: "right", marginRight: '10px' }}>
                         <Button onClick={async () => await sendMessage()} type='primary'>{user.avatar ? "发送" : "请先登录"}</Button>
                     </div>
