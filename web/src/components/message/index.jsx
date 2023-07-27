@@ -113,12 +113,13 @@ const Message = () => {
 
 
     const sendMessage = async () => {
+        debugger;
         // 掉用mentionRef的方法
         const mention = mentionRef.current;
         const value = mention.getValue();
 
         if (user.avatar) {
-            if (value.content === '') {
+            if (value.content === '' && value.base64.length === 0) {
                 return;
             }
 
@@ -141,7 +142,6 @@ const Message = () => {
                         }
                     })
             }
-    
 
         } else {
             message.error('请先登录账号');
@@ -154,7 +154,6 @@ const Message = () => {
         if (value === '') {
             return;
         }
-        console.log('发送消息', value, type);
         await window.connection.send('SendMessage', value, type);
     }
 
@@ -164,7 +163,6 @@ const Message = () => {
         a.href = url;
         a.target = '_blank';
         a.click();
-
     }
 
     const rendetContent = (item) => {
@@ -328,18 +326,7 @@ const Message = () => {
                             <Button size='small' style={{ marginLeft: '10px', border: 'none' }} icon={<FileImageOutlined />} />
                         </Upload>
                     </div>
-                    {/* <Mentions
-                        onFocus={() => setUnread(0)}
-                        rows={6}
-                        value={value}
-                        maxLength={2000}
-                        onChange={(v) => setValue(v)}
-                        className='chat-input'
-                        onKeyDown={onKeyDown}
-                        placeholder="开始聊天吧"
-                        options={userLists}
-                    /> */}
-                    <Mention ref={mentionRef} />
+                    <Mention onSubmit={()=>sendMessage()} ref={mentionRef} />
                     <div style={{ float: "right", marginRight: '10px' }}>
                         <Button onClick={async () => await sendMessage()} type='primary'>{user.avatar ? "发送" : "请先登录"}</Button>
                     </div>

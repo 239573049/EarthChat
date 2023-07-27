@@ -42,6 +42,7 @@ class Mention extends Component {
 
     handlePaste(e) {
         e.preventDefault();
+        
         const text = e.clipboardData.getData('text/plain');
         const image = e.clipboardData.items[0];
         if (image && image.type.includes('image')) {
@@ -65,6 +66,15 @@ class Mention extends Component {
         }
     }
 
+    onKeyDown(e){
+        // 如果按下了回车键，就阻止默认行为
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            // 触发onSubmit事件
+            this.props.onSubmit();
+            
+        }
+    }
 
     render() {
         return (
@@ -73,6 +83,7 @@ class Mention extends Component {
                 id="editor-container"
                 onInput={(e) => this.handleInput(e)}
                 onPaste={(e) => this.handlePaste(e)}
+                onKeyDown={(e)=>this.onKeyDown(e)}
                 style={{
                     padding: '10px',
                     minHeight: '140px',
