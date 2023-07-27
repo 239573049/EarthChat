@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import config from '../../config';
 
+import PubSub from 'pubsub-js';
 import { GetList } from '../../services/chatService';
 
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -20,10 +21,6 @@ const cache = new CellMeasurerCache({
     fixedWidth: true,
 });
 
-let user = {
-
-};
-
 const Message = () => {
     const [chatMessage, setChatMessage] = useState([]);
     const [value, setValue] = useState('');
@@ -33,11 +30,16 @@ const Message = () => {
     const [unread, setUnread] = useState(0);
     const listRef = useRef([]);
     const [userLists, setUserLists] = useState([]);
+    const [user, setUser] = useState({});
 
 
     useEffect(() => {
 
         getlist();
+
+        PubSub.subscribe('user', (name, data) => {
+            setUser(data)
+        });
 
         PubSub.subscribe('userLists', (name, data) => {
             // 将data转换value和label
@@ -65,7 +67,7 @@ const Message = () => {
 
         return () => {
             PubSub.unsubscribe('userLists');
-
+            PubSub.unsubscribe('user');
             window.connection.off('ReceiveMessage');
         };
     }, []);
@@ -109,19 +111,25 @@ const Message = () => {
 
 
     const sendMessage = async () => {
-        if (value === '') {
-            return;
-        }
-        await send(value, 0);
-
-        setTimeout(() => {
-            var messageList = document.getElementById('message-list');
-            if (messageList) {
-                messageList.scrollTop = messageList.scrollHeight + 1000;
+        if (user.avatar) {
+            if (value === '') {
+                return;
             }
-        }, 100);
 
-        setValue('');
+            await send(value, 0);
+
+            setTimeout(() => {
+                var messageList = document.getElementById('message-list');
+                if (messageList) {
+                    messageList.scrollTop = messageList.scrollHeight + 1000;
+                }
+            }, 100);
+
+            setValue('');
+        }else{
+            message.error('请先登录账号');
+        }
+
     };
 
 
@@ -131,15 +139,6 @@ const Message = () => {
         }
         console.log('发送消息', value, type);
         await window.connection.send('SendMessage', value, type);
-    }
-
-    let userJson = localStorage.getItem('user');
-    if (userJson) {
-        try {
-            user = JSON.parse(userJson);
-        } catch (e) {
-
-        }
     }
 
     const download = (url) => {
@@ -252,7 +251,7 @@ const Message = () => {
         if (e.shiftKey && e.keyCode === 13) {
             console.log('Shift+Enter 组合键被按下');
             // 执行你的操作
-        }else if(e.keyCode === 13){
+        } else if (e.keyCode === 13) {
             if (!value) {
                 return;
             }
@@ -304,6 +303,7 @@ const Message = () => {
                         <Upload
                             listType='image'
                             accept='image/*'
+                            name='file'
                             headers={{ Authorization: 'Bearer ' + localStorage.getItem('token') }}
                             onChange={onImage}
                             action={config.API_URL + '/api/v1/Files/Upload'}
@@ -323,7 +323,7 @@ const Message = () => {
                         options={userLists}
                     />
                     <div style={{ float: "right", marginRight: '10px' }}>
-                        <Button onClick={async () => await sendMessage()} type='primary'>发送</Button>
+                        <Button onClick={async () => await sendMessage()} type='primary'>{user.avatar ? "发送" : "请先登录"}</Button>
                     </div>
                 </div>
             </div>

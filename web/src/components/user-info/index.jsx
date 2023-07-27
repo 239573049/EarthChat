@@ -5,6 +5,8 @@ import { useState } from 'react';
 // 引用antd组件
 import { Avatar } from 'antd';
 
+import PubSub from 'pubsub-js';
+
 const token = localStorage.getItem('token')
 
 const UserInfo = () => {
@@ -19,6 +21,7 @@ const UserInfo = () => {
                 .then(res => {
                     if (res.code === '200') {
                         localStorage.setItem('user', JSON.stringify(res.data))
+                        PubSub.publish('user', res.data)
                         setUser(res.data)
                     }
                 })
