@@ -44,7 +44,6 @@ class Mention extends Component {
         e.preventDefault();
         const text = e.clipboardData.getData('text/plain');
         const image = e.clipboardData.items[0];
-        debugger;
         if (image && image.type.includes('image')) {
 
             const reader = new FileReader();
