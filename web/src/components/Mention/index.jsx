@@ -32,7 +32,7 @@ class Mention extends Component {
 
     setValue(value) {
         // 如果value超过了maxlength，就截取
-        if (value.length > this.state.maxlength) {
+        if (value && value.length > this.state.maxlength) {
             value = value.substring(0, this.state.maxlength);
         }
         const editorContainer = document.getElementById('editor-container');
