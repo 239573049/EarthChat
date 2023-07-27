@@ -117,7 +117,6 @@ const Message = () => {
         const mention = mentionRef.current;
         const value = mention.getValue();
 
-
         if (user.avatar) {
             if (value.content === '') {
                 return;
@@ -133,14 +132,16 @@ const Message = () => {
             }, 100);
 
             mention.setValue(null);
+            
             for (let i = 0; i < value.base64.length; i++) {
-                uploadBase64(value.base64[i], "image")
+                uploadBase64(value.base64[i], "image.png")
                     .then(res => {
                         if (res.code === '200') {
                             send(res.data, 1);
                         }
                     })
             }
+    
 
         } else {
             message.error('请先登录账号');
