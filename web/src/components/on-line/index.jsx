@@ -56,7 +56,6 @@ const OnLine = () => {
                     fontSize: '15px',
                     marginLeft: '8px'
                 }}>{item.name}</span>
-
             </div>
         </div>
     };
@@ -72,7 +71,7 @@ const OnLine = () => {
                                 width={width}
                                 height={height}
                                 rowCount={onlineUsers.length}
-                                rowHeight={50}
+                                rowHeight={42}
                                 rowRenderer={rowRenderer}
                             />
                         )}

@@ -9,6 +9,7 @@ import {
     FileImageOutlined
 } from '@ant-design/icons';
 import config from '../../config';
+import moment from 'moment/moment';
 
 import PubSub from 'pubsub-js';
 import { GetList } from '../../services/chatService';
@@ -60,7 +61,7 @@ const Message = () => {
             // 设置未读消息
             var v = JSON.parse(message);
             console.log('更新未读', v);
-            if (v.userId !== window?.user?.id) {
+            if (v.userId !== user?.id) {
                 setUnread(oldUnread => oldUnread + 1);
             }
 
@@ -211,6 +212,7 @@ const Message = () => {
         parent
     }) {
         const item = chatMessage[index];
+        item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
         return (
             <CellMeasurer
                 cache={cache}
@@ -223,7 +225,11 @@ const Message = () => {
                     <div key={item.id} onLoad={measure} style={{ ...style }}>
                         <Avatar size='large' style={{ float: 'left' }} src={<img src={item.user.avatar} alt="avatar" />} />
                         <div style={{ float: 'left', marginLeft: '10px', width: 'calc(100% - 50px)', display: "inline-block" }}>
-                            {item.user.name}
+                            {item.user.name} <span style={{
+                                backgroundColor: 'rgb(34 145 58)',
+                                padding: '2px 5px',
+                                borderRadius: '5px',
+                            }}>{item.creationTime}</span>
                         </div>
                         {rendetContent(item)}
                     </div>
