@@ -170,7 +170,7 @@ const Message = () => {
         const className = user?.id === item.user.id ? ' message-item-content-user' : '';
         if (item.type === 0) {
             return (
-                <div className={'message-item-content' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}>
+                <div className={'message-item-content' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap' }}>
                     {item.content}
                 </div>
             )
