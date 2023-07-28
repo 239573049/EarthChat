@@ -13,16 +13,18 @@ public class CommandHandler
     private readonly IUserContext _userContext;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IHubContext<ChatHub> _hubContext;
+    private readonly ILogger<CommandHandler> _logger;
     private readonly IEventBus _eventBus;
 
     public CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,
-        IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus)
+        IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus, ILogger<CommandHandler> logger)
     {
         _chatMessageRepository = chatMessageRepository;
         _userContext = userContext;
         _httpClientFactory = httpClientFactory;
         _hubContext = hubContext;
         _eventBus = eventBus;
+        _logger = logger;
     }
 
     [EventHandler]
@@ -110,6 +112,7 @@ public class CommandHandler
             }
             catch (Exception e)
             {
+                _logger.LogError("智能助手出现异常", e);
                 await _hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(new ChatMessageDto
                 {
                     Content = "机器人出错了，请联系管理员检查！",
