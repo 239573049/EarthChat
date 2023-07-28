@@ -12,7 +12,6 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
 
     public ChatMessage(Guid id) : base(id)
     {
-        CreationTime = DateTime.UtcNow;
         Extends = new Dictionary<string, string>();
     }
 
