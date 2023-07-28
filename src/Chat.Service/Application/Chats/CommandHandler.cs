@@ -30,7 +30,7 @@ public class CommandHandler
     [EventHandler]
     public async Task CreateAsync(CreateChatMessageCommand command)
     {
-        var chatMessage = new ChatMessage(command.Dto.Id)
+        var chatMessage = new ChatMessage(command.Dto.Id, DateTime.UtcNow)
         {
             Content = command.Dto.Content,
             Extends = command.Dto.Extends ?? new Dictionary<string, string>(),

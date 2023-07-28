@@ -17,7 +17,7 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
             from messages in Context.ChatMessages
             join contextUser in Context.Users on messages.UserId equals contextUser.Id into users
             from user in users.DefaultIfEmpty()
-            select new ChatMessage(messages.Id)
+            select new ChatMessage(messages.Id, messages.CreationTime)
             {
                 Content = messages.Content,
                 Extends = messages.Extends,

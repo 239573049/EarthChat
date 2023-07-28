@@ -9,12 +9,7 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
     {
         Extends = new Dictionary<string, string>();
     }
-
-    public ChatMessage(Guid id) : base(id)
-    {
-        Extends = new Dictionary<string, string>();
-    }
-
+    
     public ChatMessage(Guid id,DateTime creationTime) : base(id)
     {
         CreationTime = creationTime;
