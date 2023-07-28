@@ -30,12 +30,11 @@ public class CommandHandler
     [EventHandler]
     public async Task CreateAsync(CreateChatMessageCommand command)
     {
-        var chatMessage = new ChatMessage(command.Dto.Id, DateTime.UtcNow)
+        var chatMessage = new ChatMessage(command.Dto.Id, DateTime.Now)
         {
             Content = command.Dto.Content,
             Extends = command.Dto.Extends ?? new Dictionary<string, string>(),
             Type = command.Dto.Type,
-
             UserId = _userContext.GetUserId<Guid>()
         };
         await _chatMessageRepository.AddAsync(chatMessage);
@@ -100,7 +99,7 @@ public class CommandHandler
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 }));
 
-                var chatMessage = new ChatMessage(Guid.NewGuid(), DateTime.UtcNow.AddSeconds(1))
+                var chatMessage = new ChatMessage(Guid.NewGuid(), DateTime.Now)
                 {
                     Content = content,
                     Extends = new Dictionary<string, string>(),

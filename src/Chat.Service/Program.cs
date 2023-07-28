@@ -1,6 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// 解决pgsql的时间戳问题
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
@@ -127,10 +131,6 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization().UseCors("CorsPolicy");
 app.MapHub<ChatHub>("/chatHub");
-
-// 解决pgsql的时间戳问题
-AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 await app.RunAsync();
 Log.CloseAndFlush();
