@@ -2,6 +2,7 @@
 using Chat.Contracts.Chats;
 using Chat.Service.Application.Chats.Commands;
 using FreeRedis;
+using Masa.BuildingBlocks.Dispatcher.Events;
 using Masa.Contrib.Authentication.Identity;
 using Microsoft.AspNetCore.SignalR;
 
@@ -115,9 +116,13 @@ public class ChatHub : Hub
             await _redisClient.IncrByAsync(key, 1);
             await _redisClient.ExpireAsync(key, 60);
         }
-
-
+        
         await _eventBus.PublishAsync(createChat);
+        await _eventBus.CommitAsync();
+
+        var chatGPT = new ChatGPTCommand(value, base.Context.ConnectionId);
+        await _eventBus.PublishAsync(chatGPT);
+        await _eventBus.CommitAsync();
     }
 
     public Guid? GetUserId()

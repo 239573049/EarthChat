@@ -13,11 +13,20 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
 
     public async Task<List<ChatMessage>> GetListAsync(int page = 1, int pageSize = 20)
     {
-        // 查询ChatMessage指定数量
-        return await Context.ChatMessages
-            .OrderByDescending(x => x.CreationTime)
-            .Include(x => x.User)
-            .Skip((page - 1) * pageSize)
+        var query =
+            from messages in Context.ChatMessages
+            join contextUser in Context.Users on messages.UserId equals contextUser.Id into users
+            from user in users.DefaultIfEmpty()
+            select new ChatMessage(messages.Id)
+            {
+                Content = messages.Content,
+                Extends = messages.Extends,
+                Type = messages.Type,
+                User = user,
+                UserId = messages.UserId
+            };
+
+        return await query.Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
     }

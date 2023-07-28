@@ -1,5 +1,7 @@
 ﻿using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Users.Aggregates;
+using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 
 namespace Chat.Service.DataAccess;
 
@@ -42,6 +44,13 @@ public class ChatDbContext : MasaDbContext
             options.HasIndex(x => x.Id);
 
             options.Property(x => x.Content).HasMaxLength(2000);
+
+            // 设置userId为逻辑外键
+
+            options.HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .HasConstraintName("UserId");
         });
 
 

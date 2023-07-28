@@ -1,12 +1,4 @@
-using System.Text.Json;
-using AspNetCoreRateLimit;
-using Chat.Service.Hubs;
-using Chat.Service.Infrastructure.Extensions;
-using Chat.Service.Options;
-using FreeRedis;
-using Masa.BuildingBlocks.Data.UoW;
-using Masa.BuildingBlocks.Ddd.Domain.Repositories;
-using Serilog;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,11 +16,12 @@ builder.Services.AddSignalR()
 #region Options
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
-builder.Services.Configure<JwtOptions>(jwtSection);
-
+var chatGpt = builder.Configuration.GetSection(Constant.ChatGPT);
 var github = builder.Configuration.GetSection("GitHub");
 var gitee = builder.Configuration.GetSection("Gitee");
 
+builder.Services.Configure<ChatGptOptions>(chatGpt);
+builder.Services.Configure<JwtOptions>(jwtSection);
 builder.Services.Configure<GithubOptions>(github);
 builder.Services.Configure<GiteeOptions>(gitee);
 
@@ -44,12 +37,15 @@ builder.Services.AddSingleton<IRateLimitConfiguration,
 
 builder.Services.AddInMemoryRateLimiting();
 
-builder.Services
-    .AddHttpClient("Github", c =>
-    {
-        c.DefaultRequestHeaders.Add("Accept", "application/json");
-        c.DefaultRequestHeaders.Add("User-Agent", "Chat");
-    });
+builder.Services.AddHttpClient(Constant.ChatGPT, (services,c) =>
+{
+    var options = services.GetRequiredService<IOptions<ChatGptOptions>>().Value;
+    c.BaseAddress =new Uri(options.Url);
+    c.DefaultRequestHeaders.Add("Accept", "application/json");
+    c.DefaultRequestHeaders.Add("User-Agent", "Chat");
+    c.DefaultRequestHeaders.Add("Authorization","Bearer "+ options.Token);
+});
+
 
 var app = builder.Services
     .AddEndpointsApiExplorer()
@@ -104,7 +100,6 @@ app.UseMasaExceptionHandler();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger().UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "ChatApp"));
-
 }
 
 #region MigrationDb
@@ -120,7 +115,7 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
     {
         Console.WriteLine(e);
     }
- 
+
     // 判断是否需要创建数据库
     context!.Database.EnsureCreated();
 }
@@ -134,6 +129,7 @@ app.UseAuthorization().UseCors("CorsPolicy");
 app.MapHub<ChatHub>("/chatHub");
 
 // 解决pgsql的时间戳问题
+AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 await app.RunAsync();
