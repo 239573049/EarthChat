@@ -26,7 +26,8 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
                 UserId = messages.UserId
             };
 
-        return await query.Skip((page - 1) * pageSize)
+        return await query
+            .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
     }

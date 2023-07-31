@@ -18,9 +18,9 @@ public class ChatService : BaseService<ChatService>
         return (query.Result.OrderByDescending(x => x.OnLine).ToArray()).CreateResult();
     }
 
-    public async Task<ResultDto<PaginatedListBase<ChatMessageDto>>> GetListAsync(int page, int pageSize)
+    public async Task<ResultDto<PaginatedListBase<ChatMessageDto>>> GetListAsync(Guid groupId,int page, int pageSize)
     {
-        var query = new GeChatMessageListQuery(page, pageSize);
+        var query = new GeChatMessageListQuery(groupId,page, pageSize);
         await PublishAsync(query);
         return query.Result.CreateResult();
     }

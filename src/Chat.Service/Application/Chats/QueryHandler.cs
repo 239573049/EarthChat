@@ -8,13 +8,16 @@ namespace Chat.Service.Application.Chats;
 
 public class QueryHandler
 {
-    private readonly IChatMessageRepository _chatMessageRepository;
     private readonly IMapper _mapper;
+    private readonly IChatMessageRepository _chatMessageRepository;
+    private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
 
-    public QueryHandler(IChatMessageRepository chatMessageRepository, IMapper mapper)
+    public QueryHandler(IChatMessageRepository chatMessageRepository, IMapper mapper,
+        IChatGroupInUserRepository chatGroupInUserRepository)
     {
         _chatMessageRepository = chatMessageRepository;
         _mapper = mapper;
+        _chatGroupInUserRepository = chatGroupInUserRepository;
     }
 
     [EventHandler]
@@ -37,5 +40,13 @@ public class QueryHandler
             Result = _mapper.Map<List<ChatMessageDto>>(list.OrderBy(x => x.CreationTime)),
             Total = await _chatMessageRepository.GetCountAsync()
         };
+    }
+
+    [EventHandler]
+    public async Task GetUserGroupAsync(GetUserGroupQuery query)
+    {
+        var ids = await _chatGroupInUserRepository.GetUserChatGroupAsync(query.userId);
+
+        query.Result = _mapper.Map<List<ChatGroupDto>>(ids);
     }
 }

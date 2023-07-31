@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Chat.Service.Application.Users.Commands;
+using Chat.Service.Domain.Chats.Aggregates;
+using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
 using Masa.BuildingBlocks.Data.UoW;
@@ -11,15 +13,17 @@ public class UserCommandHandler
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
 
-    public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper)
+    public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, IChatGroupInUserRepository chatGroupInUserRepository)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
+        _chatGroupInUserRepository = chatGroupInUserRepository;
     }
 
-    [EventHandler]
+    [EventHandler(1)]
     public async Task CreateUserAsync(CreateUserCommand command)
     {
         if (await _userRepository.GetCountAsync(x => x.Account == command.CreateUserDto.Account) > 0)
@@ -33,8 +37,22 @@ public class UserCommandHandler
         };
 
         await _userRepository.AddAsync(user);
-        await _unitOfWork.SaveChangesAsync();
         command.Result = _mapper.Map<UserDto>(user);
+    }
+    
+    [EventHandler(2)]
+    public async Task DefaultGroupUserAsync(CreateUserCommand command)
+    {
+        var user = await _userRepository.FindAsync(x => x.Id == command.Result.Id);
+        
+        // TODO: 默认加入的群组
+        await _chatGroupInUserRepository.AddAsync(new ChatGroupInUser()
+        {
+            UserId = command.Result.Id,
+            ChatGroupId = Guid.Empty
+        });
+        
+        await _unitOfWork.SaveChangesAsync();
     }
 
     [EventHandler]

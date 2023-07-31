@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Chat.Contracts.Chats;
 using Chat.Service.Application.Chats.Commands;
+using Chat.Service.Application.Chats.Queries;
 using FreeRedis;
 using Masa.BuildingBlocks.Dispatcher.Events;
 using Masa.Contrib.Authentication.Identity;
@@ -27,9 +28,25 @@ public class ChatHub : Hub
         
         await _redisClient.LRemAsync("onlineUsers", 1, userId.ToString());
 
-        if (userId != null) await _redisClient.LPushAsync("onlineUsers", userId);
+        if (userId != null)
+        {
+            await _redisClient.LPushAsync("onlineUsers", userId);
+            var groupsQuery = new GetUserGroupQuery(userId.Value);
+            await _eventBus.PublishAsync(groupsQuery);
+            foreach (var groupDto in groupsQuery.Result)
+            {
+                // 加入群组
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupDto.Id.ToString("N"));
+            }
+        }
+        else
+        {
+            // 默认加入群组
+            await Groups.AddToGroupAsync(Context.ConnectionId, Guid.Empty.ToString("N"));
+        }
         
         // 更新在线人数
+        
         await UpdateOnlineAsync();
     }
 

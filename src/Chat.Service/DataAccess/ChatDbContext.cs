@@ -15,6 +15,10 @@ public class ChatDbContext : MasaDbContext
 
     public DbSet<ChatMessage> ChatMessages { get; set; } = null!;
 
+    public DbSet<ChatGroup> ChatGroups { get; set; } = null!;
+
+    public DbSet<ChatGroupInUser> ChatGroupInUsers { get; set; } = null!;
+
     protected override void OnModelCreatingExecuting(ModelBuilder modelBuilder)
     {
         base.OnModelCreatingExecuting(modelBuilder);
@@ -53,6 +57,33 @@ public class ChatDbContext : MasaDbContext
                 .HasConstraintName("UserId");
         });
 
+        builder.Entity<ChatGroup>(options =>
+        {
+            options.TryConfigureConcurrencyStamp();
+
+            options.HasIndex(x => x.Id);
+
+            options.Property(x => x.Name).HasMaxLength(20).IsRequired();
+
+            options.Property(x => x.Avatar).HasMaxLength(200).IsRequired();
+
+            options.Property(x => x.Description).HasMaxLength(2000);
+        });
+
+        builder.Entity<ChatGroupInUser>(options =>
+        {
+            options.HasKey(x => new { x.UserId, x.ChatGroupId });
+
+            options.HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .HasConstraintName("UserId");
+
+            options.HasOne(o => o.ChatGroup)
+                .WithMany()
+                .HasForeignKey(o => o.ChatGroupId)
+                .HasConstraintName("ChatGroupId");
+        });
 
         #region Init Data
 
@@ -65,6 +96,25 @@ public class ChatDbContext : MasaDbContext
         };
 
         builder.Entity<User>().HasData(user);
+
+        // TODO: 定义空的Guid，用于表示世界频道
+        var group = new ChatGroup(Guid.Empty)
+        {
+            Name = "世界频道",
+            Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
+            Description = "世界频道，所有人默认加入的频道"
+        };
+
+        builder.Entity<ChatGroup>().HasData(group);
+
+
+        var groupInUser = new ChatGroupInUser()
+        {
+            UserId = user.Id,
+            ChatGroupId = group.Id
+        };
+
+        builder.Entity<ChatGroupInUser>().HasData(groupInUser);
 
         #endregion
     }

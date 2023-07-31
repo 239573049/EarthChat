@@ -31,6 +31,8 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
     /// </summary>
     public Guid UserId { get; set; }
 
+    public Guid ChatGroupId { get; set; }
+    
     public virtual User User { get; set; }
 
     /// <summary>

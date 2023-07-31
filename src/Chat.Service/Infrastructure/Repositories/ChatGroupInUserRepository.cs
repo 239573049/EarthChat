@@ -1,0 +1,23 @@
+﻿using Chat.Service.Domain.Chats.Aggregates;
+using Chat.Service.Domain.Chats.Repositories;
+using Masa.Contrib.Ddd.Domain.Repository.EFCore;
+
+namespace Chat.Service.Infrastructure.Repositories;
+
+public class ChatGroupInUserRepository : Repository<ChatDbContext, ChatGroupInUser, Guid>, IChatGroupInUserRepository
+{
+    public ChatGroupInUserRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
+    {
+    }
+
+    public Task<IEnumerable<ChatGroup>> GetUserChatGroupAsync(Guid userId)
+    {
+        var query =
+            Context.ChatGroupInUsers
+                .Where(x => x.UserId == userId)
+                .Include(x => x.ChatGroup)
+                .Select(x => x.ChatGroup);
+
+        return Task.FromResult(query.AsEnumerable());
+    }
+}
