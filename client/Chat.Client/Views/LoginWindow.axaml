@@ -1,0 +1,87 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Chat.Client.Views.LoginWindow"
+        Height="448"
+        Width="320"
+        MinHeight="448"
+        MinWidth="320"
+        MaxHeight="448"
+        MaxWidth="320"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="None"
+        Icon="../Assets/chat.png"
+        WindowStartupLocation="CenterScreen"
+        Title="LoginWindow">
+
+    <Design.DataContext>
+        <viewModels:LoginWindowViewModel />
+    </Design.DataContext>
+
+    <Border CornerRadius="8" Background="Transparent">
+        <Grid>
+            <Image Name="Background" Source="../Assets/background.png" Stretch="Fill" HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch">
+            </Image>
+            <Border HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Border Tapped="Close_OnTapped" Cursor="Hand">
+                    <Image Margin="5" RenderOptions.BitmapInterpolationMode="HighQuality" Width="15" Height="15"
+                           Source="../Assets/close.png">
+                    </Image>
+                    <Border.Styles>
+                        <Style Selector="Border:pointerover">
+                            <Setter Property="Background" Value="Red" />
+                        </Style>
+                    </Border.Styles>
+                </Border>
+            </Border>
+            <Border Width="85" Height="85" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,60,0,0"
+                    CornerRadius="500" Background="Black">
+                <Image Width="85" Height="85"
+                       Source="../Assets/chat.png" RenderOptions.BitmapInterpolationMode="HighQuality">
+                </Image>
+            </Border>
+            
+            <Border CornerRadius="5"  Width="260" Height="45" Background="Azure">
+                <WrapPanel >
+                    <TextBox Foreground="Black"  Background="Transparent"  Watermark="输入账号" Margin="20,2,0,0" Width="220" BorderBrush="Transparent" FontSize="23">
+                    </TextBox>
+                    <Button  Height="20" Width="20" Background="Transparent">
+                        <Image Source="../Assets/close.png"  Height="15" Width="15"
+                               RenderOptions.BitmapInterpolationMode="HighQuality">
+                        </Image>
+                    </Button>
+                </WrapPanel>
+            </Border>
+            <Border CornerRadius="5" Margin="0,100,0,0" Width="260" Height="45" Background="Azure">
+                <WrapPanel >
+                    <TextBox Foreground="Black" Background="Transparent" PasswordChar="*" Watermark="输入密码" Margin="20,2,0,0" Width="220" BorderBrush="Transparent" FontSize="23">
+                    </TextBox>
+                    <Button  Height="20" Width="20" Background="Transparent">
+                        <Image Source="../Assets/close.png"  Height="15" Width="15"
+                               RenderOptions.BitmapInterpolationMode="HighQuality">
+                        </Image>
+                    </Button>
+                </WrapPanel>
+            </Border>
+
+            <Border Margin="0,230,0,0"  HorizontalAlignment="Center" Cursor="Hand" CornerRadius="5" Height="40" Width="260" Background="#0099FF">
+                <TextBlock Foreground="Azure" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    登录
+                </TextBlock>
+                <Border.Styles>
+                    <Style Selector="Border:pointerover">
+                        <Setter Property="Background" Value="#008DE8" />
+                    </Style>
+                </Border.Styles>
+            </Border>
+        </Grid>
+    </Border>
+
+
+</Window>
