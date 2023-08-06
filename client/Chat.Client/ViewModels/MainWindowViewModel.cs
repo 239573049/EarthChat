@@ -1,6 +1,8 @@
-﻿namespace Chat.Client.ViewModels;
+﻿
+namespace Chat.Client.ViewModels;
 
 public class MainWindowViewModel : ViewModelBase
 {
-    public string Greeting => "Welcome to Avalonia!";
+    public MessageListViewModel MessageListViewModel = new();
+    
 }

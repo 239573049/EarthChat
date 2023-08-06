@@ -11,5 +11,6 @@
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://Chat.Client/Icons.axaml" />
     </Application.Styles>
 </Application>

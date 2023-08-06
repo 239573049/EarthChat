@@ -8,22 +8,76 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1"
-        SystemDecorations="None"
         Title="Chat.Client">
 
     <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
-    
-    <Grid ColumnDefinitions="65,Auto,*"> 
-        <StackPanel>
-            
-        </StackPanel>
-        <StackPanel Grid.Column="1" Width="250"></StackPanel>
-        <StackPanel Grid.Column="2"></StackPanel>
+
+    <Grid ColumnDefinitions="65,1,Auto,1,*">
+        <Grid Background="#111111">
+            <StackPanel VerticalAlignment="Top" Margin="15,30,15,10">
+                <!-- ClipToBounds="True"图片圆角 -->
+                <Border ClipToBounds="True" Background="Transparent" CornerRadius="500">
+                    <Image Source="../Assets/avatar.png" Height="35" Width="35" />
+                </Border>
+            </StackPanel>
+            <StackPanel VerticalAlignment="Top" Margin="15,75,15,4">
+                <Button Click="MessageBut_OnClick" Name="MessageBut" Padding="15" Height="40" Width="40" Background="Transparent" HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                    <PathIcon Foreground="White" Data="{StaticResource chat_message}" />
+                </Button>
+            </StackPanel>
+
+            <StackPanel VerticalAlignment="Top" Margin="15,120,15,4">
+                <Button Click="UserBut_OnClick" Name="UserBut" Padding="15" Height="40" Width="40" Background="Transparent" HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                    <PathIcon Foreground="White" Data="{StaticResource chat_user}">
+                    </PathIcon>
+                </Button>
+            </StackPanel>
+
+            <Border Padding="10,0,0,20" VerticalAlignment="Bottom">
+                <Menu DockPanel.Dock="Right">
+                    <MenuItem>
+                        <MenuItem.Header>
+                            <PathIcon Foreground="White" Data="{StaticResource chat_menu}" />
+                        </MenuItem.Header>
+                        <MenuItem.Items>
+                            <MenuItem Header="检查更新" />
+                            <MenuItem Header="关于" />
+                            <MenuItem Header="设置" />
+                        </MenuItem.Items>
+                    </MenuItem>
+                </Menu>
+            </Border>
+        </Grid>
+        <!-- 竖分割线 -->
+        <StackPanel Grid.Column="1" Width="1" Background="#1B1B1B"></StackPanel>
+        <Grid RowDefinitions="70,*" Grid.Column="2" Width="250" Background="#1B1B1B" Name="ListPanel">
+            <Grid ColumnDefinitions="*,45" Margin="15,30,15,10">
+                <TextBox  Height="30"  Background="#818181"
+                         BorderThickness="0" FontSize="16" >
+                    <TextBox.InnerLeftContent>
+                        <PathIcon Margin="5" Height="15" Foreground="Cornsilk" Data="{StaticResource chat_search}" />
+                    </TextBox.InnerLeftContent>
+                    <TextBox.Styles>
+                        <Style Selector="TextBox:focus">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="Cornsilk" />
+                        </Style>
+                    </TextBox.Styles>
+                </TextBox>
+                <Button Grid.Column="1"  Height="30" Width="30" Background="Transparent" HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                    <PathIcon VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Data="{StaticResource chat_add}" />
+                </Button>
+            </Grid>
+            <Grid Grid.Row="1" RowDefinitions="*" Name="ListMainPanel">
+
+            </Grid>
+        </Grid>
+        <StackPanel Grid.Column="3" Width="1" Background="#1B1B1B"></StackPanel>
+        <StackPanel Grid.Column="4" Background="#111111"></StackPanel>
     </Grid>
 </Window>
