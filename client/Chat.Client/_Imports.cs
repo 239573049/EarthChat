@@ -7,3 +7,4 @@ global using Avalonia.Interactivity;
 global using Avalonia.Media;
 global using System;
 global using Avalonia.Input;
+global using Infrastructure;
