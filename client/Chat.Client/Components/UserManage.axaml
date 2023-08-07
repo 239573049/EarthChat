@@ -31,7 +31,7 @@
                     </Border.RenderTransform>
                     <Border.Transitions>
                         <Transitions>
-                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.3"/>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
                         </Transitions>
                     </Border.Transitions>
                 </Border>

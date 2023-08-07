@@ -119,6 +119,7 @@ public class ChatHub : Hub
             UserId = userId.Value
         });
 
+        // 转发到客户端
         _ = Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(message, new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
@@ -134,14 +135,20 @@ public class ChatHub : Hub
             await _redisClient.ExpireAsync(key, 60);
         }
         
+        // 发送消息新增事件
         await _eventBus.PublishAsync(createChat);
         await _eventBus.CommitAsync();
 
+        // 发送智能助手订阅事件
         var chatGPT = new ChatGPTCommand(value, base.Context.ConnectionId);
         await _eventBus.PublishAsync(chatGPT);
         await _eventBus.CommitAsync();
     }
 
+    /// <summary>
+    /// 获取当前用户id
+    /// </summary>
+    /// <returns></returns>
     public Guid? GetUserId()
     {
         var userId = Context.User.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_ID);
@@ -153,6 +160,10 @@ public class ChatHub : Hub
         return Guid.Parse(userId.Value);
     }
 
+    /// <summary>
+    /// 获取当前用户头像
+    /// </summary>
+    /// <returns></returns>
     private string GetAvatar()
     {
         var avatar = Context.User.FindFirst(x => x.Type == "avatar");
@@ -160,6 +171,10 @@ public class ChatHub : Hub
         return avatar?.Value == null ? "" : avatar.Value;
     }
 
+    /// <summary>
+    /// 获取当前用户名称
+    /// </summary>
+    /// <returns></returns>
     private string GetName()
     {
         var name = Context.User.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_NAME);
