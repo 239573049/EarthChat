@@ -13,7 +13,7 @@
     
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
         <StackPanel Orientation="Vertical">
-            <ListBox Name="UserListBox" Background="Transparent" ItemsSource="{Binding MessageLists}">
+            <ListBox SelectionChanged="UserListBox_OnSelectionChanged" Name="UserListBox" Background="Transparent" ItemsSource="{Binding MessageLists}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid ColumnDefinitions="30,*,45" Margin="10,5,0,5">

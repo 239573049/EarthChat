@@ -1,3 +1,7 @@
+using Avalonia.Layout;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using Avalonia.Threading;
 using Chat.Client.Components;
 using Chat.Client.ViewModels;
 
@@ -5,24 +9,43 @@ namespace Chat.Client.Views;
 
 public partial class MainWindow : Window
 {
-    private Message? _message;
-
-    private UserManage? _userManage;
-
     public MainWindow()
     {
         InitializeComponent();
 
+        var eventBus = MainAppHelper.GetRequiredService<IEventBus>();
+
+        eventBus.Subscribe(EventBusConstant.ContentStackPanel, (obj) =>
+        {
+            if (obj is UserControl control)
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    ContentStackPanel.Children.Clear();
+                    ContentStackPanel.Children.Add(control);
+                });
+            }
+            else
+            {
+                Dispatcher.UIThread.Invoke(() =>
+                {
+                    ContentStackPanel.Children.Clear();
+                    ContentStackPanel.Children.Add(new Image()
+                    {
+                        Source = new Bitmap(AssetLoader.Open(new Uri("avares://Chat.Client/Assets/chat.png"))),
+                        VerticalAlignment = VerticalAlignment.Center,
+                        Height = 100,
+                        Width = 100,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                    });
+                });
+            }
+        });
+        
         // 默认选择MessageBut,背景色为默认色
         MessageBut.Background = new SolidColorBrush(Color.Parse(ColorConstant.DefaultMenuButColor));
+        SelectMessage();
 
-        DataContextChanged += ((sender, args) =>
-        {
-            ListMainPanel.Children.Add(_message ??= new Message()
-            {
-                DataContext = ViewModel.MessageListViewModel
-            });
-        });
     }
 
     private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
@@ -31,12 +54,20 @@ public partial class MainWindow : Window
     {
         if (SetButSelect(sender))
         {
-            // 设置UserBut背景色为透明
-            UserBut.Background = Brushes.Transparent;
-            ListMainPanel.Children.Clear();
-
-            ListMainPanel.Children.Add(_message);
+            SelectMessage();
         }
+    }
+
+    private void SelectMessage()
+    {
+        // 设置UserBut背景色为透明
+        UserBut.Background = Brushes.Transparent;
+        ListMainPanel.Children.Clear();
+
+        var message = MainAppHelper.GetRequiredService<Message>();
+        ListMainPanel.Children.Add(message);
+
+        message.SelectFirst();
     }
 
     /// <summary>
@@ -59,17 +90,18 @@ public partial class MainWindow : Window
 
     private void UserBut_OnClick(object? sender, RoutedEventArgs e)
     {
-        if (SetButSelect(sender))
-        {
-            // 设置UserBut背景色为透明
-            MessageBut.Background = Brushes.Transparent;
-            ListMainPanel.Children.Clear();
+        if (!SetButSelect(sender)) return;
 
-            ListMainPanel.Children.Add(_userManage ??= new UserManage()
-            {
-                DataContext = new UserManageViewModel()
-            });
-        }
+        // 设置UserBut背景色为透明
+        MessageBut.Background = Brushes.Transparent;
+        ListMainPanel.Children.Clear();
+
+        
+        ListMainPanel.Children.Add(MainAppHelper.GetRequiredService<UserManage>());
+
+        // 重置内容面板
+        MainAppHelper.GetRequiredService<IEventBus>().Publish(EventBusConstant.ContentStackPanel, null);
+
         // 设置UserBut背景色为透明
     }
 }

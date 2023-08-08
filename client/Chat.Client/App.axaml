@@ -5,7 +5,7 @@
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.DataTemplates>
+             <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
   
@@ -13,4 +13,5 @@
         <FluentTheme />
         <StyleInclude Source="avares://Chat.Client/Icons.axaml" />
     </Application.Styles>
+             
 </Application>

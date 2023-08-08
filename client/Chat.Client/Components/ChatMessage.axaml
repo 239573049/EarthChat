@@ -1,0 +1,67 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chat.Client.Components.ChatMessage"
+             Background="#1F1F1F"
+             x:DataType="viewModels:ChatMessageViewModel">
+
+    <Design.DataContext>
+        <viewModels:ChatMessageViewModel />
+    </Design.DataContext>
+
+
+    <Grid RowDefinitions="35,1,*" Margin="0,30,0,0">
+        <Grid ColumnDefinitions="Auto,*">
+            <TextBlock Margin="20,0,0,0" FontSize="18" FontWeight="Bold">Blazor技术群</TextBlock>
+            <WrapPanel VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20"
+                          Foreground="White"
+                          Data="{StaticResource chat_message_phone}" />
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20" Foreground="White"
+                          Data="{StaticResource chat_message_video}" />
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20" Foreground="White"
+                          Data="{StaticResource chat_message_Invitation}" />
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20" Foreground="White"
+                          Data="{StaticResource chat_message_menu}" />
+            </WrapPanel>
+        </Grid>
+        <Border Grid.Row="1" Height="1" Background="#1F1F1F"></Border>
+        <Grid Grid.Row="2" ColumnDefinitions="*,1,180">
+            <Grid RowDefinitions="*,1,Auto" Name="MessageMainGrid">
+                <ItemsControl Name="MessageItems">
+                    <!-- 消息列表 -->
+                </ItemsControl>
+                <Border PointerMoved="Message_OnPointerMoved"
+                        PointerPressed="Message_OnPointerPressed"
+                        PointerReleased="Message_OnPointerReleased" Cursor="SizeNorthSouth" Grid.Row="1" Height="1"
+                        Background="#1F1F1F">
+                </Border>
+                <Grid RowDefinitions="40,*" Grid.Row="2" Height="{Binding OperatingArea}" MaxHeight="400"
+                      MinHeight="160">
+                    <Grid Height="40" HorizontalAlignment="Left" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+                        <PathIcon Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource chat_message_meme}" />
+                        <PathIcon Grid.Column="1" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource chat_message_screenshot}" />
+                        <PathIcon Grid.Column="2" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource folder}" />
+                        <PathIcon Grid.Column="3" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource image}" />
+                        <PathIcon Grid.Column="4" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource microphone}" />
+                        <PathIcon Grid.Column="5" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource time}" />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Border Grid.Column="1" Width="1" Background="#1F1F1F"></Border>
+            <Grid Grid.Column="2">
+                <!-- 群聊成员 -->
+
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

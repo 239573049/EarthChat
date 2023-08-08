@@ -4,6 +4,7 @@
     <option name="projectPerEditor">
       <map>
         <entry key="client/Chat.Client/App.axaml" value="client/Chat.Client/Chat.Client.csproj" />
+        <entry key="client/Chat.Client/Components/ChatMessage.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Components/Message.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Components/UserManage.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Icons.axaml" value="client/Chat.Client/Chat.Client.csproj" />

@@ -25,7 +25,7 @@ public partial class App : Application
             service.AddHttpClient();
             service.AddSingleton<ILoggerFactory, DefaultLoggerFactory>();
 
-            service.AddSingleton(new MainWindow()
+            service.AddSingleton<MainWindow>((_) => new MainWindow()
             {
                 DataContext = new MainWindowViewModel(),
             });
@@ -42,24 +42,32 @@ public partial class App : Application
                 {
                     return new UserManage()
                     {
-                        DataContext = view.MessageListViewModel
+                        DataContext = new UserManageViewModel()
                     };
                 }
                 throw new CheckoutException("未找到MainWindow");
             });
             
-            service.AddSingleton((serviceProvider) =>
+            #region Views
+
+            service.AddSingleton<ChatMessage>((_)=>new ChatMessage()
             {
-                var mainWindow = serviceProvider.GetRequiredService<MainWindow>();
-                if (mainWindow.DataContext is MainWindowViewModel view)
-                {
-                    return new Message()
-                    {
-                        DataContext = view.MessageListViewModel
-                    };
-                }
-                throw new CheckoutException("未找到MainWindow");
+                DataContext = new ChatMessageViewModel()
             });
+            
+            service.AddSingleton<Message>((_) => new Message()
+            {
+                DataContext = new MessageListViewModel()
+            });
+            service.AddSingleton<UserManage>((_) => new UserManage()
+            {
+                DataContext = new UserManageViewModel()
+            });
+            
+            #endregion
+            
+            
+            service.AddSingleton<IEventBus, EventBus>();
         });
 
         var app = mainApp.BuilderApp();

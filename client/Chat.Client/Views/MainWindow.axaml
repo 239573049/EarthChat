@@ -78,6 +78,8 @@
             </Grid>
         </Grid>
         <StackPanel Grid.Column="3" Width="1" Background="#1B1B1B"></StackPanel>
-        <StackPanel Grid.Column="4" Background="#111111"></StackPanel>
+        <Grid Grid.Column="4" Background="#111111" Name="ContentStackPanel">
+            <Image VerticalAlignment="Center" HorizontalAlignment="Center" Height="100" Width="100" Source="../Assets/chat.png"></Image>
+        </Grid>
     </Grid>
 </Window>
