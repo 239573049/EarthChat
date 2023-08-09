@@ -55,6 +55,8 @@
                         <PathIcon Grid.Column="5" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource time}" />
                     </Grid>
+                    <TextBox Grid.Row="1">
+                    </TextBox>
                 </Grid>
             </Grid>
             <Border Grid.Column="1" Width="1" Background="#1F1F1F"></Border>
