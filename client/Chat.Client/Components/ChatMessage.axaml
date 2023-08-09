@@ -6,7 +6,6 @@
              xmlns:components="clr-namespace:Chat.Client.Components"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chat.Client.Components.ChatMessage"
-             Background="#1F1F1F"
              x:DataType="viewModels:ChatMessageViewModel">
 
     <Design.DataContext>
@@ -57,14 +56,38 @@
                                   Data="{StaticResource time}" />
                     </Grid>
                     <Grid RowDefinitions="*" Grid.Row="1">
-                        <components:Editor DataContext="{Binding EditorViewModel}"/>
+                        <components:Editor DataContext="{Binding EditorViewModel}" />
                     </Grid>
                 </Grid>
             </Grid>
             <Border Grid.Column="1" Width="1" Background="#1F1F1F"></Border>
-            <Grid Grid.Column="2">
-                <!-- 群聊成员 -->
-
+            <Grid RowDefinitions="50,*" Grid.Column="2">
+                <TextBlock Margin="15,20,0,0" FontSize="14" FontWeight="Bold">群成员 1511</TextBlock>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <ItemsControl ItemsSource="{Binding GroupInUserModels}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="3,1,1,3" CornerRadius="8" Margin="10,0,5,5">
+                                        <WrapPanel>
+                                            <Border ClipToBounds="True" Background="Transparent" CornerRadius="500">
+                                                <Image Source="../Assets/avatar.png" Height="25" Width="25" />
+                                            </Border>
+                                            <TextBlock FontSize="13" Margin="5,0,0,0" VerticalAlignment="Center">Token</TextBlock>
+                                        </WrapPanel>
+                                        <Border.Styles>
+                                            <Style Selector="Border:pointerover">
+                                                <Setter Property="Background" Value="#242424"></Setter>
+                                                <Setter Property="CornerRadius" Value="8"></Setter>
+                                            </Style>
+                                        </Border.Styles>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>

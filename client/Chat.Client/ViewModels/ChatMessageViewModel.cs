@@ -17,4 +17,18 @@ public class ChatMessageViewModel : ViewModelBase
         get => _editorViewModel;
         set => this.RaiseAndSetIfChanged(ref _editorViewModel, value);
     }
+    
+    private ObservableCollection<GroupInUserModel> _groupInUserModels = new()
+    {
+        new GroupInUserModel()
+        {
+            Name = "次数"
+        }
+    };
+    
+    public ObservableCollection<GroupInUserModel> GroupInUserModels
+    {
+        get => _groupInUserModels;
+        set => this.RaiseAndSetIfChanged(ref _groupInUserModels, value);
+    }
 }

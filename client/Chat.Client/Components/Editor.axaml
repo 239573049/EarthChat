@@ -11,22 +11,41 @@
 
     <UserControl.Resources>
         <converter:TypeToBoolConverter x:Key="TypeToBoolConverter" />
+        <SolidColorBrush x:Key="Transparent" >
+            Transparent
+        </SolidColorBrush>
     </UserControl.Resources>
     <Design.DataContext>
         <viewModels:EditorViewModel />
     </Design.DataContext>
-    
-    <ItemsControl ItemsSource="{Binding Editors}">
-        <ItemsControl.ItemTemplate>
-            <DataTemplate>
-                <StackPanel>
-                    <TextBox Text="{Binding Content}" 
-                             IsVisible="{Binding EditorType, Converter={StaticResource TypeToBoolConverter}, ConverterParameter=Text}"/>
-                    <Image Source="{Binding Content}" 
-                           IsVisible="{Binding EditorType, Converter={StaticResource TypeToBoolConverter}, ConverterParameter=Image}"/>
-                </StackPanel>
-            </DataTemplate>
-        </ItemsControl.ItemTemplate>
-    </ItemsControl>
+    <Grid RowDefinitions="*,55">
+        <TextBox TextWrapping="WrapWithOverflow" BorderBrush="Transparent"
+                 Background="Transparent"  >
+            <TextBox.Styles>
+                <!-- 当获取焦点时，将其背景色和边框颜色设置为透明 -->
+                <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0" />
+                </Style>
+                <!-- 当鼠标悬浮在TextBox上时，将其背景色和边框颜色设置为透明 -->
+                <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0" />
+                </Style>
+            </TextBox.Styles>
+        </TextBox>
+        <Border HorizontalAlignment="Right" Margin="10" Width="95" Height="25" CornerRadius="5" Background="#0066CC"
+                Grid.Row="1">
+            <WrapPanel>
+                <TextBlock Margin="15,3,0,0" Foreground="White">发送</TextBlock>
+                <Border Width="1" Margin="15,5,0,0" Background="Azure"></Border>
+                <PathIcon Height="5" Margin="5,5,0,0" Foreground="Azure"
+                          Data="{StaticResource chat_message_send_below}">
+                </PathIcon>
+            </WrapPanel>
+        </Border>
+    </Grid>
 
 </UserControl>
