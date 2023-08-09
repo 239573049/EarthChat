@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+             xmlns:components="clr-namespace:Chat.Client.Components"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Chat.Client.Components.ChatMessage"
              Background="#1F1F1F"
@@ -55,8 +56,9 @@
                         <PathIcon Grid.Column="5" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource time}" />
                     </Grid>
-                    <TextBox Grid.Row="1">
-                    </TextBox>
+                    <Grid RowDefinitions="*" Grid.Row="1">
+                        <components:Editor DataContext="{Binding EditorViewModel}"/>
+                    </Grid>
                 </Grid>
             </Grid>
             <Border Grid.Column="1" Width="1" Background="#1F1F1F"></Border>

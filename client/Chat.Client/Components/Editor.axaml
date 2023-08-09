@@ -2,7 +2,31 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+             xmlns:converter="clr-namespace:Chat.Client.Converter"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Chat.Client.Components.Editor">
-    Welcome to Avalonia!
+             x:Class="Chat.Client.Components.Editor"
+             x:DataType="viewModels:EditorViewModel">
+
+
+    <UserControl.Resources>
+        <converter:TypeToBoolConverter x:Key="TypeToBoolConverter" />
+    </UserControl.Resources>
+    <Design.DataContext>
+        <viewModels:EditorViewModel />
+    </Design.DataContext>
+    
+    <ItemsControl ItemsSource="{Binding Editors}">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <StackPanel>
+                    <TextBox Text="{Binding Content}" 
+                             IsVisible="{Binding EditorType, Converter={StaticResource TypeToBoolConverter}, ConverterParameter=Text}"/>
+                    <Image Source="{Binding Content}" 
+                           IsVisible="{Binding EditorType, Converter={StaticResource TypeToBoolConverter}, ConverterParameter=Image}"/>
+                </StackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+
 </UserControl>

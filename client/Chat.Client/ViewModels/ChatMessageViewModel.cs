@@ -9,4 +9,12 @@ public class ChatMessageViewModel : ViewModelBase
         get => operatingArea;
         set => this.RaiseAndSetIfChanged(ref operatingArea, value);
     }
+    
+    private EditorViewModel _editorViewModel = new();
+    
+    public EditorViewModel EditorViewModel
+    {
+        get => _editorViewModel;
+        set => this.RaiseAndSetIfChanged(ref _editorViewModel, value);
+    }
 }
