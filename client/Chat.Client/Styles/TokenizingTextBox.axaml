@@ -1,0 +1,74 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:texts="clr-namespace:Chat.Client.Components.Texts">
+    <Design.PreviewWith>
+        <DockPanel Height="100">
+            <texts:EditorBox Width="500" DockPanel.Dock="Top" Margin="10" Text="Test String">
+                <texts:TokenizingTextBoxItem>
+                    Text
+                </texts:TokenizingTextBoxItem>
+                <texts:TokenizingTextBoxItem>
+                    Text1
+                </texts:TokenizingTextBoxItem>
+            </texts:EditorBox>
+            <TextBox DockPanel.Dock="Bottom" Margin="10" Height="25">Test</TextBox>
+        </DockPanel>
+    </Design.PreviewWith>
+
+    <Style Selector="texts|EditorBox">
+        <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="{DynamicResource TextControlBorderThemeThickness}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="MinHeight" Value="25" />
+        <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <Border Name="PART_OuterBorder"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <WrapPanel>
+                            <WrapPanel Name="FunctionWrapPanel"></WrapPanel>
+                            <texts:TextEditor Name="PART_TextBox" Classes="TokenInput"
+                                              Background="Transparent"
+                                              Text="{TemplateBinding Text}"
+                                              MinHeight="{TemplateBinding MinHeight}"
+                                              Padding="{TemplateBinding Padding}" />
+                        </WrapPanel>
+
+                    </Border>
+
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+    <Style Selector="texts|EditorBox /template/ Border#PART_OuterBorder">
+        <Setter Property="CornerRadius" Value="4" />
+    </Style>
+
+
+    <!--TextBox Styles-->
+    <Style Selector="TextBox.TokenInput">
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TextBox.TokenInput:focus /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0" />
+    </Style>
+
+    <Style Selector="TextBox.TokenInput:pointerover /template/ Border#PART_BorderElement">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+</Styles>

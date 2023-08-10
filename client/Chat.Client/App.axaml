@@ -3,14 +3,14 @@
              x:Class="Chat.Client.App"
              xmlns:local="using:Chat.Client"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-
              <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
   
     <Application.Styles>
         <FluentTheme />
+        <StyleInclude Source="avares://Chat.Client/Styles/TokenizingTextBox.axaml"/>
+        <StyleInclude Source="avares://Chat.Client/Styles/TokenizingTextBoxItem.axaml"/>
         <StyleInclude Source="avares://Chat.Client/Icons.axaml" />
     </Application.Styles>
              

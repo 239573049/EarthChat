@@ -9,6 +9,10 @@
         <entry key="client/Chat.Client/Components/Message.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Components/UserManage.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Icons.axaml" value="client/Chat.Client/Chat.Client.csproj" />
+        <entry key="client/Chat.Client/Styles/TokenizingTextBox.axaml" value="client/Chat.Client/Chat.Client.csproj" />
+        <entry key="client/Chat.Client/Styles/TokenizingTextBoxItem.axaml" value="client/Chat.Client/Chat.Client.csproj" />
+        <entry key="client/Chat.Client/Styles/TokenizingTextBoxItems.axaml" value="client/Chat.Client/Chat.Client.csproj" />
+        <entry key="client/Chat.Client/Styles/TokenizingTextBoxs.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Views/LoginWindow.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Views/MainWindow.axaml" value="client/Chat.Client/Chat.Client.csproj" />
       </map>
