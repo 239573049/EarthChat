@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Chat.Client.Components;
 using Chat.Client.Loggers;
+using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using Chat.Client.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ public partial class App : Application
         var mainApp = MainAppHelper.ConfigureServices(service =>
         {
             service.AddHttpClient();
+            service.AddSingleton<StorageService>();
             service.AddSingleton<ILoggerFactory, DefaultLoggerFactory>();
 
             service.AddSingleton<MainWindow>((_) => new MainWindow()
@@ -66,15 +68,32 @@ public partial class App : Application
             
             #endregion
             
-            
             service.AddSingleton<IEventBus, EventBus>();
+
+            service.AddSingleton<IChatService, ChatService>();
+            
         });
 
         var app = mainApp.BuilderApp();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = app.GetRequiredService<MainWindow>();
+            var storage = app.GetRequiredService<StorageService>();
+            if (storage.GetToken().IsNullOrWhiteSpace())
+            {
+                
+            }
+            else
+            {
+                desktop.MainWindow = app.GetRequiredService<MainWindow>();
+            }
         }
+    }
+    
+    private static void DesktopLogin(IClassicDesktopStyleApplicationLifetime desktop)
+    {
+        var loginWindow = MainAppHelper.GetRequiredService<LoginWindow>();
+        loginWindow.Show();
+        desktop.MainWindow = loginWindow;
     }
 }

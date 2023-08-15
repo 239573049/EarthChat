@@ -28,4 +28,5 @@
     <ProjectReference Include="..\..\src\Chat.Contracts\Chat.Contracts.csproj" />
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
+  
 </Project>

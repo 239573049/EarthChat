@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Chat.Service.Services;
 
-public class AuthService : BaseService<AuthService>
+public class AuthService : BaseService<AuthService>, IAuthService
 {
     public async Task<ResultDto<string>> CreateAsync(string account, string password)
     {
@@ -90,7 +90,7 @@ public class AuthService : BaseService<AuthService>
                     null);
 
             var json = await response.Content.ReadAsStringAsync();
-            
+
             _logger.LogWarning("Gitee授权 {json}", json);
             var result = JsonSerializer.Deserialize<GitTokenDto>(json, new JsonSerializerOptions
             {
@@ -139,5 +139,18 @@ public class AuthService : BaseService<AuthService>
             _logger.LogError("Gitee授权失败 {e}", e);
             return "".CreateResult("500", e.Message);
         }
+    }
+
+    public async Task<ResultDto<string>> LoginAsync(string account, string password)
+    {
+        var query = new GetUserByAccountQuery(account, password);
+        await _eventBus.PublishAsync(query);
+        
+        var claims = JwtHelper.GetClaimsIdentity(query.Result);
+        var jwt = GetService<IOptions<JwtOptions>>()?.Value;
+
+        var token = JwtHelper.GeneratorAccessToken(claims, jwt);
+
+        return token.CreateResult();
     }
 }

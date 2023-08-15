@@ -2,8 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="Chat.Client.App"
              xmlns:local="using:Chat.Client"
+             xmlns:converter="clr-namespace:Chat.Client.Converter"
              RequestedThemeVariant="Default">
-             <Application.DataTemplates>
+    <Application.Resources>
+        <converter:Base64Converter x:Key="Base64Converter" />
+    </Application.Resources>
+    <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>
   

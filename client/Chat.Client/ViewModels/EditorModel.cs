@@ -17,4 +17,6 @@ public class EditorModel : ViewModelBase
         get => _content;
         set => this.RaiseAndSetIfChanged(ref _content, value);
     }
+    
+    public EditorModel This => this;
 }

@@ -2,14 +2,7 @@
 
 public class EditorViewModel: ViewModelBase
 {
-    private ObservableCollection<EditorModel> _editors = new()
-    {
-        new EditorModel()
-        {
-            Content = string.Empty,
-            EditorType = EditorType.Text
-        }
-    };
+    private ObservableCollection<EditorModel> _editors = new();
     
     public ObservableCollection<EditorModel> Editors
     {

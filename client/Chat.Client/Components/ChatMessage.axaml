@@ -46,9 +46,9 @@
                                   Data="{StaticResource chat_message_meme}" />
                         <PathIcon Grid.Column="1" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource chat_message_screenshot}" />
-                        <PathIcon Grid.Column="2" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                        <PathIcon Grid.Column="2"  Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource folder}" />
-                        <PathIcon Grid.Column="3" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                        <PathIcon Grid.Column="3" Tapped="InputElement_OnTapped" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource image}" />
                         <PathIcon Grid.Column="4" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource microphone}" />

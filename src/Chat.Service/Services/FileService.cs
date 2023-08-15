@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Chat.Service.Services;
 
-public class FileService : BaseService<FileService>
+public class FileService : BaseService<FileService>, IFileService
 {
     [Authorize]
     public async Task<ResultDto<string>> UploadAsync(IFormFile file)

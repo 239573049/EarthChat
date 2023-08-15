@@ -16,7 +16,7 @@ public class EditorBox : SelectingItemsControl
 {
     private const string PART_TEXT_BOX = "PART_TextBox";
 
-    private const string PART_SEARCH_LIST_BOX = "PART_SearchListBox";
+    private const string TokenItems = "TokenItems";
 
     private TextEditor? _textEditor;
 
@@ -83,13 +83,12 @@ public class EditorBox : SelectingItemsControl
     }
 
     private ObservableCollection<EditorModel> _source = new();
-
+    
     public ObservableCollection<EditorModel> Source
     {
         get => _source;
         set => SetAndRaise(SourceProperty, ref _source, value);
     }
-
 
     public static readonly DirectProperty<EditorBox, ObservableCollection<EditorModel>> SourceProperty =
         AvaloniaProperty.RegisterDirect<EditorBox, ObservableCollection<EditorModel>>(
@@ -119,14 +118,12 @@ public class EditorBox : SelectingItemsControl
         _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = null;
         _cancellationTokenSource = new CancellationTokenSource();
-
     }
 
     private Task<List<string>> FilterTextAsync(string searchText, CancellationToken cancellationToken)
     {
         try
         {
-
             List<string> items = new(SearchSource); //create local copy of SearchSource property.
             List<string> tokens = new((IEnumerable<string>)ItemsSource); //get local list of tokens already added.
             List<string> results = new();
@@ -146,7 +143,6 @@ public class EditorBox : SelectingItemsControl
             }
 
             return Task.FromResult(results);
-            
         }
         catch (Exception e)
         {
@@ -175,6 +171,8 @@ public class EditorBox : SelectingItemsControl
         }
     }
 
+    private static string[] imageFormats = new[] { "Unknown_Format_2", "Shell IDList Array" };
+
     protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
     {
         base.OnApplyTemplate(e);
@@ -187,22 +185,19 @@ public class EditorBox : SelectingItemsControl
         }
 
         _textEditor = e.NameScope.Get<TextEditor>(PART_TEXT_BOX);
-        
+
 
         if (_textEditor != null)
         {
             _textEditor.AddHandler(TextInputEvent, TextBox_TextChanged, RoutingStrategies.Tunnel);
-            // 监听_textEditor的复制粘贴事件
-            _textEditor.PastingFromClipboard += async (sender, args) =>
-            {
-                // 获取最新粘贴板
-                
-            };
+
+            _textEditor.HorizontalAlignment = HorizontalAlignment.Left;
+            _textEditor.VerticalAlignment = VerticalAlignment.Top;
+
             _textEditor.BackKeyDown += TextBox_KeyDown;
             _textEditor.GotFocus += TextBox_GotFocus;
         }
     }
-
 
     private void TextBox_GotFocus(object? sender, GotFocusEventArgs e)
     {
@@ -219,27 +214,15 @@ public class EditorBox : SelectingItemsControl
         {
             return;
         }
-
-        string? textBoxText = _textEditor?.Text;
-        Text = textBoxText + e.Text;
-        var value = Source.FirstOrDefault(x => x.EditorType == EditorType.Text);
-        if (value == null)
-        {
-            value = new EditorModel()
-            {
-                EditorType = EditorType.Text,
-                Content = Text
-            };
-            Source.Add(value);
-        }
         
-        value.Content = Text;
+        _tempText = _textEditor?.Text + e.Text;
 
         if (e.Text != null)
         {
             return;
         }
 
-        e.Handled = true; //handle the event so the delimiter doesn't display
+        e.Handled = true;
+        //handle the event so the delimiter doesn't display
     }
 }

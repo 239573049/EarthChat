@@ -56,15 +56,23 @@
         <StackPanel Grid.Column="1" Width="1" Background="#1B1B1B"></StackPanel>
         <Grid RowDefinitions="70,*" Grid.Column="2" Width="250" Background="#1B1B1B" Name="ListPanel">
             <Grid ColumnDefinitions="*,45" Margin="15,30,15,10">
-                <TextBox  Height="30"  Background="#818181"
+                <TextBox  Height="30"  Background="#282828"
                          BorderThickness="0" FontSize="16" >
                     <TextBox.InnerLeftContent>
                         <PathIcon Margin="5" Height="15" Foreground="Cornsilk" Data="{StaticResource chat_search}" />
                     </TextBox.InnerLeftContent>
                     <TextBox.Styles>
-                        <Style Selector="TextBox:focus">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Foreground" Value="Cornsilk" />
+                        <!--TextBox Styles-->
+                        <Style Selector="TextBox">
+                            <Setter Property="BorderBrush" Value="#282828" />
+                        </Style>
+
+                        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+                            <Setter Property="Background" Value="#282828"/>
+                        </Style>
+
+                        <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+                            <Setter Property="Background" Value="#282828"/>
                         </Style>
                     </TextBox.Styles>
                 </TextBox>

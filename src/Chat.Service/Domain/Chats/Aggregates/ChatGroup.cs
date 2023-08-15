@@ -8,6 +8,8 @@ public class ChatGroup: AuditAggregateRoot<Guid, Guid>
     
     public string Description { get; set; }
 
+    public bool Default { get; set; }
+
     protected ChatGroup()
     {
     }

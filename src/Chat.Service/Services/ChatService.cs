@@ -5,9 +5,9 @@ using FreeRedis;
 
 namespace Chat.Service.Services;
 
-public class ChatService : BaseService<ChatService>
+public class ChatService : BaseService<ChatService>,IChatService
 {
-    public async Task<ResultDto<GetUserDto[]>> GetOnlineUsersAsync()
+    public async Task<ResultDto<GetUserDto[]>?> GetOnlineUsersAsync()
     {
         var redis = GetService<RedisClient>();
         var query = new GetUserAllQuery();

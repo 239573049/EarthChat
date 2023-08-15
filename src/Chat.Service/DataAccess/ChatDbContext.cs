@@ -98,9 +98,10 @@ public class ChatDbContext : MasaDbContext
         builder.Entity<User>().HasData(user);
 
         // TODO: 定义空的Guid，用于表示世界频道
-        var group = new ChatGroup(Guid.Empty)
+        var group = new ChatGroup(Guid.NewGuid())
         {
             Name = "世界频道",
+            Default = true,
             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
             Description = "世界频道，所有人默认加入的频道"
         };

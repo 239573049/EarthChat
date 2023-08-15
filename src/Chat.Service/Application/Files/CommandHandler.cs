@@ -28,10 +28,10 @@ public class CommandHandler
         await command.Stream.CopyToAsync(stream);
 
         // 回去当前请求的域名
-        var host = _contextAccessor.HttpContext.Request.Host.Value;
+        var host = _contextAccessor.HttpContext!.Request.Host.Value;
 
         // 判断是否https
-        if (_contextAccessor.HttpContext.Request.IsHttps)
+        if (_contextAccessor.HttpContext!.Request.IsHttps)
         {
             host = $"https://{host}";
         }
