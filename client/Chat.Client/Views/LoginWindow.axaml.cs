@@ -1,16 +1,15 @@
-using System;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
 using Chat.Client.Helpers;
+using Chat.Client.Services;
+using Chat.Client.ViewModels;
+using Chat.Contracts;
+using Chat.Contracts.Users;
 
 namespace Chat.Client.Views;
 
 public partial class LoginWindow : Window
 {
+    public Action? SuccessAction { get; set; }
+    
     public LoginWindow()
     {
         InitializeComponent();
@@ -29,5 +28,27 @@ public partial class LoginWindow : Window
     private void Close_OnTapped(object? sender, TappedEventArgs e)
     {
         Environment.Exit(0);
+    }
+
+    private async void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var vm = (LoginWindowViewModel)DataContext!;
+        if (string.IsNullOrEmpty(vm.Account))
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(vm.Password))
+        {
+            return;
+        }
+
+        var result = await MainAppHelper.GetRequiredService<IAuthService>().CreateAsync(vm.Account, vm.Password);
+        if (result.Code == Constant.Success)
+        {
+            Caller.SetToken(result.Data);
+            SuccessAction?.Invoke();
+            Close();
+        }
     }
 }

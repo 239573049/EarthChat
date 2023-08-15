@@ -6,9 +6,9 @@ namespace Chat.Client.Services;
 
 public class AuthService : IAuthService
 {
-    public Task<ResultDto<string>> CreateAsync(string account, string password)
+    public async Task<ResultDto<string>> CreateAsync(string account, string password)
     {
-        throw new NotImplementedException();
+        return await Caller.PostAsync<ResultDto<string>>($"Auths?account={account}&password={password}",null);
     }
 
     public Task<ResultDto<string>> GithubAuthAsync(string accessToken)
@@ -21,8 +21,4 @@ public class AuthService : IAuthService
         throw new NotImplementedException();
     }
 
-    public Task<ResultDto<string>> LoginAsync(string account, string password)
-    {
-        throw new NotImplementedException();
-    }
 }

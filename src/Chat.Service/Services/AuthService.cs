@@ -1,11 +1,6 @@
 ﻿using System.Net.Http.Headers;
-using System.Text.Json;
 using Chat.Service.Application.Users.Commands;
-using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Infrastructure.Helper;
-using Chat.Service.Options;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 
 namespace Chat.Service.Services;
 
@@ -141,16 +136,4 @@ public class AuthService : BaseService<AuthService>, IAuthService
         }
     }
 
-    public async Task<ResultDto<string>> LoginAsync(string account, string password)
-    {
-        var query = new GetUserByAccountQuery(account, password);
-        await _eventBus.PublishAsync(query);
-        
-        var claims = JwtHelper.GetClaimsIdentity(query.Result);
-        var jwt = GetService<IOptions<JwtOptions>>()?.Value;
-
-        var token = JwtHelper.GeneratorAccessToken(claims, jwt);
-
-        return token.CreateResult();
-    }
 }

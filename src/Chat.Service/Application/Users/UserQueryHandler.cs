@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Chat.Service.Domain.Users.Repositories;
-using FreeRedis;
 
 namespace Chat.Service.Application.Users;
 
@@ -64,11 +63,4 @@ public class UserQueryHandler
         query.Result = _mapper.Map<GetUserDto>(user);
     }
     
-    [EventHandler]
-    public async Task GetUserByAccountAsync(GetUserByAccountQuery query)
-    {
-        var user = await _userRepository.FindAsync(x => x.Account == query.account);
-
-        query.Result = _mapper.Map<UserDto>(user);
-    }
 }

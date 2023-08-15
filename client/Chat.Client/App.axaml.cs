@@ -7,6 +7,7 @@ using Chat.Client.Loggers;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using Chat.Client.Views;
+using Chat.Contracts.Users;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -71,6 +72,8 @@ public partial class App : Application
             service.AddSingleton<IEventBus, EventBus>();
 
             service.AddSingleton<IChatService, ChatService>();
+            service.AddSingleton<IAuthService, AuthService>();
+            service.AddSingleton<IUserService, UserService>();
             
         });
 
@@ -81,7 +84,7 @@ public partial class App : Application
             var storage = app.GetRequiredService<StorageService>();
             if (storage.GetToken().IsNullOrWhiteSpace())
             {
-                
+                DesktopLogin(desktop);
             }
             else
             {
@@ -94,6 +97,13 @@ public partial class App : Application
     {
         var loginWindow = MainAppHelper.GetRequiredService<LoginWindow>();
         loginWindow.Show();
+        
+        loginWindow.SuccessAction = () =>
+        {
+            desktop.MainWindow = MainAppHelper.GetRequiredService<MainWindow>();
+        };
+        
         desktop.MainWindow = loginWindow;
+        
     }
 }

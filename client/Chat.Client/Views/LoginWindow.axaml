@@ -3,6 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+        xmlns:views="clr-namespace:Chat.Client.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Chat.Client.Views.LoginWindow"
         Height="448"
@@ -17,11 +18,33 @@
         SystemDecorations="None"
         Icon="../Assets/chat.png"
         WindowStartupLocation="CenterScreen"
-        Title="LoginWindow">
+        Title="LoginWindow"
+        x:DataType="viewModels:LoginWindowViewModel">
 
     <Design.DataContext>
         <viewModels:LoginWindowViewModel />
     </Design.DataContext>
+    <Window.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="TextWrapping" Value="WrapWithOverflow"></Setter>
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Foreground" Value="Black"></Setter>
+        </Style>
+
+        <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+        </Style>
+
+        <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent"></Setter>
+        </Style>
+        <Style Selector="TextBox:pointerover">
+            <Setter Property="Foreground" Value="Black"></Setter>
+        </Style>
+    </Window.Styles>
 
     <Border CornerRadius="8" Background="Transparent">
         <Grid>
@@ -46,40 +69,37 @@
                        Source="../Assets/chat.png" RenderOptions.BitmapInterpolationMode="HighQuality">
                 </Image>
             </Border>
-            
-            <Border CornerRadius="5"  Width="260" Height="45" Background="Azure">
-                <WrapPanel >
-                    <TextBox Foreground="Black"  Background="Transparent"  Watermark="输入账号" Margin="20,2,0,0" Width="220" BorderBrush="Transparent" FontSize="23">
+
+            <Border CornerRadius="5" Width="260" Height="45" Background="Azure">
+                <WrapPanel>
+                    <TextBox Text="{Binding Account}" Foreground="Black" Background="Transparent" Watermark="输入账号"
+                             Margin="20,8,0,0" Width="220" BorderBrush="Transparent" FontSize="23">
                     </TextBox>
-                    <Button  Height="20" Width="20" Background="Transparent">
-                        <Image Source="../Assets/close.png"  Height="15" Width="15"
+                    <Button Height="20" Width="20" Background="Transparent">
+                        <Image Source="../Assets/close.png" Height="15" Width="15"
                                RenderOptions.BitmapInterpolationMode="HighQuality">
                         </Image>
                     </Button>
                 </WrapPanel>
             </Border>
             <Border CornerRadius="5" Margin="0,100,0,0" Width="260" Height="45" Background="Azure">
-                <WrapPanel >
-                    <TextBox Foreground="Black" Background="Transparent" PasswordChar="*" Watermark="输入密码" Margin="20,2,0,0" Width="220" BorderBrush="Transparent" FontSize="23">
+                <WrapPanel>
+                    <TextBox Text="{Binding Password}" Foreground="Black" Background="Transparent"
+                             PasswordChar="*" Watermark="输入密码" Margin="20,8,0,0" Width="220"
+                             BorderBrush="Transparent" FontSize="23">
                     </TextBox>
-                    <Button  Height="20" Width="20" Background="Transparent">
-                        <Image Source="../Assets/close.png"  Height="15" Width="15"
+                    <Button Height="20" Width="20" Background="Transparent">
+                        <Image Source="../Assets/close.png" Height="15" Width="15"
                                RenderOptions.BitmapInterpolationMode="HighQuality">
                         </Image>
                     </Button>
                 </WrapPanel>
             </Border>
 
-            <Border Margin="0,230,0,0"  HorizontalAlignment="Center" Cursor="Hand" CornerRadius="5" Height="40" Width="260" Background="#0099FF">
-                <TextBlock Foreground="Azure" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    登录
-                </TextBlock>
-                <Border.Styles>
-                    <Style Selector="Border:pointerover">
-                        <Setter Property="Background" Value="#008DE8" />
-                    </Style>
-                </Border.Styles>
-            </Border>
+            <Button Click="Button_OnClick" Width="260"  Background="#0099FF" Margin="30,230,0,0" CornerRadius="5"  Height="40">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center">登录</TextBlock>
+            </Button>
+            
         </Grid>
     </Border>
 

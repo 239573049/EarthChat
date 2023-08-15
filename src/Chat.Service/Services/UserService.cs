@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Chat.Service.Services;
 
-public class UserService : BaseService<UserService>
+public class UserService : BaseService<UserService>,IUserService
 {
     [Authorize]
     public async Task<ResultDto<GetUserDto>> GetAsync()
