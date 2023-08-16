@@ -58,12 +58,16 @@ public class LoggerHandler
         var log =
             $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] [{module.CategoryName} {module.LogLevel}] [{module.EventId}] [{module.Exception?.Message}]";
         
+        var info = new FileInfo(fileName);
+        
         if (module.Exception is not null)
         {
             log += $" [{module.Exception.Message}]";
             log += $" [{module.Exception.StackTrace}]";
         }
 
+        if(info.Directory is not null && !info.Directory.Exists) info.Directory.Create();
+        
         File.AppendAllLines(fileName, new[] { log });
     }
 }

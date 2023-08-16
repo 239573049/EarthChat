@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -37,6 +38,35 @@ public static class MainAppHelper
 {
     private static IServiceProvider _serviceProvider = null!;
 
+    private static readonly ConcurrentDictionary<object, object> Items = new();
+
+    public static void AddItem(object key, object value)
+    {
+        Items.TryAdd(key, value);
+    }
+
+    public static bool GetItem<T>(object key,out T? value)
+    {
+        if (Items.TryGetValue(key, out var item))
+        {
+            value = (T)item;
+            return true;
+        }
+        
+        value = default;
+        return false;
+    }
+
+    public static void RemoveItem(object key)
+    {
+        Items.TryRemove(key, out _);
+    }
+    
+    public static void UpdateItem(object key, object value)
+    {
+        Items[key] = value;
+    }
+    
     public static Action<IServiceCollection>? AddService { get; set; }
 
     private static MainApp _mainApp;

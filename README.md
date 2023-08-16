@@ -52,6 +52,7 @@
 qq群：737776595
 
 ## 公众号
+
 <p align="center">
     <a href="" target="_blank">
       <img src="./docs/img/qrcode.jpg" width="280" />

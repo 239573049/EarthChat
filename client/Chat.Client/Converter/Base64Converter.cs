@@ -2,6 +2,7 @@
 using System.IO;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Chat.Client.ViewModels;
 
 namespace Chat.Client.Converter;
@@ -13,6 +14,22 @@ public class Base64Converter : IValueConverter
         if (value is EditorModel model && model.EditorType == EditorType.Image)
         {
             return new Bitmap(new MemoryStream(System.Convert.FromBase64String(model.Content)));
+        }
+
+        if (value is string str)
+        {
+            try
+            {
+                if (str.StartsWith("assets://"))
+                {
+                    return new Bitmap(AssetLoader.Open(new Uri(str)));
+                }
+                return new Bitmap(new MemoryStream(System.Convert.FromBase64String(str)));
+            }
+            catch
+            {
+                return value;
+            }
         }
 
         return value;

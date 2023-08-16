@@ -6,7 +6,10 @@ using Chat.Client.Components;
 using Chat.Client.Loggers;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
+using Chat.Client.ViewModels.Users;
 using Chat.Client.Views;
+using Chat.Client.Views.Users;
+using Chat.Contracts;
 using Chat.Contracts.Users;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +23,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public override async void OnFrameworkInitializationCompleted()
     {
         var mainApp = MainAppHelper.ConfigureServices(service =>
         {
@@ -31,6 +34,11 @@ public partial class App : Application
             service.AddSingleton<MainWindow>((_) => new MainWindow()
             {
                 DataContext = new MainWindowViewModel(),
+            });
+            
+            service.AddSingleton(new CreateGroupWindow()
+            {
+                DataContext = new CreateGroupViewModel(),
             });
 
             service.AddSingleton(new LoginWindow()
@@ -48,16 +56,17 @@ public partial class App : Application
                         DataContext = new UserManageViewModel()
                     };
                 }
+
                 throw new CheckoutException("未找到MainWindow");
             });
-            
+
             #region Views
 
-            service.AddSingleton<ChatMessage>((_)=>new ChatMessage()
+            service.AddSingleton<ChatMessage>((_) => new ChatMessage()
             {
                 DataContext = new ChatMessageViewModel()
             });
-            
+
             service.AddSingleton<Message>((_) => new Message()
             {
                 DataContext = new MessageListViewModel()
@@ -66,44 +75,64 @@ public partial class App : Application
             {
                 DataContext = new UserManageViewModel()
             });
-            
+
             #endregion
-            
+
             service.AddSingleton<IEventBus, EventBus>();
 
             service.AddSingleton<IChatService, ChatService>();
             service.AddSingleton<IAuthService, AuthService>();
             service.AddSingleton<IUserService, UserService>();
             
+            
         });
 
         var app = mainApp.BuilderApp();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
+
+        var storage = app.GetRequiredService<StorageService>();
+        if (storage.GetToken().IsNullOrWhiteSpace())
         {
-            var storage = app.GetRequiredService<StorageService>();
-            if (storage.GetToken().IsNullOrWhiteSpace())
+            DesktopLogin(desktop);
+        }
+        else
+        {
+            try
             {
-                DesktopLogin(desktop);
+                Caller.SetToken(storage.GetToken());
+                // 如果token存在，尝试获取用户信息，如果获取失败，重新登录
+                var userService = app.GetRequiredService<IUserService>();
+                var user = await userService.GetAsync();
+                if (user.Code == Constant.Success)
+                {
+                    desktop.MainWindow = app.GetRequiredService<MainWindow>();
+                    desktop.MainWindow.Show();
+                }
+                else
+                {
+                    DesktopLogin(desktop);
+                }
             }
-            else
+            catch (Exception e)
             {
-                desktop.MainWindow = app.GetRequiredService<MainWindow>();
+                MainAppHelper.Logger().LogError("获取用户信息失败 Message:{e}", e);
+                DesktopLogin(desktop);
             }
         }
     }
-    
+
     private static void DesktopLogin(IClassicDesktopStyleApplicationLifetime desktop)
     {
         var loginWindow = MainAppHelper.GetRequiredService<LoginWindow>();
         loginWindow.Show();
-        
+
         loginWindow.SuccessAction = () =>
         {
             desktop.MainWindow = MainAppHelper.GetRequiredService<MainWindow>();
+            desktop.MainWindow.Show();
         };
-        
+
         desktop.MainWindow = loginWindow;
-        
     }
 }

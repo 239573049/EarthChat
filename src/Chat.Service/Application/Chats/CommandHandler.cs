@@ -10,14 +10,18 @@ namespace Chat.Service.Application.Chats;
 public class CommandHandler
 {
     private readonly IChatMessageRepository _chatMessageRepository;
+    private readonly IChatGroupRepository _chatGroupRepository;
+    private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
     private readonly IUserContext _userContext;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly ILogger<CommandHandler> _logger;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IEventBus _eventBus;
 
     public CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,
-        IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus, ILogger<CommandHandler> logger)
+        IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus,
+        ILogger<CommandHandler> logger, IChatGroupRepository chatGroupRepository, IUnitOfWork unitOfWork, IChatGroupInUserRepository chatGroupInUserRepository)
     {
         _chatMessageRepository = chatMessageRepository;
         _userContext = userContext;
@@ -25,6 +29,9 @@ public class CommandHandler
         _hubContext = hubContext;
         _eventBus = eventBus;
         _logger = logger;
+        _chatGroupRepository = chatGroupRepository;
+        _unitOfWork = unitOfWork;
+        _chatGroupInUserRepository = chatGroupInUserRepository;
     }
 
     [EventHandler]
@@ -37,6 +44,7 @@ public class CommandHandler
             Type = command.Dto.Type,
             UserId = _userContext.GetUserId<Guid>()
         };
+        
         await _chatMessageRepository.AddAsync(chatMessage);
     }
 
@@ -129,5 +137,30 @@ public class CommandHandler
                 }));
             }
         }
+    }
+
+    [EventHandler]
+    public async Task CreateGroupAsync(CreateGroupCommand command)
+    {
+        if (await _chatGroupRepository.GetCountAsync(x => x.Creator == _userContext.GetUserId<Guid>()) > 10)
+            throw new UserFriendlyException("最多只能创建10个群组");
+
+        var chatGroup = new ChatGroup(Guid.NewGuid())
+        {
+            Avatar = command.Dto.Avatar,
+
+            Description = command.Dto.Description,
+            Name = command.Dto.Name,
+        };
+
+        await _chatGroupRepository.AddAsync(chatGroup);
+        
+        var chatGroupInUser = new ChatGroupInUser()
+        {
+            ChatGroupId = chatGroup.Id,
+            UserId = _userContext.GetUserId<Guid>()
+        };
+        
+        await _chatGroupInUserRepository.AddAsync(chatGroupInUser);
     }
 }

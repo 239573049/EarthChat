@@ -15,6 +15,7 @@
         <entry key="client/Chat.Client/Styles/TokenizingTextBoxs.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Views/LoginWindow.axaml" value="client/Chat.Client/Chat.Client.csproj" />
         <entry key="client/Chat.Client/Views/MainWindow.axaml" value="client/Chat.Client/Chat.Client.csproj" />
+        <entry key="client/Chat.Client/Views/Users/CreateGroupWindow.axaml" value="client/Chat.Client/Chat.Client.csproj" />
       </map>
     </option>
   </component>

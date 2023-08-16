@@ -76,11 +76,18 @@
                         </Style>
                     </TextBox.Styles>
                 </TextBox>
-                <Button Grid.Column="1"  Height="30" Width="30" Background="Transparent" HorizontalAlignment="Right"
+                <Button Click="Button_OnClick" Grid.Column="1"  Height="30" Width="30" Background="Transparent" HorizontalAlignment="Right"
                         VerticalAlignment="Top">
                     <PathIcon VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" Data="{StaticResource chat_add}" />
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Click="CreateGroup_OnClick" CornerRadius="5" Margin="2" Header="创建群聊" />
+                            <MenuItem CornerRadius="5" Margin="2" Header="添加好友" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
                 </Button>
             </Grid>
+            <!-- 这里是渲染群聊列表 -->
             <Grid Grid.Row="1" RowDefinitions="*" Name="ListMainPanel">
 
             </Grid>

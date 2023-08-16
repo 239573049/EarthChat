@@ -4,6 +4,7 @@ using Avalonia.Platform;
 using Avalonia.Threading;
 using Chat.Client.Components;
 using Chat.Client.ViewModels;
+using Chat.Client.Views.Users;
 
 namespace Chat.Client.Views;
 
@@ -15,6 +16,7 @@ public partial class MainWindow : Window
 
         var eventBus = MainAppHelper.GetRequiredService<IEventBus>();
 
+        // 订阅消息按钮点击事件。
         eventBus.Subscribe(EventBusConstant.ContentStackPanel, (obj) =>
         {
             if (obj is UserControl control)
@@ -41,11 +43,10 @@ public partial class MainWindow : Window
                 });
             }
         });
-        
+
         // 默认选择MessageBut,背景色为默认色
         MessageBut.Background = new SolidColorBrush(Color.Parse(ColorConstant.DefaultMenuButColor));
         SelectMessage();
-
     }
 
     private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
@@ -96,12 +97,32 @@ public partial class MainWindow : Window
         MessageBut.Background = Brushes.Transparent;
         ListMainPanel.Children.Clear();
 
-        
+
         ListMainPanel.Children.Add(MainAppHelper.GetRequiredService<UserManage>());
 
         // 重置内容面板
         MainAppHelper.GetRequiredService<IEventBus>().Publish(EventBusConstant.ContentStackPanel, null);
 
         // 设置UserBut背景色为透明
+    }
+
+    private void Button_OnClick(object? sender, RoutedEventArgs e)
+    {
+        if (sender is Button but)
+        {
+            var contextMenu = but.ContextMenu!;
+
+            contextMenu.Open(but);
+        }
+    }
+
+    private void CreateGroup_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var createGroupWindow = MainAppHelper.GetRequiredService<CreateGroupWindow>();
+
+        if (createGroupWindow.IsVisible == false)
+        {
+            createGroupWindow.ShowDialog(this);
+        }
     }
 }

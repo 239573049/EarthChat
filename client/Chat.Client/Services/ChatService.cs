@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Collections.Generic;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Chat.Contracts.Core;
 using Chat.Contracts.Users;
@@ -16,5 +17,21 @@ public class ChatService : IChatService
     public Task<ResultDto<PaginatedListBase<ChatMessageDto>>> GetListAsync(Guid groupId, int page, int pageSize)
     {
         return Caller.GetHttpClient().GetFromJsonAsync<ResultDto<PaginatedListBase<ChatMessageDto>>>($"Chats/List?groupId={groupId}&page={page}&pageSize={pageSize}");
+    }
+
+    public Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync()
+    {
+        return Caller.GetHttpClient().GetFromJsonAsync<IReadOnlyList<ChatGroupDto>>("Chats/UserGroup");
+    }
+
+    /// <inheritdoc />
+    public async Task CreateGroupAsync(CreateGroupDto dto)
+    {
+        await Caller.GetHttpClient().PostAsJsonAsync("Chats/Group", dto);
+    }
+
+    public Task AddUserToGroupAsync(Guid groupId, Guid userId)
+    {
+        throw new NotImplementedException();
     }
 }

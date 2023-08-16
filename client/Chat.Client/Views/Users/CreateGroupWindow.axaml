@@ -1,0 +1,59 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:users="clr-namespace:Chat.Client.ViewModels.Users"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="450"
+        Height="450"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="None"
+        WindowStartupLocation="CenterScreen"
+        Background="Transparent"
+        CanResize="False"
+        x:Class="Chat.Client.Views.Users.CreateGroupWindow"
+        Title="CreateGroupWindow"
+        x:DataType="users:CreateGroupViewModel">
+
+    <Design.DataContext>
+        <users:CreateGroupViewModel />
+    </Design.DataContext>
+
+    <Border CornerRadius="5" Background="#303030">
+
+        <StackPanel VerticalAlignment="Top">
+            <Border HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Border Cursor="Hand">
+                    <Image Margin="5" RenderOptions.BitmapInterpolationMode="HighQuality" Width="15" Height="15"
+                           Source="../../Assets/close.png">
+                    </Image>
+                    <Border.Styles>
+                        <Style Selector="Border:pointerover">
+                            <Setter Property="Background" Value="Red" />
+                        </Style>
+                    </Border.Styles>
+                </Border>
+            </Border>
+
+            <Border Tapped="AccountClick_OnTapped" Margin="0,20,0,0" ClipToBounds="True" Height="120" Width="120"
+                    Background="Transparent" CornerRadius="500">
+                <Image Source="{Binding CreateGroupDto.Avatar,Converter={StaticResource Base64Converter}}" Height="120"
+                       Width="120" />
+            </Border>
+            <TextBox Margin="5" Watermark="群聊名称" TextWrapping="Wrap" FontWeight="Bold" FontSize="20" Height="40"
+                     Width="180">
+            </TextBox>
+            <TextBox Margin="5" Watermark="群聊描述" TextWrapping="Wrap" FontWeight="Bold" FontSize="20" Height="40"
+                     Width="180">
+            </TextBox>
+            <Button HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="5,120,5,5" Width="180"
+                    Background="#0099FF">
+                <TextBlock FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    创建
+                </TextBlock>
+            </Button>
+        </StackPanel>
+    </Border>
+</Window>

@@ -21,7 +21,7 @@ public class FileService : BaseService<FileService>, IFileService
     }
 
     [Authorize]
-    public async Task<ResultDto<string>> UploadBase64Async(UploadBase64Dto dto)
+    public async Task<ResultDto<string>?> UploadBase64Async(UploadBase64Dto dto)
     {
         var bytes = Convert.FromBase64String(dto.Value);
         if (bytes.Length > 1024 * 1024 * 5)

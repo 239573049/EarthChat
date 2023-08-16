@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Chat.Client.ViewModels;
+using Chat.Contracts;
 
 namespace Chat.Client.Components;
 
@@ -9,18 +11,28 @@ public partial class Message : UserControl
     {
         InitializeComponent();
 
-        DataContextChanged += ((sender, args) =>
+        DataContextChanged += (async (sender, args) =>
         {
             if (DataContext is not MessageListViewModel viewModel) return;
 
-            for (int i = 0; i < 100; i++)
+            var chatService = MainAppHelper.GetService<IChatService>();
+            
+            // 优先从缓存中获取
+            if (!MainAppHelper.GetItem<IReadOnlyList<ChatGroupDto>>(Constant.GetUserGroup, out var groups))
+            {
+                // 从服务端获取，并且缓存。
+                groups = await chatService.GetUserGroupAsync();
+                MainAppHelper.AddItem(nameof(ChatGroupDto), groups);
+            }
+
+            foreach (var group in groups)
             {
                 viewModel.MessageLists.Add(new MessageList()
                 {
-                    Avatar = "",
-                    Description = "",
-                    Id = Guid.NewGuid(),
-                    Name = "测试",
+                    Avatar = group.Avatar,
+                    Description = group.Description,
+                    Id = group.Id,
+                    Name = group.Name,
                 });
             }
 
@@ -36,7 +48,7 @@ public partial class Message : UserControl
 
         SelectFirst();
     }
-    
+
     public void SelectFirst()
     {
         var eventBus = MainAppHelper.GetRequiredService<IEventBus>();

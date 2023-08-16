@@ -8,7 +8,15 @@ public class ChatGroupDto
     
     public string Avatar { get; set; }
     
+    /// <summary>
+    /// 描述
+    /// </summary>
     public string Description { get; set; }
 
+    /// <summary>
+    /// 是否群组
+    /// </summary>
+    public bool Group { get; set; }
+    
     public bool Default { get; set; }
 }

@@ -2,9 +2,9 @@
 
 public class UserManageViewModel : ViewModelBase
 {
-    private ObservableCollection<Users> _users = new();
+    private ObservableCollection<Models.Users> _users = new();
     
-    public ObservableCollection<Users> Users
+    public ObservableCollection<Models.Users> Users
     {
         get => _users;
         set => this.RaiseAndSetIfChanged(ref _users, value);
