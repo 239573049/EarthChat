@@ -1,8 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Chat.Client.ViewModels.Users;
 using Chat.Contracts.Files;
@@ -17,6 +15,8 @@ public partial class CreateGroupWindow : Window
     }
 
     private CreateGroupViewModel ViewModel => DataContext as CreateGroupViewModel;
+
+    private string fileName;
     
     private async void AccountClick_OnTapped(object? sender, TappedEventArgs e)
     {
@@ -24,12 +24,6 @@ public partial class CreateGroupWindow : Window
         var file = await storage.OpenFilePickerAsync(new FilePickerOpenOptions()
         {
             AllowMultiple = false,
-            FileTypeFilter = new FilePickerFileType[]
-            {
-                new("png"),
-                new("jpg"),
-                new("jpeg")
-            }
         });
 
         if (file.Count == 0) return;
@@ -39,16 +33,34 @@ public partial class CreateGroupWindow : Window
         // 转换base64 
         var bytes = await filePath!.OpenReadAsync();
 
-        var buffer = new byte[bytes.Length];
-        _ = await bytes.ReadAsync(buffer, 0, (int)bytes.Length);
+        Avatar.Source = new Bitmap(bytes);
+        fileName = filePath.Path.AbsolutePath;
+        
+    }
+
+    private async void Group_OnClick(object? sender, RoutedEventArgs e)
+    {
+        var file = File.OpenRead(fileName);
+        var buffer = new byte[file.Length];
+        _ = file.Read(buffer, 0, (int)file.Length);
         var base64 = Convert.ToBase64String(buffer);
         var fileService = MainAppHelper.GetRequiredService<IFileService>();
-
+        
+        var info = new FileInfo(fileName);
+        
         var result = await fileService.UploadBase64Async(new UploadBase64Dto()
         {
-            FileName = filePath.Name,
+            FileName = info.Name,
             Value = base64
         });
-        ViewModel.CreateGroupDto.Avatar = result.Data;
+        
+        var chatService = MainAppHelper.GetRequiredService<IChatService>();
+        await chatService.CreateGroupAsync(new CreateGroupDto()
+        {
+            Avatar = result.Data,
+            Name = GroupName.Text,
+            Description = GroupDescription.Text
+        });
+        
     }
 }

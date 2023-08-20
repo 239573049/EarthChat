@@ -16,7 +16,9 @@ public class ChatService : IChatService
 
     public Task<ResultDto<PaginatedListBase<ChatMessageDto>>> GetListAsync(Guid groupId, int page, int pageSize)
     {
-        return Caller.GetHttpClient().GetFromJsonAsync<ResultDto<PaginatedListBase<ChatMessageDto>>>($"Chats/List?groupId={groupId}&page={page}&pageSize={pageSize}");
+        return Caller.GetHttpClient()
+            .GetFromJsonAsync<ResultDto<PaginatedListBase<ChatMessageDto>>>(
+                $"Chats/List?groupId={groupId}&page={page}&pageSize={pageSize}");
     }
 
     public Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync()
@@ -33,5 +35,11 @@ public class ChatService : IChatService
     public Task AddUserToGroupAsync(Guid groupId, Guid userId)
     {
         throw new NotImplementedException();
+    }
+
+    /// <inheritdoc />
+    public async Task<List<ChatGroupInUserDto>> GetGroupInUserAsync(Guid groupId)
+    {
+        return await Caller.GetAsync<List<ChatGroupInUserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }
 }

@@ -35,13 +35,19 @@ public class ChatService : BaseService<ChatService>, IChatService
     public async Task CreateGroupAsync(CreateGroupDto dto)
     {
         var command = new CreateGroupCommand(dto);
-        
+
         await PublishAsync(command);
-        
     }
 
     public Task AddUserToGroupAsync(Guid groupId, Guid userId)
     {
         throw new NotImplementedException();
+    }
+
+    public async Task<List<ChatGroupInUserDto>> GetGroupInUserAsync(Guid groupId)
+    {
+        var query = new GetGroupInUserQuery(groupId);
+        await PublishAsync(query);
+        return query.Result;
     }
 }

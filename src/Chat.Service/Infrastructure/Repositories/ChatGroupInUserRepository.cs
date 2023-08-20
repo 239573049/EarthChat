@@ -20,4 +20,14 @@ public class ChatGroupInUserRepository : Repository<ChatDbContext, ChatGroupInUs
 
         return Task.FromResult(query.AsEnumerable());
     }
+
+    public async Task<List<ChatGroupInUser>> GetGroupInUserAsync(Guid groupId)
+    {
+        var query = Context.ChatGroupInUsers
+            .Where(x => x.ChatGroupId == groupId)
+            .Include(x => x.User);
+
+        return await query.ToListAsync();
+
+    }
 }

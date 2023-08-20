@@ -41,4 +41,11 @@ public interface IChatService
     /// <param name="userId"></param>
     /// <returns></returns>
     Task AddUserToGroupAsync(Guid groupId, Guid userId);
+    
+    /// <summary>
+    /// 获取群组中的用户。
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    Task<List<ChatGroupInUserDto>> GetGroupInUserAsync(Guid groupId);
 }

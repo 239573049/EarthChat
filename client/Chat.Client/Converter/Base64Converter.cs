@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using Avalonia.Data.Converters;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -20,10 +21,17 @@ public class Base64Converter : IValueConverter
         {
             try
             {
-                if (str.StartsWith("assets://"))
+                if (str.StartsWith("avares://"))
                 {
                     return new Bitmap(AssetLoader.Open(new Uri(str)));
                 }
+
+                if (str.StartsWith("base64://"))
+                {
+                    str = str.Replace("base64://", "");
+                    return new Bitmap(new MemoryStream(System.Convert.FromBase64String(str)));
+                }
+
                 return new Bitmap(new MemoryStream(System.Convert.FromBase64String(str)));
             }
             catch

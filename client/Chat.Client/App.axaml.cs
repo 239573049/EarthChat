@@ -10,6 +10,7 @@ using Chat.Client.ViewModels.Users;
 using Chat.Client.Views;
 using Chat.Client.Views.Users;
 using Chat.Contracts;
+using Chat.Contracts.Files;
 using Chat.Contracts.Users;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -83,6 +84,7 @@ public partial class App : Application
             service.AddSingleton<IChatService, ChatService>();
             service.AddSingleton<IAuthService, AuthService>();
             service.AddSingleton<IUserService, UserService>();
+            service.AddSingleton<IFileService, FileService>();
             
             
         });

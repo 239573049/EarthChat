@@ -49,4 +49,11 @@ public class QueryHandler
 
         query.Result = _mapper.Map<List<ChatGroupDto>>(ids);
     }
+
+    [EventHandler]
+    public async Task GetGroupInUserAsync(GetGroupInUserQuery query)
+    {
+        query.Result =
+            _mapper.Map<List<ChatGroupInUserDto>>(await _chatGroupInUserRepository.GetGroupInUserAsync(query.groupId));
+    }
 }

@@ -13,6 +13,8 @@ public class ChatMessageProfile : Profile
             .ForMember(x => x.CreationTime, x => x.MapFrom(x => x.CreationTime.AddHours(-8)));
 
         CreateMap<ChatGroup,ChatGroupDto>();
-        
+
+        CreateMap<ChatGroupInUserDto, ChatGroupInUser>();
+
     }
 }

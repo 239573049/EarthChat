@@ -1,6 +1,6 @@
 ﻿namespace Chat.Contracts.Chats;
 
-public class CreateGroupDto
+public class CreateGroupDto 
 {
     public string Name { get; set; }
 
