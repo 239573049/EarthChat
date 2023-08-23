@@ -41,6 +41,7 @@
  - Ant Design
  - Axios
  - Vite
+ - Avalonia
 
 ## 项目使用
 
