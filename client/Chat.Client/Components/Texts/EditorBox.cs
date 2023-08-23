@@ -215,7 +215,7 @@ public class EditorBox : SelectingItemsControl
             return;
         }
         
-        _tempText = _textEditor?.Text + e.Text;
+        _text = _textEditor?.Text + e.Text;
 
         if (e.Text != null)
         {

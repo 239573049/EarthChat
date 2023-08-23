@@ -9,4 +9,12 @@ public class EditorViewModel: ViewModelBase
         get => _editors;
         set => this.RaiseAndSetIfChanged(ref _editors, value);
     }
+    
+    private string _text;
+    
+    public string Text
+    {
+        get => _text;
+        set => this.RaiseAndSetIfChanged(ref _text, value);
+    }
 }

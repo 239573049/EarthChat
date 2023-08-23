@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Chat.Client.Helpers;
+using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using DynamicData;
 
@@ -87,11 +88,19 @@ public partial class ChatMessage : UserControl
         }
     }
 
-    private void SendMessage(TappedEventArgs e)
+    private async void SendMessage(TappedEventArgs e)
     {
-        ViewModel.EditorViewModel.Editors.Clear();
+        var text = Editor.editorBox.Text;
+        if (!string.IsNullOrEmpty(text))
+        {
+            var chatHubService = MainAppHelper.GetService<ChatHubService>();
+
+            await chatHubService.SendMessageAsync(text, ChatType.Text);
+
+            ViewModel.EditorViewModel.Text = string.Empty;
+        }
     }
-    
+
     public async Task Select(MessageList messageList)
     {
         ViewModel.MessageList = messageList;

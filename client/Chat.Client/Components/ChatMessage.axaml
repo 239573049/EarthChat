@@ -57,7 +57,7 @@
                                   Data="{StaticResource time}" />
                     </Grid>
                     <Grid RowDefinitions="*" Grid.Row="1">
-                        <components:Editor OnClick="SendMessage" DataContext="{Binding EditorViewModel}" />
+                        <components:Editor Name="Editor" OnClick="SendMessage" DataContext="{Binding EditorViewModel}" />
                     </Grid>
                 </Grid>
             </Grid>

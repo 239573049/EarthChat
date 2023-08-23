@@ -21,7 +21,7 @@
     </Design.DataContext>
     <Grid RowDefinitions="*,55">
         
-        <texts:EditorBox  Margin="8,0,8,0" Source="{Binding Editors}"/>
+        <texts:EditorBox  Name="EditorBox" Text="{Binding Text}" Margin="8,0,8,0" Source="{Binding Editors}"/>
         <Border HorizontalAlignment="Right" Margin="10" Width="95" Height="25" CornerRadius="5" Background="#0066CC"
                 Grid.Row="1">
             <WrapPanel Tapped="Click">

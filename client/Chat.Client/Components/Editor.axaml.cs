@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Chat.Client.Components.Texts;
 using Chat.Client.ViewModels;
 
 namespace Chat.Client.Components;
@@ -30,7 +31,7 @@ public partial class Editor : UserControl
         }
     }
     
-    private EditorViewModel ViewModel => (EditorViewModel) DataContext;
+    public EditorViewModel ViewModel => (EditorViewModel) DataContext;
 
     private void Send_OnTapped(object? sender, TappedEventArgs e)
     {
@@ -38,6 +39,8 @@ public partial class Editor : UserControl
         OnClick?.Invoke(e);
     }
 
+    public EditorBox editorBox => this.FindControl<EditorBox>("EditorBox");
+    
     private void Click(object? sender, TappedEventArgs e)
     {
     }
