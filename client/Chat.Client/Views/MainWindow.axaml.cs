@@ -4,6 +4,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Chat.Client.Components;
+using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using Chat.Client.Views.Users;
 
@@ -14,6 +15,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+
 
         var eventBus = MainAppHelper.GetRequiredService<IEventBus>();
 
@@ -47,7 +49,13 @@ public partial class MainWindow : Window
 
         // 默认选择MessageBut,背景色为默认色
         MessageBut.Background = new SolidColorBrush(Color.Parse(ColorConstant.DefaultMenuButColor));
-        SelectMessage();
+        SelectMessage().GetAwaiter().GetResult();
+    }
+
+    protected override async void OnInitialized()
+    {
+        var chatHubService = MainAppHelper.GetRequiredService<ChatHubService>();
+        await chatHubService.StartAsync();
     }
 
     private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
@@ -69,7 +77,7 @@ public partial class MainWindow : Window
         var message = MainAppHelper.GetRequiredService<Message>();
         ListMainPanel.Children.Add(message);
 
-       await message.SelectFirst();
+        await message.SelectFirst();
     }
 
     /// <summary>

@@ -87,6 +87,11 @@ public partial class ChatMessage : UserControl
         }
     }
 
+    private void SendMessage(TappedEventArgs e)
+    {
+        ViewModel.EditorViewModel.Editors.Clear();
+    }
+    
     public async Task Select(MessageList messageList)
     {
         ViewModel.MessageList = messageList;

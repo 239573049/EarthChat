@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Text.Json;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +11,8 @@ public class ChatHubService
 
     private HubConnection? _hubConnection;
 
+    private Action<ChatMessageDto> _receiveMessage;
+
     /// <summary>
     /// 重新连接次数
     /// </summary>
@@ -18,7 +21,7 @@ public class ChatHubService
     public async Task StartAsync()
     {
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("/chatHub", options =>
+            .WithUrl("http://localhost:5218/chatHub", options =>
             {
                 options.AccessTokenProvider = async () =>
                 {
@@ -49,13 +52,28 @@ public class ChatHubService
             await _hubConnection.StartAsync();
             _isConnected = true;
         };
-        
+
         // 接收消息.
         _hubConnection.On<string>("ReceiveMessage", (message) =>
         {
-            
+            var dto = JsonSerializer.Deserialize<ChatMessageDto>(message);
+
+            _receiveMessage?.Invoke(dto);
         });
     }
-    
-    
+
+    public async Task SendMessageAsync(string value, ChatType type)
+    {
+        if (!_isConnected)
+        {
+            await StartAsync();
+        }
+
+        await _hubConnection?.SendAsync("SendMessage", value, type);
+    }
+
+    public async Task StopAsync()
+    {
+        await _hubConnection?.StopAsync();
+    }
 }

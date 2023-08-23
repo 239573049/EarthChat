@@ -24,7 +24,7 @@
         <texts:EditorBox  Margin="8,0,8,0" Source="{Binding Editors}"/>
         <Border HorizontalAlignment="Right" Margin="10" Width="95" Height="25" CornerRadius="5" Background="#0066CC"
                 Grid.Row="1">
-            <WrapPanel>
+            <WrapPanel Tapped="Click">
                 <TextBlock Margin="15,3,0,0" Foreground="White" Tapped="Send_OnTapped">发送</TextBlock>
                 <Border Width="1" Margin="15,5,0,0" Background="Azure"></Border>
                 <PathIcon Height="5" Margin="5,5,0,0" Foreground="Azure"

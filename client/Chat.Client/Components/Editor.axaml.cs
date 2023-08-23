@@ -34,6 +34,14 @@ public partial class Editor : UserControl
 
     private void Send_OnTapped(object? sender, TappedEventArgs e)
     {
-        
+        // 调用OnClick
+        OnClick?.Invoke(e);
     }
+
+    private void Click(object? sender, TappedEventArgs e)
+    {
+    }
+    
+    public Action<TappedEventArgs> OnClick { get; set; }
+    
 }

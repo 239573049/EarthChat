@@ -85,8 +85,10 @@ public partial class App : Application
             service.AddSingleton<IAuthService, AuthService>();
             service.AddSingleton<IUserService, UserService>();
             service.AddSingleton<IFileService, FileService>();
-            
-            
+
+            service.AddSingleton<ChatHubService>();
+
+
         });
 
         var app = mainApp.BuilderApp();
