@@ -1,14 +1,19 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Chat.Client.Helpers;
 using Chat.Client.ViewModels;
+using DynamicData;
 
 namespace Chat.Client.Components;
 
 public partial class ChatMessage : UserControl
 {
     private bool _startList;
+
+    private static Dictionary<Guid, List<ChatGroupInUserDto>> _groupInUserModels = new(5);
 
     public static FilePickerFileType ImageAll { get; } = new("All Images")
     {
@@ -80,5 +85,22 @@ public partial class ChatMessage : UserControl
                 Content = base64
             });
         }
+    }
+
+    public async Task Select(MessageList messageList)
+    {
+        ViewModel.MessageList = messageList;
+        if (!_groupInUserModels.TryGetValue(messageList.Id, out var list))
+        {
+            var chatService = await MainAppHelper.GetService<IChatService>().GetGroupInUserAsync(messageList.Id);
+            if (!_groupInUserModels.ContainsKey(messageList.Id))
+            {
+                _groupInUserModels.TryAdd(messageList.Id, chatService);
+                list = chatService;
+            }
+        }
+
+        ViewModel.GroupInUserModels.Clear();
+        ViewModel.GroupInUserModels.AddRange(list);
     }
 }

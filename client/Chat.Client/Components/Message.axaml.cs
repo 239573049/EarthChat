@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Chat.Client.ViewModels;
 using Chat.Contracts;
 
@@ -16,7 +17,7 @@ public partial class Message : UserControl
             if (DataContext is not MessageListViewModel viewModel) return;
 
             var chatService = MainAppHelper.GetService<IChatService>();
-            
+
             // 优先从缓存中获取
             if (!MainAppHelper.GetItem<IReadOnlyList<ChatGroupDto>>(Constant.GetUserGroup, out var groups))
             {
@@ -42,17 +43,22 @@ public partial class Message : UserControl
 
     private MessageListViewModel ViewModel => (MessageListViewModel)DataContext;
 
-    private void UserListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+    private async void UserListBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (sender is not ListBox { SelectedItem: MessageList messageList }) return;
 
-        SelectFirst();
+        await SelectFirst(messageList);
     }
 
-    public void SelectFirst()
+    public async Task SelectFirst(MessageList? messageList = null)
     {
         var eventBus = MainAppHelper.GetRequiredService<IEventBus>();
 
-        eventBus.Publish(EventBusConstant.ContentStackPanel, MainAppHelper.GetRequiredService<ChatMessage>());
+        var chatMessage = MainAppHelper.GetRequiredService<ChatMessage>();
+        if (messageList != null)
+        {
+            await chatMessage.Select(messageList);
+        }
+        eventBus.Publish(EventBusConstant.ContentStackPanel, chatMessage);
     }
 }

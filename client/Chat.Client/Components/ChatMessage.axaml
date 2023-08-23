@@ -15,7 +15,7 @@
 
     <Grid RowDefinitions="35,1,*" Margin="0,30,0,0">
         <Grid ColumnDefinitions="Auto,*">
-            <TextBlock Margin="20,0,0,0" FontSize="18" FontWeight="Bold">Blazor技术群</TextBlock>
+            <TextBlock Margin="20,0,0,0" FontSize="18" FontWeight="Bold" Text="{Binding MessageList.Name}"></TextBlock>
             <WrapPanel VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
                 <PathIcon Margin="10,0,10,0" Height="20" Width="20"
                           Foreground="White"
@@ -46,9 +46,10 @@
                                   Data="{StaticResource chat_message_meme}" />
                         <PathIcon Grid.Column="1" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource chat_message_screenshot}" />
-                        <PathIcon Grid.Column="2"  Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                        <PathIcon Grid.Column="2" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource folder}" />
-                        <PathIcon Grid.Column="3" Tapped="InputElement_OnTapped" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                        <PathIcon Grid.Column="3" Tapped="InputElement_OnTapped" Margin="10,10,10,10" Height="20"
+                                  Width="20" Foreground="White"
                                   Data="{StaticResource image}" />
                         <PathIcon Grid.Column="4" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
                                   Data="{StaticResource microphone}" />
@@ -62,7 +63,10 @@
             </Grid>
             <Border Grid.Column="1" Width="1" Background="#1F1F1F"></Border>
             <Grid RowDefinitions="50,*" Grid.Column="2">
-                <TextBlock Margin="15,20,0,0" FontSize="14" FontWeight="Bold">群成员 1511</TextBlock>
+                <TextBlock Margin="15,20,0,0" FontSize="14" FontWeight="Bold">
+                    <Run Text="群成员"></Run>
+                    <Run Text="{Binding GroupInUserModels.Count}"></Run>
+                </TextBlock>
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Auto">
                     <StackPanel Orientation="Vertical">
@@ -74,7 +78,9 @@
                                             <Border ClipToBounds="True" Background="Transparent" CornerRadius="500">
                                                 <Image Source="../Assets/avatar.png" Height="25" Width="25" />
                                             </Border>
-                                            <TextBlock FontSize="13" Margin="5,0,0,0" VerticalAlignment="Center">Token</TextBlock>
+                                            <TextBlock FontSize="13" Margin="5,0,0,0" VerticalAlignment="Center"
+                                                       Text="{Binding User.Name}">
+                                            </TextBlock>
                                         </WrapPanel>
                                         <Border.Styles>
                                             <Style Selector="Border:pointerover">

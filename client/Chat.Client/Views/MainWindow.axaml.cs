@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Avalonia.Layout;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
@@ -51,15 +52,15 @@ public partial class MainWindow : Window
 
     private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;
 
-    private void MessageBut_OnClick(object? sender, RoutedEventArgs e)
+    private async void MessageBut_OnClick(object? sender, RoutedEventArgs e)
     {
         if (SetButSelect(sender))
         {
-            SelectMessage();
+            await SelectMessage();
         }
     }
 
-    private void SelectMessage()
+    private async Task SelectMessage()
     {
         // 设置UserBut背景色为透明
         UserBut.Background = Brushes.Transparent;
@@ -68,7 +69,7 @@ public partial class MainWindow : Window
         var message = MainAppHelper.GetRequiredService<Message>();
         ListMainPanel.Children.Add(message);
 
-        message.SelectFirst();
+       await message.SelectFirst();
     }
 
     /// <summary>

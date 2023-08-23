@@ -2,31 +2,33 @@
 
 public class ChatMessageViewModel : ViewModelBase
 {
-    private int operatingArea = 245;
+    private int _operatingArea = 245;
+
+    private EditorViewModel _editorViewModel = new();
+
+    private MessageList _messageList = new();
+
+    public MessageList MessageList
+    {
+        get => _messageList;
+        set => this.RaiseAndSetIfChanged(ref _messageList, value);
+    }
 
     public int OperatingArea
     {
-        get => operatingArea;
-        set => this.RaiseAndSetIfChanged(ref operatingArea, value);
+        get => _operatingArea;
+        set => this.RaiseAndSetIfChanged(ref _operatingArea, value);
     }
-    
-    private EditorViewModel _editorViewModel = new();
-    
+
     public EditorViewModel EditorViewModel
     {
         get => _editorViewModel;
         set => this.RaiseAndSetIfChanged(ref _editorViewModel, value);
     }
-    
-    private ObservableCollection<GroupInUserModel> _groupInUserModels = new()
-    {
-        new GroupInUserModel()
-        {
-            Name = "次数"
-        }
-    };
-    
-    public ObservableCollection<GroupInUserModel> GroupInUserModels
+
+    private ObservableCollection<ChatGroupInUserDto> _groupInUserModels = new();
+
+    public ObservableCollection<ChatGroupInUserDto> GroupInUserModels
     {
         get => _groupInUserModels;
         set => this.RaiseAndSetIfChanged(ref _groupInUserModels, value);
