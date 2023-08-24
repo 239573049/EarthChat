@@ -5,7 +5,7 @@
              xmlns:converter="clr-namespace:Chat.Client.Converter"
              RequestedThemeVariant="Default">
     <Application.Resources>
-        <converter:Base64Converter x:Key="Base64Converter" />
+        <converter:AvatarConverter x:Key="AvatarConverter" />
     </Application.Resources>
     <Application.DataTemplates>
         <local:ViewLocator/>

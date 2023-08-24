@@ -4,6 +4,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
 using Chat.Client.Components;
+using Chat.Client.Helpers;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using Chat.Client.Views.Users;
@@ -56,6 +57,16 @@ public partial class MainWindow : Window
     {
         var chatHubService = MainAppHelper.GetRequiredService<ChatHubService>();
         await chatHubService.StartAsync();
+    }
+
+    public override void Render(DrawingContext context)
+    {
+        DragControlHelper.StartDrag(ContentStackPanel);
+    }
+
+    protected override void OnUnloaded(RoutedEventArgs e)
+    {
+        DragControlHelper.StopDrag(ContentStackPanel);
     }
 
     private MainWindowViewModel ViewModel => (MainWindowViewModel)DataContext;

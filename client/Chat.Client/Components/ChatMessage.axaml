@@ -31,8 +31,26 @@
         <Border Grid.Row="1" Height="1" Background="#1F1F1F"></Border>
         <Grid Grid.Row="2" ColumnDefinitions="*,1,180">
             <Grid RowDefinitions="*,1,Auto" Name="MessageMainGrid">
-                <ItemsControl Name="MessageItems">
-                    <!-- 消息列表 -->
+                <ItemsControl Name="MessageItems" ItemsSource="{Binding ChatMessageModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel Margin="5">
+                                <Border Height="35" Width="35" ClipToBounds="True" Background="Transparent"
+                                        CornerRadius="500">
+                                    <Image Source="{Binding User.Avatar,Converter={StaticResource AvatarConverter}}"
+                                           Height="35" Width="35" />
+                                </Border>
+                                <StackPanel Margin="5,5,30,0">
+                                    <TextBlock FontSize="13" Margin="5,0,0,5" VerticalAlignment="Center"
+                                               Text="{Binding User.Name}">
+                                    </TextBlock>
+                                    <Border Padding="10" Margin="0,5,0,0" CornerRadius="8" Background="#262626">
+                                        <TextBlock Foreground="Azure" Text="{Binding Content}"></TextBlock>
+                                    </Border>
+                                </StackPanel>
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 <Border PointerMoved="Message_OnPointerMoved"
                         PointerPressed="Message_OnPointerPressed"

@@ -7,6 +7,7 @@ using Chat.Client.Helpers;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using DynamicData;
+using LiteDB;
 
 namespace Chat.Client.Components;
 
@@ -22,6 +23,7 @@ public partial class ChatMessage : UserControl
         AppleUniformTypeIdentifiers = new[] { "public.image" },
         MimeTypes = new[] { "image/*" }
     };
+
 
     public ChatMessage()
     {

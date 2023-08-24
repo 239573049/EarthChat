@@ -18,7 +18,7 @@
                     <DataTemplate>
                         <Grid ColumnDefinitions="30,*,45" Margin="10,5,0,5">
                             <Border Height="40" Width="40" ClipToBounds="True" Background="Transparent" CornerRadius="500">
-                                <Image Source="../Assets/avatar.png"></Image>
+                                <Image Source="{Binding Avatar,Converter={StaticResource AvatarConverter}}"></Image>
                             </Border>
                             <StackPanel Grid.Column="1">
                                 <!-- 显示标题加粗 -->

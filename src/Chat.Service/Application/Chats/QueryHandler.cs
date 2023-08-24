@@ -57,5 +57,19 @@ public class QueryHandler
 
         query.Result =
             _mapper.Map<List<ChatGroupInUserDto>>(result);
+
+        query.Result.Add(new ChatGroupInUserDto
+        {
+            Id = Guid.Empty,
+            ChatGroupId = query.groupId,
+            UserId = Guid.Empty,
+            User = new UserDto()
+            {
+                Id = Guid.Empty,
+                Account = string.Empty,
+                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+                Name = "聊天机器人",
+            }
+        });
     }
 }

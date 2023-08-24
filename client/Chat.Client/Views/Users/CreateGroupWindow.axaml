@@ -39,7 +39,7 @@
 
             <Border Tapped="AccountClick_OnTapped" Margin="0,20,0,0" ClipToBounds="True" Height="120" Width="120"
                     Background="Transparent" CornerRadius="500">
-                <Image Name="Avatar" Source="{Binding CreateGroupDto.Avatar,Converter={StaticResource Base64Converter}}" Height="120"
+                <Image Name="Avatar"  Height="120"
                        Width="120" />
             </Border>
             <TextBox Name="GroupName" Margin="5" Watermark="群聊名称" TextWrapping="Wrap" FontWeight="Bold" FontSize="20" Height="40"

@@ -1,4 +1,6 @@
-﻿namespace Chat.Client.ViewModels;
+﻿using Chat.Contracts.Users;
+
+namespace Chat.Client.ViewModels;
 
 public class ChatMessageViewModel : ViewModelBase
 {
@@ -32,5 +34,28 @@ public class ChatMessageViewModel : ViewModelBase
     {
         get => _groupInUserModels;
         set => this.RaiseAndSetIfChanged(ref _groupInUserModels, value);
+    }
+    
+    private ObservableCollection<ChatMessageDto> _chatMessageModels = new()
+    {
+        new ChatMessageDto
+        {
+            Content = "欢迎使用聊天室",
+            Type = ChatType.Text,
+            User = new GetUserDto()
+            {
+                Id = Guid.Empty,
+                Account = string.Empty,
+                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+                Name = "聊天机器人",
+            },
+            CreationTime = DateTime.Now
+        }
+    };
+    
+    public ObservableCollection<ChatMessageDto> ChatMessageModels
+    {
+        get => _chatMessageModels;
+        set => this.RaiseAndSetIfChanged(ref _chatMessageModels, value);
     }
 }
