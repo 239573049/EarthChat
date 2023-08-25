@@ -1,9 +1,6 @@
-﻿using System.Text.Json;
-using Chat.Contracts.Chats;
+﻿using Chat.Contracts.Chats;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Chats.Queries;
-using FreeRedis;
-using Masa.BuildingBlocks.Dispatcher.Events;
 using Masa.Contrib.Authentication.Identity;
 using Microsoft.AspNetCore.SignalR;
 
@@ -74,7 +71,7 @@ public class ChatHub : Hub
         await Clients.All.SendAsync("UpdateOnline", count);
     }
 
-    public async Task SendMessage(string value, int type)
+    public async Task SendMessage(string value,string groupId, int type)
     {
         if (value.IsNullOrWhiteSpace())
         {
@@ -102,6 +99,7 @@ public class ChatHub : Hub
             Type = (ChatType)type,
             UserId = userId.Value,
             CreationTime = DateTime.Now,
+            GroupId= groupId,
             Id = Guid.NewGuid(),
             User = new GetUserDto
             {

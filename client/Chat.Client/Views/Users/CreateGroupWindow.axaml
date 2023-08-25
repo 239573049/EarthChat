@@ -25,7 +25,7 @@
 
         <StackPanel VerticalAlignment="Top">
             <Border HorizontalAlignment="Right" VerticalAlignment="Top">
-                <Border Cursor="Hand">
+                <Border PointerPressed="OnClose" Cursor="Hand">
                     <Image Margin="5" RenderOptions.BitmapInterpolationMode="HighQuality" Width="15" Height="15"
                            Source="../../Assets/close.png">
                     </Image>

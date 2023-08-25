@@ -37,8 +37,9 @@
                             <WrapPanel Margin="5">
                                 <Border Height="35" Width="35" ClipToBounds="True" Background="Transparent"
                                         CornerRadius="500">
-                                    <Image Source="{Binding User.Avatar,Converter={StaticResource AvatarConverter}}"
-                                           Height="35" Width="35" />
+                                    <Image
+                                        Source="{Binding User.Avatar,Converter={StaticResource AvatarConverter},ConverterParameter={Binding User}}"
+                                        Height="35" Width="35" />
                                 </Border>
                                 <StackPanel Margin="5,5,30,0">
                                     <TextBlock FontSize="13" Margin="5,0,0,5" VerticalAlignment="Center"

@@ -11,7 +11,7 @@ public class ChatHubService
 
     private HubConnection? _hubConnection;
 
-    private Action<ChatMessageDto> _receiveMessage;
+    public Action<ChatMessageDto> _receiveMessage;
 
     /// <summary>
     /// 重新连接次数
@@ -29,7 +29,7 @@ public class ChatHubService
                     return await Task.FromResult(storageService.GetToken());
                 };
             })
-            .AddMessagePackProtocol()
+            // .AddMessagePackProtocol()
             .Build();
 
         await _hubConnection.StartAsync();
@@ -56,24 +56,28 @@ public class ChatHubService
         // 接收消息.
         _hubConnection.On<string>("ReceiveMessage", (message) =>
         {
-            var dto = JsonSerializer.Deserialize<ChatMessageDto>(message);
+            var dto = JsonSerializer.Deserialize<ChatMessageDto>(message, new JsonSerializerOptions()
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
             _receiveMessage?.Invoke(dto);
         });
+        
     }
 
-    public async Task SendMessageAsync(string value, ChatType type)
+    public async Task SendMessageAsync(string value,string groupId, ChatType type)
     {
         if (!_isConnected)
         {
             await StartAsync();
         }
 
-        await _hubConnection?.SendAsync("SendMessage", value, type);
+        await _hubConnection?.SendAsync("SendMessage", value, groupId,type)!;
     }
 
     public async Task StopAsync()
     {
-        await _hubConnection?.StopAsync();
+        await _hubConnection?.StopAsync()!;
     }
 }

@@ -23,6 +23,10 @@ public class ChatMessageDto
 
     public GetUserDto User { get; set; }
 
+    /// <summary>
+    /// 发送指定链接id
+    /// </summary>
+    public string GroupId { get; set; }
 
     public DateTime CreationTime { get; set; }
 }

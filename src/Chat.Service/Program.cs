@@ -6,16 +6,17 @@ var builder = WebApplication.CreateBuilder(args);
 // 解决pgsql的时间戳问题
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
-    .CreateLogger();
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
+//    .CreateLogger();
 
-builder.Host.UseSerilog(); // 将Serilog配置到Host中
+//builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 builder.Services.AddSignalR()
-    .AddMessagePackProtocol()
-    .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
-        options => { options.Configuration.ChannelPrefix = "Chat:"; });
+    //.AddMessagePackProtocol()
+    //.AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
+    //    options => { options.Configuration.ChannelPrefix = "Chat:"; })
+    ;
 
 #region Options
 
@@ -126,7 +127,7 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
 
 #endregion
 
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization().UseCors("CorsPolicy");

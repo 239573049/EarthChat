@@ -3,11 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using Chat.Client.Helpers;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using DynamicData;
-using LiteDB;
 
 namespace Chat.Client.Components;
 
@@ -30,6 +28,26 @@ public partial class ChatMessage : UserControl
         InitializeComponent();
     }
 
+    protected override void OnInitialized()
+    {
+        var chatHubService = MainAppHelper.GetService<ChatHubService>();
+        chatHubService._receiveMessage += ReceiveMessage;
+    }
+
+    protected override void OnUnloaded(RoutedEventArgs e)
+    {
+        var chatHubService = MainAppHelper.GetService<ChatHubService>();
+        chatHubService._receiveMessage -= ReceiveMessage;
+    }
+
+    private void ReceiveMessage(ChatMessageDto dto)
+    {
+        if (ViewModel.MessageList.Id.ToString("N") == dto.GroupId)
+        {
+            ViewModel.ChatMessageModels.Add(dto);
+        }
+    }
+
     private ChatMessageViewModel ViewModel => (ChatMessageViewModel)DataContext;
 
     private void Message_OnPointerReleased(object? sender, PointerReleasedEventArgs e)
@@ -50,16 +68,6 @@ public partial class ChatMessage : UserControl
     private void Message_OnPointerPressed(object? sender, PointerPressedEventArgs e)
     {
         _startList = true;
-    }
-
-    private void OnPointerExited(object? sender, PointerEventArgs e)
-    {
-        PathIconHelper.Path_OnPointerExited(sender, e);
-    }
-
-    private void OnPointerEntered(object? sender, PointerEventArgs e)
-    {
-        PathIconHelper.Path_OnPointerEntered(sender, e);
     }
 
     private async void InputElement_OnTapped(object? sender, TappedEventArgs e)
@@ -97,7 +105,7 @@ public partial class ChatMessage : UserControl
         {
             var chatHubService = MainAppHelper.GetService<ChatHubService>();
 
-            await chatHubService.SendMessageAsync(text, ChatType.Text);
+            await chatHubService.SendMessageAsync(text, ViewModel.MessageList.Id.ToString("N"), ChatType.Text);
 
             ViewModel.EditorViewModel.Text = string.Empty;
         }

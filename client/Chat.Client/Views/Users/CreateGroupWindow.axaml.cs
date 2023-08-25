@@ -40,7 +40,7 @@ public partial class CreateGroupWindow : Window
 
     private async void Group_OnClick(object? sender, RoutedEventArgs e)
     {
-        var file = File.OpenRead(fileName);
+        await using var file = File.OpenRead(fileName);
         var buffer = new byte[file.Length];
         _ = file.Read(buffer, 0, (int)file.Length);
         var base64 = Convert.ToBase64String(buffer);
@@ -62,5 +62,10 @@ public partial class CreateGroupWindow : Window
             Description = GroupDescription.Text
         });
         
+    }
+
+    private void OnClose(object? sender, PointerPressedEventArgs e)
+    {
+        Close();
     }
 }
