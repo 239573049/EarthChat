@@ -20,6 +20,16 @@ class ChatService {
             }
         })
     }
+
+    getList(groupId:string,page:number,pageSize:number){
+        return Request.get(`${baseURL}/List`,{
+            params:{
+                groupId,
+                page,
+                pageSize
+            }
+        })
+    }
 }
 
 export default new ChatService()

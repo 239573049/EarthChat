@@ -1,4 +1,6 @@
 using MessagePack;
+using MessagePack.Formatters;
+using MessagePack.Resolvers;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -15,8 +17,8 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
-    //.AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
-    //    options => { options.Configuration.ChannelPrefix = "Chat:"; })
+    // .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
+    //     options => { options.Configuration.ChannelPrefix = "Chat:"; })
     ;
 
 #region Options
@@ -43,13 +45,13 @@ builder.Services.AddSingleton<IRateLimitConfiguration,
 
 builder.Services.AddInMemoryRateLimiting();
 
-builder.Services.AddHttpClient(Constant.ChatGPT, (services,c) =>
+builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
 {
     var options = services.GetRequiredService<IOptions<ChatGptOptions>>().Value;
-    c.BaseAddress =new Uri(options.Url);
+    c.BaseAddress = new Uri(options.Url);
     c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
-    c.DefaultRequestHeaders.Add("Authorization","Bearer "+ options.Token);
+    c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
 });
 
 

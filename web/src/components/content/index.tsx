@@ -10,6 +10,7 @@ import { IconMoon, IconSun, IconFile } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
+import ChatService from '../../services/chatService';
 import AutoSizer from "react-virtualized-auto-sizer";
 
 
@@ -21,6 +22,8 @@ interface IState {
     height: number;
     data: any[],
     unread: number,
+    page: number,
+    pageSize: number,
 }
 
 const body = document.body;
@@ -42,7 +45,9 @@ export default class Content extends Component<IProps, IState> {
     state: Readonly<IState> = {
         height: 270,
         data: [],
-        unread: 0
+        unread: 0,
+        page: 1,
+        pageSize: 20
     }
 
 
@@ -54,12 +59,31 @@ export default class Content extends Component<IProps, IState> {
         this.download = this.download.bind(this);
         this.onScroll = this.onScroll.bind(this);
         this.rowRenderer = this.rowRenderer.bind(this);
+        this.loadingMessage = this.loadingMessage.bind(this);
         this.resizableRef = React.createRef();
+
     }
 
     componentDidMount() {
         console.log('componentDidMount');
         PubSub.subscribe('changeGroup', this.onMessage)
+
+        this.loadingMessage();
+    }
+
+    // 监听props变化
+    componentWillReceiveProps(nextProps: any) {
+        const { group } = nextProps;
+        if (group.id !== this.props.group.id) {
+            this.setState({
+                data: [],
+                page: 1,
+                pageSize: 20,
+            }, () => {
+                this.loadingMessage();
+            });
+        }
+
     }
 
     componentWillUnmount() {
@@ -69,9 +93,11 @@ export default class Content extends Component<IProps, IState> {
 
     onMessage = (msg: any, data: any) => {
         const { group } = this.props;
-        if (group.id === data.GroupId) {
+        if (group.id === data.groupId) {
             this.setState({
                 data: [...this.state.data, data]
+            }, () => {
+                // this.listRef.current?.scrollToRow(this.state.data.length - 1);
             })
         }
     }
@@ -118,6 +144,7 @@ export default class Content extends Component<IProps, IState> {
     async sendMessage() {
         const { group } = this.props
         const value = this.mentionRef.current?.getValue();
+
         if (value && value.content.length > 0) {
             await ChatHubService.send('SendMessage', value.content, group.id, 0);
 
@@ -130,29 +157,47 @@ export default class Content extends Component<IProps, IState> {
                         }
                     })
             }
-
+        } else if (value && value.base64.length > 0) {
+            this.mentionRef.current?.setValue('')
+            for (let i = 0; i < value.base64.length; i++) {
+                fileService.uploadBase64(value.base64[i], 'image.png')
+                    .then((res: any) => {
+                        if (res.code === '200') {
+                            ChatHubService.send('SendMessage', res.data, group.id, 1);
+                        }
+                    })
+            }
         }
     }
 
     rendetContent = (item: any) => {
-        const className = user?.id === item.User.Id ? ' message-item-content-user' : '';
-        if (item.Type === "Text") {
+        const className = user?.id === item.user.id ? ' message-item-content-user' : '';
+
+        if (item.type === "Text" || item.type === 0) {
             return (
                 <div className={'message-item-content' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap' }}>
-                    {item.Content}
+                    {item.content}
                 </div>
             )
-        } else if (item.Type === "Image") {
+        } else if (item.type === "Image" || item.type === 1) {
             return (
-                <div className={'message-item-content ' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}>
-                    <Image
-                        width={200}
+                <Image
+                        preview={false}
+                        className={className}
+                        width={300}
+                        style={{
+                            maxWidth: '300px',
+                            width: 'auto',
+                            // 图片显示自适应
+                            height: 'auto',
+                            marginBottom: '20px',
+                            marginLeft: '10px'
+                        }}
                         src={item.content}
                     />
-                </div>
             )
-        } else if (item.Type === "File") {
-            var name = item.Content.split('/')[item.Content.split('/').length - 1];
+        } else if (item.type === "File" || item.type === 2) {
+            var name = item.content.split('/')[item.content.split('/').length - 1];
             return (
                 <Card
                     className='message-item-content '
@@ -162,7 +207,7 @@ export default class Content extends Component<IProps, IState> {
                     <Avatar>
                         <IconFile />
                     </Avatar>
-                    <Button onClick={() => this.download(item.Content)} style={{
+                    <Button onClick={() => this.download(item.content)} style={{
                         float: 'right'
                     }}>下载</Button>
                 </Card>
@@ -181,26 +226,24 @@ export default class Content extends Component<IProps, IState> {
     }: any) {
         const { data } = this.state;
         const item = data[index];
-        item.CreationTime = moment(item.CreationTime).format('YYYY-MM-DD HH:mm:ss');
-        console.log(item);
-
+        item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
         return (
             <CellMeasurer
                 cache={cache}
-                columnIndex={0}
+                columnIndex={10}
                 key={key}
                 parent={parent}
                 rowIndex={index}
             >
                 {({ measure }: any) => (
                     <div key={item.Id} onLoad={measure} style={{ margin: '15px', ...style }}>
-                        <Avatar size='medium' style={{ float: 'left' }} src={item.User.Avatar} />
+                        <Avatar size='medium' style={{ float: 'left' }} src={item.user.avatar} />
                         <div style={{ marginLeft: '10px', width: 'calc(100% - 50px)' }}>
-                            {item.User.Name} <span style={{
+                            {item.user.name} <span style={{
                                 backgroundColor: 'rgb(34 145 58)',
                                 padding: '2px 5px',
                                 borderRadius: '5px',
-                            }}>{item.CreationTime}</span>
+                            }}>{item.creationTime}</span>
                         </div>
                         {this.rendetContent(item)}
                     </div>
@@ -209,8 +252,34 @@ export default class Content extends Component<IProps, IState> {
         );
     }
 
-    onScroll(onScrollProps: any) {
+    loadingMessage() {
+        const { group } = this.props;
+        const { page, pageSize } = this.state;
+        ChatService.getList(group.id, page, pageSize)
+            .then((res: any) => {
+                this.setState({
+                    data: res.data.result,
+                }, () => {
+                    // this.listRef.current?.scrollToRow(this.state.data.length - 1);
+                })
+            })
 
+    }
+
+    onScroll(onScrollProps: any) {
+        if(onScrollProps.scrollTop === 0){
+            const { group } = this.props;
+            const { page, pageSize } = this.state;
+            ChatService.getList(group.id, page + 1, pageSize)
+                .then((res: any) => {
+                    this.setState({
+                        data: [...res.data.result, ...this.state.data],
+                        page: page + 1,
+                    }, () => {
+                        this.listRef.current?.scrollToRow(res.data.result.length);
+                    })
+                })
+        }
     }
 
     ListComponent = () => {

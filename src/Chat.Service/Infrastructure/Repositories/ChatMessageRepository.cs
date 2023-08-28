@@ -17,6 +17,7 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
             from messages in Context.ChatMessages
             join contextUser in Context.Users on messages.UserId equals contextUser.Id into users
             from user in users.DefaultIfEmpty()
+            orderby messages.CreationTime descending
             select new ChatMessage(messages.Id, messages.CreationTime)
             {
                 Content = messages.Content,

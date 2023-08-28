@@ -48,12 +48,16 @@ class Mention extends Component<MentionProps, MentionState> {
   };
 
   setValue = (value: string) => {
-    if (value && value.length > this.state.maxlength) {
-      value = value.substring(0, this.state.maxlength);
-    }
-    const editorContainer = document.getElementById('editor-container');
-    if (editorContainer) {
-      editorContainer.innerHTML = value;
+    try {
+      if (value && value.length > this.state.maxlength) {
+        value = value.substring(0, this.state.maxlength);
+      }
+      const editorContainer = document.getElementById('editor-container');
+      if (editorContainer) {
+        editorContainer.innerHTML = value;
+      }
+    } catch {
+
     }
   };
 
