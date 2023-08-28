@@ -1,0 +1,8 @@
+{
+    "dotnetAcquisitionExtension.existingDotnetPath": [
+        {
+            "extensionId": "msazurermtools.azurerm-vscode-tools",
+            "path": "C:\\Program Files\\dotnet\\dotnet.exe"
+        }
+    ]
+}

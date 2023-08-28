@@ -118,10 +118,7 @@ public class ChatHub : Hub
         });
 
         // 转发到客户端
-        _ = Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(message, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        }));
+        _ = Clients.All.SendAsync("ReceiveMessage", groupId,message);
 
         if (await _redisClient.ExistsAsync(key))
         {

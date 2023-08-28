@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
 using DynamicData;
@@ -42,10 +43,14 @@ public partial class ChatMessage : UserControl
 
     private void ReceiveMessage(ChatMessageDto dto)
     {
-        if (ViewModel.MessageList.Id.ToString("N") == dto.GroupId)
+        // 使用ui更新
+        Dispatcher.UIThread.InvokeAsync(() =>
         {
-            ViewModel.ChatMessageModels.Add(dto);
-        }
+            if (ViewModel.MessageList.Id.ToString("N") == dto.GroupId)
+            {
+                ViewModel.ChatMessageModels.Add(dto);
+            }
+        });
     }
 
     private ChatMessageViewModel ViewModel => (ChatMessageViewModel)DataContext;

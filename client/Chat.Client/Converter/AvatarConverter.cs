@@ -47,21 +47,17 @@ public class AvatarConverter : IValueConverter
                         return new Bitmap(new MemoryStream(model.Bytes));
                     }
 
-                    Task.Run(() =>
+                    var httpClientFactory = MainAppHelper.GetRequiredService<IHttpClientFactory>();
+                    var httpClient = httpClientFactory.CreateClient(nameof(AvatarConverter));
+                    var bytes1 = httpClient.GetByteArrayAsync(str).GetAwaiter().GetResult();
+                    avatar.Insert(new AvatarModel()
                     {
-                        var httpClientFactory = MainAppHelper.GetRequiredService<IHttpClientFactory>();
-                        var httpClient = httpClientFactory.CreateClient(nameof(AvatarConverter));
-                        var bytes1 = httpClient.GetByteArrayAsync(str).GetAwaiter().GetResult();
-                        avatar.Insert(new AvatarModel()
-                        {
-                            Id = key,
-                            Bytes = bytes1,
-                            CreatedTime = DateTime.Now
-                        });
-                        
-                        return new Bitmap(new MemoryStream(bytes1));
+                        Id = key,
+                        Bytes = bytes1,
+                        CreatedTime = DateTime.Now
                     });
-                    return null;
+                        
+                    return new Bitmap(new MemoryStream(bytes1));
                 }
 
                 return new Bitmap(new MemoryStream(System.Convert.FromBase64String(str)));

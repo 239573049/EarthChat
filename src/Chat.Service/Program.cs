@@ -1,3 +1,4 @@
+using MessagePack;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -13,7 +14,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 //builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 builder.Services.AddSignalR()
-    //.AddMessagePackProtocol()
+    .AddMessagePackProtocol()
     //.AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
     //    options => { options.Configuration.ChannelPrefix = "Chat:"; })
     ;

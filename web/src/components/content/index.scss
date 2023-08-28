@@ -1,0 +1,105 @@
+// 根据body的属性值来判断主题
+body[theme-mode='dark'] {
+    --select-background-color: #1A1A1A;
+    --sekect-chat-item-background-color: #2D2D2D;
+}
+
+body:not([theme-mode='dark']) {
+    --select-background-color: #EAEAEA;
+    --sekect-chat-item-background-color: #F5F5F5;
+}
+
+
+.content-header {
+    height: 65px;
+}
+
+.main-content {
+    height: calc(100vh - 65px);
+
+    .content-function {
+        height: 20px;
+        margin-left: 20px;
+        margin-top: 10px;
+        width: 100%;
+        align-items: center;
+
+        .icon-function {
+            fill: var(--semi-color-text-0) !important;
+            cursor: pointer;
+        }
+
+        .icon-function:hover {
+            fill: #0065C9 !important;
+        }
+    }
+
+
+}
+
+.content-divider {
+    height: 1px;
+    background-color: var(--verticle-division-color);
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.content-box {
+    flex-grow: 1;
+}
+
+.resizable-box {}
+
+.draggable-line {
+    height: 2px;
+    background-color: var(--verticle-division-color);
+    cursor: ns-resize;
+}
+
+
+
+::view-transition-old(root) {
+    animation: none;
+}
+
+::view-transition-new(root) {
+    mix-blend-mode: normal;
+    animation: clip .5s ease-in;
+}
+
+@keyframes clip {
+    from {
+        clip-path: circle(0% at var(--x) var(--y));
+    }
+
+    to {
+        clip-path: circle(100% at var(--x) var(--y));
+    }
+}
+
+.dark {
+    background-color: #111;
+    color-scheme: dark;
+}
+
+.message{
+    float: left;
+    width: 75%;
+    height: 100%;
+}
+
+.message-item-content{
+    border: #ccc solid 1px;
+    margin-top: 5px;
+    padding: 8px;
+    border-radius: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+.message-item-content-user{
+    background-color: #95EC69;
+}
