@@ -66,6 +66,14 @@ class Request {
         })
     }
 
+    public postConfig(url: string, config?: AxiosRequestConfig) {
+        return this.request({
+            method: "POST",
+            url,
+            ...config,
+        })
+    }
+
     public put(url: string, data?: any, config?: AxiosRequestConfig) {
 
         return this.request({

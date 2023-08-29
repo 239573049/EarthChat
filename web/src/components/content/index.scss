@@ -2,11 +2,15 @@
 body[theme-mode='dark'] {
     --select-background-color: #1A1A1A;
     --sekect-chat-item-background-color: #2D2D2D;
+    --select-group-item-background-color: #242424;
+    --message-item-content-background-color:#262626;
 }
 
 body:not([theme-mode='dark']) {
     --select-background-color: #EAEAEA;
     --sekect-chat-item-background-color: #F5F5F5;
+    --select-group-item-background-color: #E9E9E9;
+    --message-item-content-background-color:#FFFFFF;
 }
 
 
@@ -93,13 +97,28 @@ body:not([theme-mode='dark']) {
 }
 
 .message-item-content{
-    border: #ccc solid 1px;
     margin-top: 5px;
     padding: 8px;
     border-radius: 8px;
     max-width: 80%;
     word-wrap: break-word;
+    background-color: var(--message-item-content-background-color);
 }
 .message-item-content-user{
-    background-color: #95EC69;
+}
+
+.grou-user-item{
+    height: 25px;
+    max-height: 25px;
+    cursor: pointer;
+    width: 100%;
+}
+.grou-user-item-content{
+    margin: 5px;
+    height: 25px;
+    max-height: 25px;
+    border-radius: 8px;
+}
+.grou-user-item-content:hover{
+    background-color: var(--select-group-item-background-color);
 }

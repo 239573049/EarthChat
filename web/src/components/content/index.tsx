@@ -1,18 +1,17 @@
 import React, { Component, RefObject } from 'react';
-import { ChatGroupDto } from '../../dto';
+import { ChatGroupDto, GetUserDto } from '../../dto';
 
 import moment from 'moment/moment';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Avatar, Button, Card, Icon, Image } from '@douyinfe/semi-ui';
+import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Empty, Tooltip } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
-import { IconMoon, IconSun, IconFile } from '@douyinfe/semi-icons';
+import { IconMoon, IconSun, IconFile, IconSearch } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
 import ChatService from '../../services/chatService';
 import AutoSizer from "react-virtualized-auto-sizer";
-
 
 interface IProps {
     group: ChatGroupDto;
@@ -23,6 +22,7 @@ interface IState {
     data: any[],
     unread: number,
     page: number,
+    groupinUsers: any[],
     pageSize: number,
 }
 
@@ -42,11 +42,14 @@ export default class Content extends Component<IProps, IState> {
     private listRef = React.createRef<List>();
     private mentionRef = React.createRef<Mention>();
 
+    private groupinUsers: any[] = [];
+
     state: Readonly<IState> = {
         height: 270,
         data: [],
         unread: 0,
         page: 1,
+        groupinUsers: [],
         pageSize: 20
     }
 
@@ -75,6 +78,8 @@ export default class Content extends Component<IProps, IState> {
     componentWillReceiveProps(nextProps: any) {
         const { group } = nextProps;
         if (group.id !== this.props.group.id) {
+            console.log(group.id, this.props.group.id);
+
             this.setState({
                 data: [],
                 page: 1,
@@ -86,18 +91,27 @@ export default class Content extends Component<IProps, IState> {
 
     }
 
+    loadingGroupUser() {
+        const { group } = this.props;
+        ChatService.getGroupInUser(group.id)
+            .then((res: any) => {
+                this.groupinUsers = res;
+                this.setState({
+                    groupinUsers: res
+                })
+            })
+    }
+
     componentWillUnmount() {
         console.log('componentWillUnmount');
         PubSub.unsubscribe('changeGroup');
     }
 
-    onMessage = (msg: any, data: any) => {
+    onMessage = (_: any, data: any) => {
         const { group } = this.props;
         if (group.id === data.groupId) {
             this.setState({
                 data: [...this.state.data, data]
-            }, () => {
-                // this.listRef.current?.scrollToRow(this.state.data.length - 1);
             })
         }
     }
@@ -181,12 +195,11 @@ export default class Content extends Component<IProps, IState> {
             )
         } else if (item.type === "Image" || item.type === 1) {
             return (
-                <Image
+                <span>
+                    <Image
                         preview={false}
                         className={className}
-                        width={300}
                         style={{
-                            maxWidth: '300px',
                             width: 'auto',
                             // 图片显示自适应
                             height: 'auto',
@@ -195,6 +208,7 @@ export default class Content extends Component<IProps, IState> {
                         }}
                         src={item.content}
                     />
+                </span>
             )
         } else if (item.type === "File" || item.type === 2) {
             var name = item.content.split('/')[item.content.split('/').length - 1];
@@ -215,6 +229,15 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    renderInfo(user: GetUserDto): React.ReactNode {
+        return (
+            <Empty
+                title={'先进的设计 / 研发协作方式'}
+                description="使用 Semi D2C 快速还原 Figma 设计稿，一键转代码"
+                style={{ width: 400, margin: '0 auto', display: 'flex', padding: 20 }}
+            />
+        )
+    }
 
     rowRenderer({
         key, // Unique key within array of rows
@@ -257,17 +280,16 @@ export default class Content extends Component<IProps, IState> {
         const { page, pageSize } = this.state;
         ChatService.getList(group.id, page, pageSize)
             .then((res: any) => {
+                this.loadingGroupUser();
                 this.setState({
                     data: res.data.result,
-                }, () => {
-                    // this.listRef.current?.scrollToRow(this.state.data.length - 1);
                 })
             })
 
     }
 
     onScroll(onScrollProps: any) {
-        if(onScrollProps.scrollTop === 0){
+        if (onScrollProps.scrollTop === 0) {
             const { group } = this.props;
             const { page, pageSize } = this.state;
             ChatService.getList(group.id, page + 1, pageSize)
@@ -314,8 +336,56 @@ export default class Content extends Component<IProps, IState> {
         a.click();
     }
 
+    onSearch(value?: string) {
+        const { groupinUsers } = this.state;
+
+        if (value) {
+            this.setState({
+                groupinUsers: groupinUsers.filter(item => item.name.includes(value))
+            })
+        } else {
+            this.setState({
+                groupinUsers: this.groupinUsers
+            })
+        }
+    }
+
+    selectPicture() {
+        // 打开文件选择器，选择图片
+        console.log('selectPicture');
+
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/png, image/jpeg, image/gif';
+        input.multiple = false;
+        input.click();
+        input.onchange = (e: any) => {
+            var files = e.target.files;
+            // 判断文件是否图片
+            if (files[0].type.indexOf('image') === -1) {
+                Notification.warning({
+                    title: '提示',
+                    content: '请选择图片',
+                    duration: 1000,
+                });
+                return;
+            }
+            // 将文件放到form
+            var formData = new FormData();
+            formData.append('file', files[0]);
+            // 上传图片
+            fileService.upload(formData)
+                .then((res: any) => {
+                    if (res.code === '200') {
+                        ChatHubService.send('SendMessage', res.data, this.props.group.id, 1);
+                    }
+                })
+
+        }
+    }
+
     render() {
-        const { data } = this.state;
+        const { groupinUsers } = this.state;
 
         return (
             <>
@@ -373,7 +443,7 @@ export default class Content extends Component<IProps, IState> {
                             }} svg={
                                 <svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M912 208H427.872l-50.368-94.176A63.936 63.936 0 0 0 321.056 80H112c-35.296 0-64 28.704-64 64v736c0 35.296 28.704 64 64 64h800c35.296 0 64-28.704 64-64v-608c0-35.296-28.704-64-64-64z m-800-64h209.056l68.448 128H912v97.984c-0.416 0-0.8-0.128-1.216-0.128H113.248c-0.416 0-0.8 0.128-1.248 0.128V144z m0 736v-96l1.248-350.144 798.752 1.216V784h0.064v96H112z" p-id="4942"></path></svg>
                             } />
-                            <Icon style={{
+                            <Icon onClick={() => this.selectPicture()} style={{
                                 float: 'left',
                                 marginLeft: '15px',
                             }} svg={
@@ -391,19 +461,18 @@ export default class Content extends Component<IProps, IState> {
                         <Mention ref={this.mentionRef} style={{
                             height: 'calc(100% - 160px)',
                         }} onSubmit={async () => await this.sendMessage()} />
-                        <div style={{
-                            float: 'right',
-                        }}>
-                            <Button onClick={async () => await this.sendMessage()} style={{
-                                backgroundColor: '#1472D0',
-                                color: 'var(--semi-color-text-0)',
-                                borderRadius: '4px',
-                                marginRight: '20px',
-                            }}>发送</Button>
-                        </div>
+                            <div style={{
+                                float: 'right',
+                            }}>
+                                <Button onClick={async () => await this.sendMessage()} style={{
+                                    backgroundColor: '#1472D0',
+                                    color: 'var(--semi-color-text-0)',
+                                    borderRadius: '4px',
+                                    marginRight: '20px',
+                                }}>发送</Button>
+                            </div>
                     </div>
                 </div>
-                {/* 显示竖着分割线 */}
                 <div style={{
                     float: 'left',
                     width: '1px',
@@ -413,8 +482,43 @@ export default class Content extends Component<IProps, IState> {
                 <div style={{
                     float: 'left',
                     width: '179px',
+                    height: '100%'
                 }}>
-                    公告
+                    <SList
+                        dataSource={groupinUsers}
+                        split={false}
+                        header={<Input onCompositionEnd={(v: any) => this.onSearch(v.target.value)} onChange={(v) => !v ? this.onSearch() : null} placeholder='搜索' prefix={<IconSearch />} />}
+                        size='small'
+                        style={{
+                            flexBasis: '100%',
+                            flexShrink: 0,
+                            height: 'calc(100% - 50px)',
+                            borderBottom: '1px solid var(--semi-color-border)'
+                        }}
+                        renderItem={item =>
+                            <div className='grou-user-item'>
+                                <div className='grou-user-item-content'>
+                                    <Avatar size='extra-small' src={item.avatar} />
+                                    <span style={{
+                                        marginLeft: '10px',
+                                        userSelect: 'none',
+                                        fontSize: '14px',
+                                    }}>
+                                        {item.name}
+                                    </span>
+                                    {item.id === "00000000-0000-0000-0000-000000000000" ?
+                                        <Tag style={{
+                                            boxSizing: 'content-box',
+                                            float: 'right',
+                                        }} color="blue">机器人</Tag> :
+                                        <Tag style={{
+                                            boxSizing: 'content-box',
+                                            float: 'right',
+                                        }} color="grey">成员</Tag>}
+                                </div>
+                            </div>
+                        }
+                    />
                 </div>
             </>
         );

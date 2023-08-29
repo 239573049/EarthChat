@@ -10,11 +10,11 @@ class ChatService {
     }
     
     createGroup(value:CreateGroupDto){
-        return Request.post(`${baseURL}/CreateGroup`,value)
+        return Request.post(`${baseURL}/Group`,value)
     }
 
     getGroupInUser(groupId:string){
-        return Request.get(`${baseURL}/GetGroupInUser`,{
+        return Request.get(`${baseURL}/GroupInUser`,{
             params:{
                 groupId
             }

@@ -5,7 +5,7 @@ const baseURL = "v1/Auths"
 class AuthService {
 
     public Login(value: { account: string, password: string, agree: boolean }) {
-        return Request.post(`${baseURL}`,{},{
+        return Request.postConfig(`${baseURL}`,{
             params: value
         })
     }
