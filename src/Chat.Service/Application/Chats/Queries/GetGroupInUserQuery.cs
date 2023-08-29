@@ -6,7 +6,7 @@ namespace Chat.Service.Application.Chats.Queries;
 /// 获取指定群组的所有成员
 /// </summary>
 /// <param name="groupId"></param>
-public record GetGroupInUserQuery(Guid groupId) : Query<List<ChatGroupInUserDto>>
+public record GetGroupInUserQuery(Guid groupId) : Query<List<UserDto>>
 {
-    public override List<ChatGroupInUserDto> Result { get; set; }
+    public override List<UserDto> Result { get; set; }
 }

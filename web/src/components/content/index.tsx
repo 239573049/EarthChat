@@ -294,6 +294,9 @@ export default class Content extends Component<IProps, IState> {
             const { page, pageSize } = this.state;
             ChatService.getList(group.id, page + 1, pageSize)
                 .then((res: any) => {
+                    if(res.data.result.length === 0){
+                        return;
+                    }
                     this.setState({
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,

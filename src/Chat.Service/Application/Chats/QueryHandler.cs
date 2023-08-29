@@ -23,7 +23,7 @@ public class QueryHandler
     [EventHandler]
     public async Task GetListAsync(GeChatMessageListQuery query)
     {
-        var list = await _chatMessageRepository.GetListAsync(query.page, query.pageSize);
+        var list = await _chatMessageRepository.GetListAsync(query.groupId,query.page, query.pageSize);
 
         foreach (var message in list.Where(message => message.UserId == Guid.Empty))
         {
@@ -37,8 +37,7 @@ public class QueryHandler
 
         query.Result = new PaginatedListBase<ChatMessageDto>
         {
-            Result = _mapper.Map<List<ChatMessageDto>>(list.OrderBy(x => x.CreationTime)),
-            Total = await _chatMessageRepository.GetCountAsync()
+            Result = _mapper.Map<List<ChatMessageDto>>(list.OrderBy(x => x.CreationTime))
         };
     }
 
@@ -56,20 +55,14 @@ public class QueryHandler
         var result = await _chatGroupInUserRepository.GetGroupInUserAsync(query.groupId);
 
         query.Result =
-            _mapper.Map<List<ChatGroupInUserDto>>(result);
+            _mapper.Map<List<UserDto>>(result);
 
-        query.Result.Add(new ChatGroupInUserDto
+        query.Result.Add(new UserDto()
         {
             Id = Guid.Empty,
-            ChatGroupId = query.groupId,
-            UserId = Guid.Empty,
-            User = new UserDto()
-            {
-                Id = Guid.Empty,
-                Account = string.Empty,
-                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
-                Name = "聊天机器人",
-            }
+            Account = string.Empty,
+            Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+            Name = "聊天机器人",
         });
     }
 }

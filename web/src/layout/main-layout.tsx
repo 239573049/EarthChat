@@ -8,6 +8,7 @@ import ChatService from '../services/chatService';
 import { IconSearch, IconPlus } from '@douyinfe/semi-icons';
 import Content from '../components/content';
 import ChatHubService from '../services/chatHubService';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const body = document.body;
 
@@ -49,21 +50,34 @@ const Function = (color: string = '#A4A4A4') => {
 
 
 
-interface AppState {
+interface state {
     middleWidth: number;
     selectid: number;
     user: GetUserDto,
     groups: ChatGroupDto[],
-    selectGroup: ChatGroupDto
+    selectGroup: ChatGroupDto,
+    menu: any[]
 }
 
-class App extends Component<{}, AppState> {
-    state: AppState = {
+
+class App extends Component<any, state> {
+    state: state = {
         middleWidth: 230,
         selectid: 0,
         user: {} as GetUserDto,
         groups: [],
-        selectGroup: {} as ChatGroupDto
+        selectGroup: {} as ChatGroupDto,
+        menu: [{
+            id: 0,
+            name: '消息',
+            icon: Message(),
+            path: '/'
+        }, {
+            id: 1,
+            name: '用户',
+            icon: User(),
+            path: '/user'
+        }]
     };
 
     constructor(props: any) {
@@ -73,11 +87,9 @@ class App extends Component<{}, AppState> {
 
         if (!localStorage.getItem('token')) {
             ChatHubService.stop();
-            window.location.href = '/login'
+            this.props.navigation('/login')
         }
 
-
-        this.handleMouseDown = this.handleMouseDown.bind(this);
     }
 
     componentDidMount() {
@@ -91,85 +103,26 @@ class App extends Component<{}, AppState> {
                 }
             })
 
-        this.loadingGroups()
     }
 
-    handleMouseDown = (e: React.MouseEvent) => {
-        const startX = e.clientX;
-        const startWidth = this.state.middleWidth;
-
-        const onMouseMove = (e: any) => {
-            const newWidth = Math.max(200, Math.min(350, startWidth + (e.clientX - startX)));
-            this.setState({ middleWidth: newWidth });
-        };
-
-        const onMouseUp = () => {
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUp);
-        };
-
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUp);
-    };
-
-    selectMenu(id: number) {
+    selectMenu(item: any) {
         const { selectid } = this.state;
-        if (selectid === id) {
+        if (selectid === item.id) {
             return
         }
+        
         this.setState({
-            selectid: id
+            selectid: item.id
         })
+        this.props.navigation(item.path)
     }
 
     onSearch(v: any) {
         console.log(v)
     }
 
-    loadingGroups() {
-        ChatService.getUserGroup()
-            .then((res: ChatGroupDto[]) => {
-                res.forEach(x => {
-                    x.lastMessage = '最新回复';
-                })
-                this.setState({
-                    groups: res,
-                    selectGroup: res[0]
-                })
-            })
-
-    }
-
-    selectChat(dto: ChatGroupDto) {
-        this.setState({
-            selectGroup: dto
-        })
-    }
-
     render() {
-        const { middleWidth, selectid, user, selectGroup, groups } = this.state;
-        const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
-
-        const renderContent = () => {
-            if (selectGroup.avatar) {
-                return <Content group={selectGroup}/>
-            } else {
-                return <div>
-                    {/* 居中显示图片 */}
-                    <div style={{
-                        margin: '0 auto',
-                        width: '100%',
-                        textAlign: 'center',
-                        marginTop: '300px',
-                    }}>
-                        <img style={{
-                            width: '200px',
-                            height: '200px',
-                        }} src="/favicon.png" alt="" />
-                    </div>
-                </div>
-            }
-        }
+        const { selectid, user, menu } = this.state;
 
         return (
             <div className="container">
@@ -191,12 +144,12 @@ class App extends Component<{}, AppState> {
                     <div style={{
                         margin: "25px 0 0 12px"
                     }}>
-                        <div onClick={() => this.selectMenu(0)} className={"left-item " + (selectid === 0 ? " left-item-select" : null)}>
-                            {Message()}
-                        </div>
-                        <div onClick={() => this.selectMenu(1)} className={"left-item " + (selectid === 1 ? " left-item-select" : null)}>
-                            {User()}
-                        </div>
+                        {menu.map(x => {
+                            return (
+                                <div onClick={() => this.selectMenu(x)} className={"left-item " + (selectid === x.id ? " left-item-select" : null)}>
+                                    {x.icon}
+                                </div>)
+                        })}
                     </div>
                     {/* 显示在最下面 */}
                     <div className="left-item " style={{
@@ -210,80 +163,17 @@ class App extends Component<{}, AppState> {
                     </div>
 
                 </div>
-                <div className="middle" style={{ width: `${middleWidth}px` }}>
-                    <div style={{
-                        marginTop: '30px',
-                        fontSize: '20px',
-                        fontWeight: 'bold',
-                        height: "100%"
-                    }}>
-                        <List
-                            dataSource={groups}
-                            split={false}
-                            header={<div style={{
-                                height: '40px',
-                            }}>
-                                <Input
-                                    style={{
-                                        width: 'calc(100% - 40px)',
-                                        borderRadius: '5px',
-                                        float: 'left',
-                                    }}
-                                    placeholder="搜索"
-                                    prefix={<IconSearch />}
-                                />
-                                <Button style={{
-                                    float: 'right',
-                                    borderRadius: '5px',
-                                }} icon={<IconPlus />}></Button>
-                            </div>}
-                            size='small'
-                            style={{
-                                width: '100%',
-                            }}
-                            renderItem={item =>
-                                <div onClick={() => { this.selectChat(item) }} className={'chat-item ' + (selectGroup === item ? "chat-item-select" : "")}>
-                                    <div style={{
-                                        padding: '15px',
-                                    }}>
-                                        <Avatar style={{
-                                            height: '40px',
-                                            width: '40px',
-                                            float: 'left',
-                                            marginRight: '10px',
-                                        }} size="small" alt='User' src={item.avatar}>
-                                        </Avatar>
-                                        <div style={{
-                                            userSelect: 'none',
-                                            float: 'left',
-                                        }}>
-                                            <span style={{
-                                                fontSize: '16px',
-                                                fontWeight: 'bold',
-                                            }}>
-                                                {item.name}
-                                            </span>
-                                            <span style={{
-                                                display: 'block',
-                                                fontSize: '12px',
-
-                                            }}>
-                                                {item.lastMessage}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        />
-                    </div>
-                </div>
-                <div className="resizer" onMouseDown={this.handleMouseDown}></div>
-                <div className="right" style={{ width: rightWidth }}>
-                    {renderContent()}
-                </div>
+                <Outlet />
             </div>
         );
     }
 }
 
-export default App;
+function Main() {
+    const navigation = useNavigate();
+    return (
+        <App navigation={navigation} />
+    )
+}
+
+export default Main;

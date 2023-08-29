@@ -44,7 +44,7 @@ public class ChatService : BaseService<ChatService>, IChatService
         throw new NotImplementedException();
     }
 
-    public async Task<List<ChatGroupInUserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<List<UserDto>> GetGroupInUserAsync(Guid groupId)
     {
         var query = new GetGroupInUserQuery(groupId);
         await PublishAsync(query);

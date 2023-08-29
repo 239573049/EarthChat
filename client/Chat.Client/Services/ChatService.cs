@@ -38,7 +38,7 @@ public class ChatService : IChatService
     }
 
     /// <inheritdoc />
-    public async Task<List<ChatGroupInUserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<List<UserDto>> GetGroupInUserAsync(Guid groupId)
     {
         return await Caller.GetAsync<List<ChatGroupInUserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }

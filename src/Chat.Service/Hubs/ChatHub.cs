@@ -71,7 +71,7 @@ public class ChatHub : Hub
         await Clients.All.SendAsync("UpdateOnline", count);
     }
 
-    public async Task SendMessage(string value,string groupId, int type)
+    public async Task SendMessage(string value,Guid groupId, int type)
     {
         if (value.IsNullOrWhiteSpace())
         {
@@ -113,6 +113,7 @@ public class ChatHub : Hub
         {
             Content = value,
             Id = message.Id,
+            ChatGroupId = groupId,
             Type = (ChatType)type,
             UserId = userId.Value
         });

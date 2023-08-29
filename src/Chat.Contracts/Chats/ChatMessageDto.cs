@@ -34,7 +34,7 @@ public class ChatMessageDto
     /// 发送指定链接id
     /// </summary>
     [Key("groupId")]
-    public string GroupId { get; set; }
+    public Guid GroupId { get; set; }
 
     [Key("creationTime")]
     public DateTime CreationTime { get; set; }

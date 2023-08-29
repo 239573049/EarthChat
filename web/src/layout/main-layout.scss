@@ -1,15 +1,3 @@
-// 根据body的属性值来判断主题
-body[theme-mode='dark'] {
-  --select-background-color: #1A1A1A;
-  --sekect-chat-item-background-color: #2D2D2D;
-  --verticle-division-color: #1F1F1F;
-}
-
-body:not([theme-mode='dark']) {
-  --select-background-color: #EAEAEA;
-  --sekect-chat-item-background-color: #F5F5F5;
-  --verticle-division-color: #E9E9E9;
-}
 
 .container {
   display: flex;

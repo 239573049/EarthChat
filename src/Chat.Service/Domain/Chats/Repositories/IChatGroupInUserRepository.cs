@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Chat.Service.Domain.Chats.Aggregates;
+using Chat.Service.Domain.Users.Aggregates;
 
 namespace Chat.Service.Domain.Chats.Repositories;
 
@@ -12,5 +13,5 @@ public interface IChatGroupInUserRepository : IRepository<ChatGroupInUser,Guid>
     /// </summary>
     /// <param name="groupId"></param>
     /// <returns></returns>
-    Task<List<ChatGroupInUser>> GetGroupInUserAsync(Guid groupId);
+    Task<List<User>> GetGroupInUserAsync(Guid groupId);
 }

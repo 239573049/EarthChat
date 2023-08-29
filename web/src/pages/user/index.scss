@@ -1,0 +1,85 @@
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.left {
+  body[theme-mode="dark"] & {
+    background-color: #111111;
+  }
+
+  body:not([theme-mode="dark"]) & {
+    background-color: #f2f2f2;
+  }
+}
+
+.middle {
+  body[theme-mode="dark"] & {
+    background-color: #1b1b1b;
+  }
+
+  body:not([theme-mode="dark"]) & {
+    background-color: #ffffff;
+  }
+
+  .chat-item {
+    height: 70px;
+    cursor: pointer;
+  }
+
+  .chat-item:hover {
+    background-color: var(--sekect-chat-item-background-color);
+  }
+
+  .chat-item-select {
+    background-color: #0099ff !important;
+  }
+}
+
+.right {
+  body[theme-mode="dark"] & {
+    background-color: #111111;
+  }
+
+  body:not([theme-mode="dark"]) & {
+    background-color: #f2f2f2;
+  }
+
+  flex-grow: 1;
+}
+
+.resizer {
+  body[theme-mode="dark"] & {
+    cursor: ew-resize;
+    background-color: var(--verticle-division-color);
+    width: 2px;
+    height: 100%;
+  }
+}
+
+.inform {
+  font-size: 14px !important;
+  height: 35px;
+  width: 100%;
+  cursor: pointer;
+  .name {
+    text-align: left;
+    padding-left: 10px;
+    padding-top: 8px;
+  }
+}
+
+.inform:hover {
+  background-color: var(--sekect-chat-item-background-color);
+}
+
+.sliding-block {
+  transition: left 0.3s;
+  height: 25px;
+  margin-left: 8px;
+  top: 5px;
+  border-radius: 8px;
+  position: relative;
+  width: 40%;
+  background-color: var(--user-tab-select-background-color);
+}

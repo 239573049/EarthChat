@@ -1,0 +1,114 @@
+
+.container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .left {
+    body[theme-mode='dark'] & {
+      background-color: #111111;
+    }
+  
+    body:not([theme-mode='dark']) & {
+      background-color: #F2F2F2;
+    }
+  
+  }
+  
+  .middle {
+    body[theme-mode='dark'] & {
+      background-color: #1B1B1B;
+    }
+  
+    body:not([theme-mode='dark']) & {
+      background-color: #FFFFFF;
+    }
+  
+    .chat-item {
+      height: 70px;
+      cursor: pointer;
+    }
+  
+    .chat-item:hover {
+      background-color: var(--sekect-chat-item-background-color);
+    }
+  
+    .chat-item-select {
+      background-color: #0099FF !important;
+    }
+  }
+  
+  
+  
+  .right {
+    body[theme-mode='dark'] & {
+      background-color: #111111;
+    }
+  
+    body:not([theme-mode='dark']) & {
+      background-color: #F2F2F2;
+    }
+  
+    flex-grow: 1;
+  }
+  
+  .resizer {
+    body[theme-mode='dark'] & {
+      cursor: ew-resize;
+      background-color: var(--verticle-division-color);
+      width: 2px;
+      height: 100%;
+    }
+  }
+  
+  htmL {
+  
+    overflow: hidden;
+  }
+  
+  #root {
+    height: 100vh;
+    width: 100%;
+  
+    body[theme-mode='dark'] & {
+      color: #F2F2F2;
+    }
+  
+    body:not([theme-mode='dark']) & {
+      color: #111111;
+    }
+  }
+  
+  .left-item {
+    max-height: 40px;
+    max-width: 40px;
+    height: 40px;
+    width: 40px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    user-select: none;
+    cursor: pointer;
+  
+    body[theme-mode='dark'] & {
+      color: #F2F2F2;
+    }
+  
+    body:not([theme-mode='dark']) & {
+      color: #111111;
+    }
+  }
+  
+  .left-item-select {
+    background-color: var(--select-background-color);
+  
+    .icon-menu {
+      fill: #0A6CCE !important;
+      // 填充内部颜色
+      stroke: #0A6CCE !important;
+      // 填充外部颜色
+    }
+  }
+  
+  .left-item:hover {
+    background-color: var(--select-background-color);
+  }
