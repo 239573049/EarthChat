@@ -1,5 +1,5 @@
 {
-  "name": "my-vue-app",
+  "name": "web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@douyinfe/semi-ui": "^2.42.1",
+    "@douyinfe/semi-ui": "^2.38.1",
     "@microsoft/signalr": "^7.0.10",
     "@microsoft/signalr-protocol-msgpack": "^7.0.10",
     "@types/pubsub-js": "^1.8.3",

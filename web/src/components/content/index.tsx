@@ -1,9 +1,9 @@
 import React, { Component, RefObject } from 'react';
-import { ChatGroupDto, GetUserDto } from '../../dto';
+import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Empty, Tooltip } from '@douyinfe/semi-ui';
+import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
 import { IconMoon, IconSun, IconFile, IconSearch } from '@douyinfe/semi-icons';
@@ -68,7 +68,6 @@ export default class Content extends Component<IProps, IState> {
     }
 
     componentDidMount() {
-        console.log('componentDidMount');
         PubSub.subscribe('changeGroup', this.onMessage)
 
         this.loadingMessage();
@@ -103,7 +102,6 @@ export default class Content extends Component<IProps, IState> {
     }
 
     componentWillUnmount() {
-        console.log('componentWillUnmount');
         PubSub.unsubscribe('changeGroup');
     }
 
@@ -229,16 +227,6 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    renderInfo(user: GetUserDto): React.ReactNode {
-        return (
-            <Empty
-                title={'先进的设计 / 研发协作方式'}
-                description="使用 Semi D2C 快速还原 Figma 设计稿，一键转代码"
-                style={{ width: 400, margin: '0 auto', display: 'flex', padding: 20 }}
-            />
-        )
-    }
-
     rowRenderer({
         key, // Unique key within array of rows
         index, // Index of row within collection
@@ -294,7 +282,7 @@ export default class Content extends Component<IProps, IState> {
             const { page, pageSize } = this.state;
             ChatService.getList(group.id, page + 1, pageSize)
                 .then((res: any) => {
-                    if(res.data.result.length === 0){
+                    if (res.data.result.length === 0) {
                         return;
                     }
                     this.setState({
@@ -389,6 +377,7 @@ export default class Content extends Component<IProps, IState> {
 
     render() {
         const { groupinUsers } = this.state;
+        const { group } = this.props;
 
         return (
             <>
@@ -464,16 +453,16 @@ export default class Content extends Component<IProps, IState> {
                         <Mention ref={this.mentionRef} style={{
                             height: 'calc(100% - 160px)',
                         }} onSubmit={async () => await this.sendMessage()} />
-                            <div style={{
-                                float: 'right',
-                            }}>
-                                <Button onClick={async () => await this.sendMessage()} style={{
-                                    backgroundColor: '#1472D0',
-                                    color: 'var(--semi-color-text-0)',
-                                    borderRadius: '4px',
-                                    marginRight: '20px',
-                                }}>发送</Button>
-                            </div>
+                        <div style={{
+                            float: 'right',
+                        }}>
+                            <Button onClick={async () => await this.sendMessage()} style={{
+                                backgroundColor: '#1472D0',
+                                color: 'var(--semi-color-text-0)',
+                                borderRadius: '4px',
+                                marginRight: '20px',
+                            }}>发送</Button>
+                        </div>
                     </div>
                 </div>
                 <div style={{
@@ -513,11 +502,18 @@ export default class Content extends Component<IProps, IState> {
                                         <Tag style={{
                                             boxSizing: 'content-box',
                                             float: 'right',
-                                        }} color="blue">机器人</Tag> :
-                                        <Tag style={{
-                                            boxSizing: 'content-box',
-                                            float: 'right',
-                                        }} color="grey">成员</Tag>}
+                                        }} color="blue">机器人</Tag> : (
+                                            item.id === group.creator ?
+                                                <Tag style={{
+                                                    boxSizing: 'content-box',
+                                                    float: 'right',
+                                                }} color='red'>频道主人</Tag> :
+                                                <Tag style={{
+                                                    boxSizing: 'content-box',
+                                                    float: 'right',
+                                                }} color="grey">成员</Tag>
+
+                                        )}
                                 </div>
                             </div>
                         }

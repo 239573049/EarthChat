@@ -22,15 +22,10 @@ class Request {
         // 全局响应拦截
         this.instance.interceptors.response.use(
             (res) => {
-                // res 为AxiosResponse 类型，含有conig\data\headers\request\status\statusText属性
-                console.log("全局响应拦截的", res);
                 return res.data
                 // 只需要返回data即可
             },
             (error) => {
-                console.log("全局响应失败拦截");
-                console.log(error.request);
-                console.log(error.response);
                 return error
             },
         )
@@ -92,12 +87,9 @@ class Request {
         })
     }
 }
-
-
-
 export default new Request({ 
     timeout: 60000,
-    baseURL: 'http://localhost:5218/api/',
+    baseURL: import.meta.env.VITE_API+"/api/",
     headers: {
         'Content-Type': 'application/json',
         'X-Client': 'web',

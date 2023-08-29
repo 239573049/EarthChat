@@ -3,10 +3,6 @@ import './main-layout.scss'
 import { Avatar, Badge, Button, Input, List } from '@douyinfe/semi-ui';
 import { ChatGroupDto, GetUserDto } from '../dto';
 import UserService from '../services/userService';
-import ChatService from '../services/chatService';
-
-import { IconSearch, IconPlus } from '@douyinfe/semi-icons';
-import Content from '../components/content';
 import ChatHubService from '../services/chatHubService';
 import { Outlet, useNavigate } from 'react-router-dom';
 
@@ -146,7 +142,7 @@ class App extends Component<any, state> {
                     }}>
                         {menu.map(x => {
                             return (
-                                <div onClick={() => this.selectMenu(x)} className={"left-item " + (selectid === x.id ? " left-item-select" : null)}>
+                                <div key={"menu"+x.id} onClick={() => this.selectMenu(x)} className={"left-item " + (selectid === x.id ? " left-item-select" : null)}>
                                     {x.icon}
                                 </div>)
                         })}
@@ -172,7 +168,7 @@ class App extends Component<any, state> {
 function Main() {
     const navigation = useNavigate();
     return (
-        <App navigation={navigation} />
+        <App key={'Main_App'} navigation={navigation} />
     )
 }
 

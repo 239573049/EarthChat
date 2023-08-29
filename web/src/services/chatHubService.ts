@@ -6,7 +6,7 @@ import PubSub from 'pubsub-js';
 
 
 const connection = new HubConnectionBuilder()
-    .withUrl("http://localhost:5218/chathub", {
+    .withUrl(import.meta.env.VITE_API+"/chathub", {
         accessTokenFactory: () => localStorage.getItem('token')!
     })
     .withAutomaticReconnect()

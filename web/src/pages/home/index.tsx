@@ -1,13 +1,15 @@
-import React, { Component, MouseEvent, RefObject } from 'react';
+import React, { Component, RefObject } from 'react';
 import './index.scss'
-import { Avatar, Badge, Button, Input, List } from '@douyinfe/semi-ui';
+import { Avatar, Button, Form, Input, List, Row, Toast, Upload } from '@douyinfe/semi-ui';
 import { ChatGroupDto, GetUserDto } from '../../dto';
 import UserService from '../../services/userService';
 import ChatService from '../../services/chatService';
 
-import { IconSearch, IconPlus } from '@douyinfe/semi-icons';
+import { IconSearch, IconPlus, IconCamera } from '@douyinfe/semi-icons';
 import Content from '../../components/content';
 import ChatHubService from '../../services/chatHubService';
+import FileService from '../../services/fileService';
+import Modal from '../../components/modal';
 
 const body = document.body;
 
@@ -16,7 +18,10 @@ interface AppState {
     selectid: number;
     user: GetUserDto,
     groups: ChatGroupDto[],
-    selectGroup: ChatGroupDto
+    selectGroup: ChatGroupDto,
+    createGroupVisible: boolean,
+    createGroupUpload: RefObject<Upload>,
+    createGroupAvatar: string,
 }
 
 class Home extends Component<{}, AppState> {
@@ -25,7 +30,10 @@ class Home extends Component<{}, AppState> {
         selectid: 0,
         user: {} as GetUserDto,
         groups: [],
-        selectGroup: {} as ChatGroupDto
+        selectGroup: {} as ChatGroupDto,
+        createGroupVisible: false,
+        createGroupUpload: React.createRef<Upload>(),
+        createGroupAvatar: '',
     };
 
     constructor(props: any) {
@@ -40,6 +48,7 @@ class Home extends Component<{}, AppState> {
 
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.getFormApi = this.getFormApi.bind(this);
     }
 
     componentDidMount() {
@@ -108,8 +117,21 @@ class Home extends Component<{}, AppState> {
         })
     }
 
+    getFormApi(v: any) {
+
+    }
+
+    createGroupClose(){
+        this.setState({ createGroupVisible: false });
+        this.state.createGroupUpload.current?.clear();
+
+        if(this.state.createGroupAvatar){
+            FileService.deleteFile(this.state.createGroupAvatar)
+        }
+    }
+
     render() {
-        const { middleWidth, selectid, user, selectGroup, groups } = this.state;
+        const { middleWidth, createGroupAvatar, selectGroup, groups, createGroupVisible } = this.state;
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
 
         const renderContent = () => {
@@ -158,7 +180,7 @@ class Home extends Component<{}, AppState> {
                                     placeholder="搜索"
                                     prefix={<IconSearch />}
                                 />
-                                <Button style={{
+                                <Button onClick={() => this.setState({ createGroupVisible: true })} style={{
                                     float: 'right',
                                     borderRadius: '5px',
                                 }} icon={<IconPlus />}></Button>
@@ -207,6 +229,43 @@ class Home extends Component<{}, AppState> {
                 <div className="right" style={{ width: rightWidth }}>
                     {renderContent()}
                 </div>
+
+                <Modal width={300} title='添加群聊' isOpen={createGroupVisible} onClose={() => this.createGroupClose()}>
+                    <Form
+                        getFormApi={this.getFormApi}
+                    >
+                        <Row>
+                            <Form.Upload field='头像'
+                                className="avatar-upload"
+                                action={import.meta.env.VITE_API + "/api/v1/Files/upload"}
+                                accept={'image/*'}
+                                ref={this.state.createGroupUpload}
+                                fileName='file'
+                                headers={{
+                                    "Authorization": "Bearer " + localStorage.getItem('token')
+                                }}
+                                style={{
+                                    left: '40%',
+                                    position: 'relative',
+                                }}
+                                onSuccess={(file: any) => {
+                                    if (file.code === '200') {
+                                        this.setState({
+                                            createGroupAvatar: file.data
+                                        })
+                                    } else {
+                                        Toast.error(file.message);
+                                    }
+                                }}
+                                showUploadList={false}
+                                onError={() => Toast.error('上传失败')}>
+                                <Avatar src={createGroupAvatar} style={{ margin: 4 }} hoverMask={<IconCamera />} />
+                            </Form.Upload>
+                            <Form.Input field='phone' label='PhoneNumber' style={{ width: '100%' }} placeholder='群聊名称'></Form.Input>
+                            <Form.TextArea rows={5} field='password' label='Password' style={{ width: '100%' }} placeholder='群聊描述'></Form.TextArea>
+                        </Row>
+                    </Form>
+                </Modal>
             </>
         );
     }

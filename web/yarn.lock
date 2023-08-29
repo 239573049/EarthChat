@@ -305,7 +305,7 @@
   dependencies:
     glob "^7.1.6"
 
-"@douyinfe/semi-ui@^2.42.1":
+"@douyinfe/semi-ui@^2.38.1":
   version "2.42.1"
   resolved "https://registry.npmjs.org/@douyinfe/semi-ui/-/semi-ui-2.42.1.tgz"
   integrity sha512-UUlnZNao9eUcPIUwdmahrCFxnCZQxogr1DmozPN2jEDHUaOjqFsAd3maugGMtWDksVt3SCBUJQJqqdETh7qJDw==

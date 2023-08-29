@@ -24,6 +24,19 @@ class FileService {
             fileName: fileName
         });
     }
+
+    /**
+     * 删除文件
+     * @param uri 
+     * @returns 
+     */
+    deleteFile(uri: string) {
+        return Request.delete(`${baseURL}`,{
+            params:{
+                uri
+            }
+        });
+    }
 }
 
 export default new FileService()

@@ -14,6 +14,8 @@ export interface ChatGroupDto {
     group: boolean;
     default: boolean;
     lastMessage: string;
+    creator:string;
+    creationTime: Date;   
 }
 
 export interface CreateGroupDto {

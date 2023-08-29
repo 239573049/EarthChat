@@ -1,5 +1,6 @@
 ﻿using Chat.Contracts.Files;
 using Chat.Service.Application.Files.Commands;
+using Chat.Service.Application.System.Commands;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Chat.Service.Services;
@@ -34,5 +35,12 @@ public class FileService : BaseService<FileService>, IFileService
         var command = new UploadCommand(stream, dto.FileName);
         await _eventBus.PublishAsync(command);
         return command.Result.CreateResult();
+    }
+    
+    [Authorize]
+    public async Task DeleteAsync(string uri)
+    {
+        var command = new DeleteFileSystemCommand(uri);
+        await _eventBus.PublishAsync(command);
     }
 }
