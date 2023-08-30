@@ -1,3 +1,4 @@
+using Chat.Service.Infrastructure.Middlewares;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
@@ -34,6 +35,8 @@ builder.Services.Configure<GithubOptions>(github);
 builder.Services.Configure<GiteeOptions>(gitee);
 
 #endregion
+
+builder.Services.AddScoped<ExceptionMiddleware>();
 
 builder.Services.AddMemoryCache();
 
@@ -100,10 +103,10 @@ var app = builder.Services
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
 
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseIpRateLimiting();
 
-app.UseMasaExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {

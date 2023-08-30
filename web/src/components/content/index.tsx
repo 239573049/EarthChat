@@ -3,15 +3,17 @@ import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification } from '@douyinfe/semi-ui';
+import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
-import { IconMoon, IconSun, IconFile, IconSearch } from '@douyinfe/semi-icons';
+import {  IconFile, IconSearch } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
 import ChatService from '../../services/chatService';
 import AutoSizer from "react-virtualized-auto-sizer";
+import Theme from '../Theme';
+import copy from 'copy-to-clipboard';
 
 interface IProps {
     group: ChatGroupDto;
@@ -25,8 +27,6 @@ interface IState {
     groupinUsers: any[],
     pageSize: number,
 }
-
-const body = document.body;
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -58,7 +58,6 @@ export default class Content extends Component<IProps, IState> {
         super(props);
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
-        this.changeTheme = this.changeTheme.bind(this);
         this.download = this.download.bind(this);
         this.onScroll = this.onScroll.bind(this);
         this.rowRenderer = this.rowRenderer.bind(this);
@@ -134,24 +133,6 @@ export default class Content extends Component<IProps, IState> {
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('mouseup', handleMouseUp);
     };
-
-    // 切换主题
-    changeTheme = (ev: any) => {
-
-        var d = document as any;
-        d.documentElement.style.setProperty('--x', ev.clientX + 'px')
-        d.documentElement.style.setProperty('--y', ev.clientY + 'px')
-
-        if (body.hasAttribute('theme-mode')) {
-            d.startViewTransition(() => {
-                body.removeAttribute('theme-mode');
-            });
-        } else {
-            d.startViewTransition(() => {
-                body.setAttribute('theme-mode', 'dark');
-            });
-        }
-    }
 
     async sendMessage() {
         const { group } = this.props
@@ -375,6 +356,13 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    invitation(){
+        const {group} = this.props;
+        const url = window.location.origin+"/invitation-group?code="+group.id;
+        copy(url)
+        Toast.success('邀请地址已经复制');
+    }
+
     render() {
         const { groupinUsers } = this.state;
         const { group } = this.props;
@@ -398,7 +386,8 @@ export default class Content extends Component<IProps, IState> {
                         paddingTop: '25px',
                         paddingRight: '10px',
                     }}>
-                        <Button theme='borderless' onClick={(e) => this.changeTheme(e)} icon={body.hasAttribute('theme-mode') ? <IconMoon size='large'></IconMoon> : <IconSun></IconSun>}></Button>
+                        <Button theme='borderless' onClick={()=>this.invitation()}>邀请</Button>
+                        <Theme/>
                     </div>
                 </div>
                 <div className="content-divider">

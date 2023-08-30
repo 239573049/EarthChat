@@ -30,6 +30,25 @@ class ChatService {
             }
         })
     }
+
+    /**
+     * 获取群聊详细信息
+     * @param id 
+     * @returns 
+     */
+    getGroup(id:string){
+        return Request.get(`${baseURL}/Group/${id}`)
+    }
+
+    /**
+     * 加入群聊
+     * @param id 
+     * @returns 
+     */
+    invitationGroup(id:string){
+        return Request.post(`${baseURL}/InvitationGroup/${id}`)
+    }
+
 }
 
 export default new ChatService()

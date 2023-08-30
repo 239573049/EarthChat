@@ -15,6 +15,7 @@
     "@microsoft/signalr-protocol-msgpack": "^7.0.10",
     "@types/pubsub-js": "^1.8.3",
     "axios": "^1.4.0",
+    "copy-to-clipboard": "^3.3.3",
     "moment": "github:moment/moment",
     "pubsub-js": "^1.9.4",
     "react": "^18.2.0",

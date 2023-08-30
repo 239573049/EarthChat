@@ -21,7 +21,8 @@ public class CommandHandler
 
     public CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,
         IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus,
-        ILogger<CommandHandler> logger, IChatGroupRepository chatGroupRepository, IUnitOfWork unitOfWork, IChatGroupInUserRepository chatGroupInUserRepository)
+        ILogger<CommandHandler> logger, IChatGroupRepository chatGroupRepository, IUnitOfWork unitOfWork,
+        IChatGroupInUserRepository chatGroupInUserRepository)
     {
         _chatMessageRepository = chatMessageRepository;
         _userContext = userContext;
@@ -45,7 +46,7 @@ public class CommandHandler
             ChatGroupId = command.Dto.ChatGroupId,
             UserId = _userContext.GetUserId<Guid>()
         };
-        
+
         await _chatMessageRepository.AddAsync(chatMessage);
     }
 
@@ -155,13 +156,36 @@ public class CommandHandler
         };
 
         await _chatGroupRepository.AddAsync(chatGroup);
-        
+
         var chatGroupInUser = new ChatGroupInUser()
         {
             ChatGroupId = chatGroup.Id,
             UserId = _userContext.GetUserId<Guid>()
         };
-        
+
         await _chatGroupInUserRepository.AddAsync(chatGroupInUser);
+    }
+
+    [EventHandler]
+    public async Task InvitationGroupAsync(InvitationGroupCommand command)
+    {
+        if (await _chatGroupInUserRepository.GetCountAsync(x =>
+                x.ChatGroupId == command.id && x.UserId == _userContext.GetUserId<Guid>()) > 0)
+        {
+            throw new UserFriendlyException("您已经加入群聊");
+        }
+
+        if (await _chatGroupRepository.GetCountAsync(x => x.Id == command.id) <= 0)
+        {
+            throw new UserFriendlyException("群聊不存在");
+        }
+
+        await _chatGroupInUserRepository.AddAsync(new ChatGroupInUser()
+        {
+            ChatGroupId = command.id,
+            UserId = _userContext.GetUserId<Guid>()
+        });
+        
+        
     }
 }

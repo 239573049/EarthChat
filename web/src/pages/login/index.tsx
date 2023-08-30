@@ -41,10 +41,26 @@ class Login extends Component<{}, State> {
             .then((res: any) => {
                 if (res.code === '200') {
                     localStorage.setItem('token', res.data);
+
+                    // 获取url的参数
+                    const queryString = window.location.search;
+
+                    // 创建URLSearchParams对象
+                    const params = new URLSearchParams(queryString);
+
+                    // 获取指定参数的值
+                    var redirect = params.get('redirect');
+
                     Toast.success('登录成功');
+
                     // 等待1秒后跳转
                     setTimeout(() => {
-                        window.location.href = '/';
+                        if (redirect) {
+                            window.location.href = redirect;
+                        } else {
+
+                            window.location.href = '/';
+                        }
                     }, 1000);
                 } else {
                     Toast.error(res.message);

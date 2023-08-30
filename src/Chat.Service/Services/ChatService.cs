@@ -50,4 +50,17 @@ public class ChatService : BaseService<ChatService>, IChatService
         await PublishAsync(query);
         return query.Result;
     }
+
+    public async Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id)
+    {
+        var query = new GetGroupQuery(id);
+        await PublishAsync(query);
+        return query.Result.CreateResult();
+    }
+
+    public async Task InvitationGroupAsync(Guid id)
+    {
+        var command = new InvitationGroupCommand(id);
+        await PublishAsync(command);
+    }
 }

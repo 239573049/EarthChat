@@ -261,8 +261,8 @@ class Home extends Component<{}, AppState> {
                                 onError={() => Toast.error('上传失败')}>
                                 <Avatar src={createGroupAvatar} style={{ margin: 4 }} hoverMask={<IconCamera />} />
                             </Form.Upload>
-                            <Form.Input field='phone' label='PhoneNumber' style={{ width: '100%' }} placeholder='群聊名称'></Form.Input>
-                            <Form.TextArea rows={5} field='password' label='Password' style={{ width: '100%' }} placeholder='群聊描述'></Form.TextArea>
+                            <Form.Input field='phone' label='群聊名称' style={{ width: '100%' }} ></Form.Input>
+                            <Form.TextArea rows={5} field='description' label='群聊描述' style={{ width: '100%' }} ></Form.TextArea>
                         </Row>
                     </Form>
                 </Modal>

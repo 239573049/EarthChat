@@ -48,4 +48,11 @@ public interface IChatService
     /// <param name="groupId"></param>
     /// <returns></returns>
     Task<List<UserDto>> GetGroupInUserAsync(Guid groupId);
+
+    /// <summary>
+    /// 通过id获取指定群聊基本信息
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id);
 }

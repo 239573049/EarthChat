@@ -10,14 +10,16 @@ public class QueryHandler
 {
     private readonly IMapper _mapper;
     private readonly IChatMessageRepository _chatMessageRepository;
+    private readonly IChatGroupRepository _chatGroupRepository;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
 
     public QueryHandler(IChatMessageRepository chatMessageRepository, IMapper mapper,
-        IChatGroupInUserRepository chatGroupInUserRepository)
+        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository)
     {
         _chatMessageRepository = chatMessageRepository;
         _mapper = mapper;
         _chatGroupInUserRepository = chatGroupInUserRepository;
+        _chatGroupRepository = chatGroupRepository;
     }
 
     [EventHandler]
@@ -64,5 +66,13 @@ public class QueryHandler
             Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
             Name = "聊天机器人",
         });
+    }
+
+    [EventHandler]
+    public async Task GetGroupAsync(GetGroupQuery query)
+    {
+        var value = await _chatGroupRepository.FindAsync(x => x.Id == query.id);
+
+        query.Result = _mapper.Map<ChatGroupDto>(value);
     }
 }
