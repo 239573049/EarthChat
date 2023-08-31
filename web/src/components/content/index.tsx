@@ -6,7 +6,7 @@ import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
-import {  IconFile, IconSearch } from '@douyinfe/semi-icons';
+import { IconFile, IconSearch } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
@@ -216,7 +216,7 @@ export default class Content extends Component<IProps, IState> {
         style, // Style object to be applied to row (to position it)
         parent
     }: any) {
-        console.log(isScrolling,isVisible);
+        console.log(isScrolling, isVisible);
         const { data } = this.state;
         const item = data[index];
         item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
@@ -230,13 +230,9 @@ export default class Content extends Component<IProps, IState> {
             >
                 {({ measure }: any) => (
                     <div key={item.Id} onLoad={measure} style={{ margin: '15px', ...style }}>
-                        <Avatar size='medium' style={{ float: 'left' }} src={item.user.avatar} />
-                        <div style={{ marginLeft: '10px', width: 'calc(100% - 50px)' }}>
-                            {item.user.name} <span style={{
-                                backgroundColor: 'rgb(34 145 58)',
-                                padding: '2px 5px',
-                                borderRadius: '5px',
-                            }}>{item.creationTime}</span>
+                        <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
+                        <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
+                            {item.user.name}
                         </div>
                         {this.rendetContent(item)}
                     </div>
@@ -253,6 +249,8 @@ export default class Content extends Component<IProps, IState> {
                 this.loadingGroupUser();
                 this.setState({
                     data: res.data.result,
+                }, () => {
+                    this.scrollToBottom();
                 })
             })
 
@@ -271,7 +269,7 @@ export default class Content extends Component<IProps, IState> {
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
                     }, () => {
-                        this.listRef.current?.scrollToRow(res.data.result.length);
+                        // this.listRef.current?.scrollToRow(res.data.result.length);
                     })
                 })
         }
@@ -323,6 +321,32 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    /**
+     * 慢慢移动到尾部
+     */
+     scrollToBottom() {
+        var element = document.getElementById('message-list')!;
+        var scrollHeight = element.scrollHeight;
+        var clientHeight = element.clientHeight;
+        var scrollTop = element.scrollTop;
+        var scrollStep = Math.PI / (scrollHeight / 2);
+        var scrollCount = 0;
+        var scrollMargin;
+      
+        function scroll() {
+          scrollMargin = scrollHeight - scrollTop;
+          element.scrollTop += scrollMargin / 20;
+          scrollCount++;
+      
+          if (scrollCount < 20) {
+            requestAnimationFrame(scroll);
+          }
+        }
+      
+        scroll();
+      }
+
+
     selectPicture() {
         // 打开文件选择器，选择图片
         console.log('selectPicture');
@@ -357,9 +381,9 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    invitation(){
-        const {group} = this.props;
-        const url = window.location.origin+"/invitation-group?code="+group.id;
+    invitation() {
+        const { group } = this.props;
+        const url = window.location.origin + "/invitation-group?code=" + group.id;
         copy(url)
         Toast.success('邀请地址已经复制');
     }
@@ -387,8 +411,8 @@ export default class Content extends Component<IProps, IState> {
                         paddingTop: '25px',
                         paddingRight: '10px',
                     }}>
-                        <Button theme='borderless' onClick={()=>this.invitation()}>邀请</Button>
-                        <Theme/>
+                        <Button theme='borderless' onClick={() => this.invitation()}>邀请</Button>
+                        <Theme />
                     </div>
                 </div>
                 <div className="content-divider">

@@ -1,6 +1,6 @@
 import  { Component } from 'react';
 import './main-layout.scss'
-import { Avatar, Badge } from '@douyinfe/semi-ui';
+import { Avatar, Badge, Tooltip } from '@douyinfe/semi-ui';
 import { ChatGroupDto, GetUserDto } from '../dto';
 import UserService from '../services/userService';
 import ChatHubService from '../services/chatHubService';
@@ -117,6 +117,20 @@ class App extends Component<any, state> {
         console.log(v)
     }
 
+
+    onExit(){
+        localStorage.removeItem('token');
+        location.href = '/login'
+    }
+
+    renderFunction(){
+        return <div>
+            <div>设置</div>
+            <div>关于</div>
+            <div onClick={()=>this.onExit()}>退出登录</div>
+        </div>
+    }
+
     render() {
         const { selectid, user, menu } = this.state;
 
@@ -155,7 +169,9 @@ class App extends Component<any, state> {
                         left: '0',
                         textAlign: 'center',
                     }}>
-                        {Function()}
+                        <Tooltip position='rightBottom' content={this.renderFunction()}>
+                            {Function()}
+                        </Tooltip>
                     </div>
 
                 </div>
