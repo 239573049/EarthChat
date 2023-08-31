@@ -23,7 +23,7 @@ connection.start()
         });
     });
 
-connection.on("ReceiveMessage", (groupId, message) => {
+connection.on("ReceiveMessage", (_, message) => {
     PubSub.publish('changeGroup', message);
 });
 

@@ -1,6 +1,6 @@
-import React, { Component, MouseEvent, RefObject } from 'react';
+import  { Component } from 'react';
 import './main-layout.scss'
-import { Avatar, Badge, Button, Input, List } from '@douyinfe/semi-ui';
+import { Avatar, Badge } from '@douyinfe/semi-ui';
 import { ChatGroupDto, GetUserDto } from '../dto';
 import UserService from '../services/userService';
 import ChatHubService from '../services/chatHubService';

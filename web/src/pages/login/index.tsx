@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import  { Component } from 'react';
 import './index.scss';
 import { Avatar, Button, Form, Row, Toast } from '@douyinfe/semi-ui';
 import AuthService from '../../services/authService';
@@ -92,7 +92,7 @@ class Login extends Component<{}, State> {
                         onSubmit={this.handleSubmit}
                     >
                         {
-                            ({ formState, values, formApi }) =>
+                            ({ values }) =>
 
                             (
                                 <Row>

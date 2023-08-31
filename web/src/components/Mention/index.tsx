@@ -1,4 +1,4 @@
-import React, { ClipboardEvent, KeyboardEvent, Component } from 'react';
+import { ClipboardEvent, KeyboardEvent, Component } from 'react';
 
 interface MentionProps {
   onSubmit: () => void;

@@ -1,6 +1,5 @@
-import { Avatar, Button, Divider, Input, List } from '@douyinfe/semi-ui';
+import { Divider} from '@douyinfe/semi-ui';
 import React, { Component } from 'react';
-import { IconSearch, IconChevronRight } from '@douyinfe/semi-icons';
 import './index.scss'
 
 

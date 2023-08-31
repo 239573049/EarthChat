@@ -216,6 +216,7 @@ export default class Content extends Component<IProps, IState> {
         style, // Style object to be applied to row (to position it)
         parent
     }: any) {
+        console.log(isScrolling,isVisible);
         const { data } = this.state;
         const item = data[index];
         item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');

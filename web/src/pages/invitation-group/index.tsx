@@ -1,6 +1,6 @@
 import { Component } from 'react'
 import './index.scss';
-import { Avatar, Button, Form, Row, Toast } from '@douyinfe/semi-ui';
+import { Avatar, Button, Row, Toast } from '@douyinfe/semi-ui';
 import { ChatGroupDto } from '../../dto';
 import chatService from '../../services/chatService';
 

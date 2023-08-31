@@ -22,6 +22,7 @@ interface AppState {
     createGroupVisible: boolean,
     createGroupUpload: RefObject<Upload>,
     createGroupAvatar: string,
+    createGroupFormApi: any
 }
 
 class Home extends Component<{}, AppState> {
@@ -34,6 +35,7 @@ class Home extends Component<{}, AppState> {
         createGroupVisible: false,
         createGroupUpload: React.createRef<Upload>(),
         createGroupAvatar: '',
+        createGroupFormApi: undefined
     };
 
     constructor(props: any) {
@@ -118,14 +120,16 @@ class Home extends Component<{}, AppState> {
     }
 
     getFormApi(v: any) {
-
+        this.setState({
+            createGroupFormApi: v
+        })
     }
 
-    createGroupClose(){
+    createGroupClose() {
         this.setState({ createGroupVisible: false });
         this.state.createGroupUpload.current?.clear();
 
-        if(this.state.createGroupAvatar){
+        if (this.state.createGroupAvatar) {
             FileService.deleteFile(this.state.createGroupAvatar)
         }
     }
