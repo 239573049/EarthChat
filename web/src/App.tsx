@@ -9,6 +9,7 @@ import './App.scss'
 import Home from "./pages/home";
 import User from "./pages/user";
 import InvitationGroup from "./pages/invitation-group";
+import Register from "./pages/register";
 
 const router = createBrowserRouter([{
     path: "/",
@@ -24,6 +25,10 @@ const router = createBrowserRouter([{
 }, {
     path: "/invitation-group",
     element: <InvitationGroup />,
+    children: [],
+}, {
+    path: "/register",
+    element: <Register />,
     children: [],
 }, {
     path: "/login",
