@@ -46,8 +46,6 @@ public class UserCommandHandler
     [EventHandler(2)]
     public async Task DefaultGroupUserAsync(CreateUserCommand command)
     {
-        // var user = await _userRepository.FindAsync(x => x.Id == command.Result.Id);
-
         var defaultGroup = await _chatGroupRepository.GetListAsync(x => x.Default);
 
         // TODO: 默认加入的群组
@@ -57,7 +55,6 @@ public class UserCommandHandler
             ChatGroupId = x.Id
         }));
 
-        await _unitOfWork.SaveChangesAsync();
     }
 
     [EventHandler]

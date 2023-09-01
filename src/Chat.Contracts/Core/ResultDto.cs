@@ -4,6 +4,7 @@ public class ResultDto<T> where T : class
 {
     public ResultDto()
     {
+        Code = "200";
     }
 
     public ResultDto(T data)
@@ -33,6 +34,7 @@ public class ResultDto
 {
     public ResultDto()
     {
+        Code = "200";
     }
 
     public ResultDto(object data)
@@ -49,7 +51,7 @@ public class ResultDto
     /// <summary>
     ///     数据
     /// </summary>
-    public object Data { get; set; }
+    public object? Data { get; set; }
 
     /// <summary>
     ///     如果有错误，返回错误信息

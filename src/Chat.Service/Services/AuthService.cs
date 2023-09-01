@@ -69,7 +69,6 @@ public class AuthService : BaseService<AuthService>, IAuthService
         return token.CreateResult();
     }
 
-
     public async Task<ResultDto<string>> GiteeAuthAsync(string accessToken)
     {
         try
