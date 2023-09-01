@@ -123,11 +123,13 @@ class App extends Component<any, state> {
     }
 
     renderFunction() {
-        return <div>
-            <div>设置</div>
-            <div>关于</div>
-            <div onClick={() => this.onExit()}>退出登录</div>
-        </div>
+        return(
+            <div className='menu'>
+                <div className='menu-item'>设置</div>
+                <div className='menu-item'>关于</div>
+                <div className='menu-item' onClick={() => this.onExit()}>退出登录</div>
+            </div>
+        )
     }
 
     render() {
@@ -168,7 +170,10 @@ class App extends Component<any, state> {
                         left: '0',
                         textAlign: 'center',
                     }}>
-                        <Tooltip position='rightBottom' content={this.renderFunction()}>
+                        <Tooltip style={{
+                            backgroundColor: 'var(--select-background-color)',
+                            color:'var(--semi-color-text-0)'
+                        }} position='rightBottom' content={this.renderFunction()}>
                             {Function()}
                         </Tooltip>
                     </div>

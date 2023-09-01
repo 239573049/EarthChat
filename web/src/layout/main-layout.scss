@@ -112,3 +112,21 @@ htmL {
 .left-item:hover {
   background-color: var(--select-background-color);
 }
+
+
+.menu{
+  background-color: var(--select-background-color);
+}
+
+.menu-item{
+  height: 25px;
+  user-select: none;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: center;
+  line-height: 20px;
+}
+
+.menu-item:hover{
+  background-color: var(--sekect-chat-item-background-color);
+}

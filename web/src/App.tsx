@@ -10,6 +10,7 @@ import Home from "./pages/home";
 import User from "./pages/user";
 import InvitationGroup from "./pages/invitation-group";
 import Register from "./pages/register";
+import OAuth from "./pages/o-auth";
 
 const router = createBrowserRouter([{
     path: "/",
@@ -29,6 +30,14 @@ const router = createBrowserRouter([{
 }, {
     path: "/register",
     element: <Register />,
+    children: [],
+}, {
+    path: "/oauth/gitee",
+    element: <OAuth />,
+    children: [],
+}, {
+    path: "/oauth/github",
+    element: <OAuth />,
     children: [],
 }, {
     path: "/login",

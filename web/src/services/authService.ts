@@ -11,11 +11,19 @@ class AuthService {
     }
 
     public gitHubAuth(accessToken: string) {
-        return Request.post(`${baseURL}/GithubAuth`, { accessToken })
+        return Request.postConfig(`${baseURL}/GithubAuth`,{
+            params:{
+                accessToken
+            }
+        } )
     }
 
     public giteeAuth(accessToken: string) {
-        return Request.post(`${baseURL}/GiteeAuth`, { accessToken })
+        return Request.postConfig(`${baseURL}/GiteeAuth`, {
+            params:{
+                accessToken
+            }
+        } )
     }
 }
 
