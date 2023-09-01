@@ -1,13 +1,10 @@
-import  { Component } from 'react';
+import { Component } from 'react';
 import './main-layout.scss'
 import { Avatar, Badge, Tooltip } from '@douyinfe/semi-ui';
 import { ChatGroupDto, GetUserDto } from '../dto';
 import UserService from '../services/userService';
 import ChatHubService from '../services/chatHubService';
 import { Outlet, useNavigate } from 'react-router-dom';
-
-const body = document.body;
-
 
 const Message = (color: string = '#A4A4A4') => {
     return <svg
@@ -79,7 +76,9 @@ class App extends Component<any, state> {
     constructor(props: any) {
         super(props);
 
-        body.setAttribute('theme-mode', 'dark');
+
+        ChatHubService.start()
+            .then(() => { });
 
         if (!localStorage.getItem('token')) {
             ChatHubService.stop();
@@ -106,7 +105,7 @@ class App extends Component<any, state> {
         if (selectid === item.id) {
             return
         }
-        
+
         this.setState({
             selectid: item.id
         })
@@ -118,16 +117,16 @@ class App extends Component<any, state> {
     }
 
 
-    onExit(){
+    onExit() {
         localStorage.removeItem('token');
         location.href = '/login'
     }
 
-    renderFunction(){
+    renderFunction() {
         return <div>
             <div>设置</div>
             <div>关于</div>
-            <div onClick={()=>this.onExit()}>退出登录</div>
+            <div onClick={() => this.onExit()}>退出登录</div>
         </div>
     }
 
@@ -156,7 +155,7 @@ class App extends Component<any, state> {
                     }}>
                         {menu.map(x => {
                             return (
-                                <div key={"menu"+x.id} onClick={() => this.selectMenu(x)} className={"left-item " + (selectid === x.id ? " left-item-select" : null)}>
+                                <div key={"menu" + x.id} onClick={() => this.selectMenu(x)} className={"left-item " + (selectid === x.id ? " left-item-select" : null)}>
                                     {x.icon}
                                 </div>)
                         })}

@@ -114,7 +114,7 @@ class Login extends Component<{}, State> {
                                         width: '100%',
                                         fontSize: '20px',
 
-                                    }} placeholder={'请输入密码'} label=' ' field='password' />
+                                    }} type='password' placeholder={'请输入密码'} label=' ' field='password' />
                                     <Form.Checkbox field='agree' noLabel>我已阅读并且同意服务协议和隐私安全保护</Form.Checkbox>
                                     <Button disabled={!values.agree} block htmlType='submit' style={{
                                         backgroundColor: '#008DED',

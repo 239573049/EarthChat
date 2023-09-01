@@ -7,7 +7,6 @@ namespace Chat.Service.Services;
 
 public class FileService : BaseService<FileService>, IFileService
 {
-    [Authorize]
     public async Task<ResultDto<string>> UploadAsync(IFormFile file)
     {
         // 判断当前文件大小

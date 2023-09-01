@@ -4,12 +4,13 @@ import './index.scss';
 import { Avatar, Button, Form, Row, Toast, Upload } from '@douyinfe/semi-ui';
 import AuthService from '../../services/authService';
 import { Link } from 'react-router-dom';
-import {  IconCamera } from '@douyinfe/semi-icons';
+import { IconCamera } from '@douyinfe/semi-icons';
+import userService from '../../services/userService';
 interface State {
     username: string;
     password: string;
     registerUpload: RefObject<Upload>,
-    avatar:string
+    avatar: string
 }
 
 const body = document.body;
@@ -21,7 +22,7 @@ class Register extends Component<{}, State> {
         this.state = {
             username: '',
             password: '',
-            avatar:'',
+            avatar: '',
             registerUpload: React.createRef<Upload>(),
         };
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -29,30 +30,23 @@ class Register extends Component<{}, State> {
     }
 
     handleSubmit = (e: any) => {
-        AuthService.Login(e)
+        const avatar = e.avatar[0].response.data;
+
+        var value = {
+            account: e.account,
+            password: e.password,
+            name: e.name,
+            avatar: avatar
+        };
+
+        userService.create(value)
             .then((res: any) => {
                 if (res.code === '200') {
-                    localStorage.setItem('token', res.data);
-
-                    // 获取url的参数
-                    const queryString = window.location.search;
-
-                    // 创建URLSearchParams对象
-                    const params = new URLSearchParams(queryString);
-
-                    // 获取指定参数的值
-                    var redirect = params.get('redirect');
-
-                    Toast.success('登录成功');
-
+                    Toast.success('注册成功');
+                    
                     // 等待1秒后跳转
                     setTimeout(() => {
-                        if (redirect) {
-                            window.location.href = redirect;
-                        } else {
-
-                            window.location.href = '/';
-                        }
+                        window.location.href = '/login';
                     }, 1000);
                 } else {
                     Toast.error(res.message);
@@ -62,7 +56,7 @@ class Register extends Component<{}, State> {
     };
 
     render() {
-        const {avatar} = this.state;
+        const { avatar } = this.state;
         return (
             <div className="login-container">
                 <div className="login-form">
@@ -75,11 +69,11 @@ class Register extends Component<{}, State> {
                         onSubmit={this.handleSubmit}
                     >
                         {
-                            ({ values }) =>
+                            ({  }) =>
 
                             (
                                 <Row>
-                                    <Form.Upload field='头像'
+                                    <Form.Upload field='avatar'
                                         className="avatar-upload"
                                         action={import.meta.env.VITE_API + "/api/v1/Files/upload"}
                                         accept={'image/*'}
@@ -114,7 +108,9 @@ class Register extends Component<{}, State> {
                                         width: '100%',
                                         fontSize: '20px',
 
-                                    }} label=' ' placeholder={'请输入昵称'} field='name' />
+                                    }} rules={[
+                                        { required: true, message: '昵称不能为空' }
+                                    ]} label=' ' placeholder={'请输入昵称'} field='name' />
                                     <Form.Input style={{
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -123,7 +119,10 @@ class Register extends Component<{}, State> {
                                         width: '100%',
                                         fontSize: '20px',
 
-                                    }} label=' ' placeholder={'请输入账号'} field='account' /> 
+                                    }} label=' ' rules={[
+                                        { required: true, message: '账号不能为空' },
+                                        { validator: (rule, value) => value.length >= 5, message: '账号长度不能小于5位' },
+                                    ]} placeholder={'请输入账号'} field='account' />
                                     <Form.Input style={{
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -132,7 +131,10 @@ class Register extends Component<{}, State> {
                                         width: '100%',
                                         fontSize: '20px',
 
-                                    }} placeholder={'请输入密码'} label=' ' field='password' />
+                                    }} rules={[
+                                        { required: true, message: '密码不能为空' },
+                                        { validator: (rule, value) => value.length >= 5, message: '密码长度不能小于5位' },
+                                    ]} type='password' placeholder={'请输入密码'} label=' ' field='password' />
                                     <Button block htmlType='submit' style={{
                                         backgroundColor: '#008DED',
                                     }} type="tertiary">注册</Button>

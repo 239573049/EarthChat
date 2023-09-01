@@ -11,8 +11,6 @@ import ChatHubService from '../../services/chatHubService';
 import FileService from '../../services/fileService';
 import Modal from '../../components/modal';
 
-const body = document.body;
-
 interface AppState {
     middleWidth: number;
     selectid: number;
@@ -40,8 +38,6 @@ class Home extends Component<{}, AppState> {
 
     constructor(props: any) {
         super(props);
-
-        body.setAttribute('theme-mode', 'dark');
 
         if (!localStorage.getItem('token')) {
             ChatHubService.stop();

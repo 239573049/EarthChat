@@ -12,6 +12,9 @@ class UserService {
         return Request.get(`${baseURL}`)
     }
     
+    create(value:any){
+        return Request.post(`${baseURL}`,value)
+    }
 }
 
 export default new UserService()
