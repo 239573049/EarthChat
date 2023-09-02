@@ -56,6 +56,14 @@ export default class Content extends Component<IProps, IState> {
 
     constructor(props: IProps) {
         super(props);
+        this.state = {
+            height: 270,
+            data: [],
+            unread: 0,
+            page: 1,
+            groupinUsers: [],
+            pageSize: 20
+        }
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.download = this.download.bind(this);
@@ -109,6 +117,10 @@ export default class Content extends Component<IProps, IState> {
         if (group.id === data.groupId) {
             this.setState({
                 data: [...this.state.data, data]
+            },()=>{
+                if(data.user.id === user.id){
+                    this.scrollToBottom();
+                }
             })
         }
     }
@@ -321,25 +333,25 @@ export default class Content extends Component<IProps, IState> {
     /**
      * 慢慢移动到尾部
      */
-     scrollToBottom() {
+    scrollToBottom() {
         var element = document.getElementById('message-list')!;
         var scrollHeight = element.scrollHeight;
         var scrollTop = element.scrollTop;
         var scrollCount = 0;
         var scrollMargin;
-      
+
         function scroll() {
-          scrollMargin = scrollHeight - scrollTop;
-          element.scrollTop += scrollMargin / 20;
-          scrollCount++;
-      
-          if (scrollCount < 20) {
-            requestAnimationFrame(scroll);
-          }
+            scrollMargin = scrollHeight - scrollTop;
+            element.scrollTop += scrollMargin / 20;
+            scrollCount++;
+
+            if (scrollCount < 20) {
+                requestAnimationFrame(scroll);
+            }
         }
-      
+
         scroll();
-      }
+    }
 
 
     selectPicture() {
