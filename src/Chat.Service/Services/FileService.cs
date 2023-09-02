@@ -12,7 +12,7 @@ public class FileService : BaseService<FileService>, IFileService
         // 判断当前文件大小
         if (file.Length > 1024 * 1024 * 5)
         {
-            return "文件大小不能超过2M".Fail();
+            return "文件大小不能超过5M".Fail();
         }
 
         var command = new UploadCommand(file.OpenReadStream(), file.FileName);
@@ -26,7 +26,7 @@ public class FileService : BaseService<FileService>, IFileService
         var bytes = Convert.FromBase64String(dto.Value);
         if (bytes.Length > 1024 * 1024 * 5)
         {
-            return "文件大小不能超过2M".Fail();
+            return "文件大小不能超过5M".Fail();
         }
         
         using var stream = new MemoryStream(bytes);
