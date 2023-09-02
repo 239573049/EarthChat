@@ -1,0 +1,70 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Chat.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="200" d:DesignHeight="300"
+             x:Class="Chat.Client.Components.UserManage"
+             x:DataType="vm:UserManageViewModel">
+
+    <Design.DataContext>
+        <vm:UserManageViewModel />
+    </Design.DataContext>
+
+    <StackPanel>
+        <Grid Height="35" PointerExited="UsePointerExited" PointerEntered="UsePointerEnter" ColumnDefinitions="*,30"
+              Name="FriendNotification">
+            <TextBlock Margin="10,9,0,0">好友通知</TextBlock>
+            <PathIcon Grid.Column="1" Height="10" Width="10" Data="{StaticResource right_triangle}" />
+        </Grid>
+        <Grid Height="35" PointerExited="UsePointerExited" PointerEntered="UsePointerEnter" ColumnDefinitions="*,30"
+              Name="GroupNotification">
+            <TextBlock Margin="10,9,0,0">群通知</TextBlock>
+            <PathIcon Grid.Column="1" Height="10" Width="10" Data="{StaticResource right_triangle}" />
+        </Grid>
+        <!-- 显示Border分割横线 -->
+        <Border Height="1" Background="#282828" />
+        <Border CornerRadius="5" Background="#282828" Margin="15" Height="35">
+            <Grid ColumnDefinitions="1*,*">
+                <Border Name="BorderBut" CornerRadius="5" Grid.Column="0" Margin="5,5,5,5" Background="#353535">
+                    <Border.RenderTransform>
+                    </Border.RenderTransform>
+                    <Border.Transitions>
+                        <Transitions>
+                            <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.2"/>
+                        </Transitions>
+                    </Border.Transitions>
+                </Border>
+
+                <TextBlock Grid.Column="0" Name="UserManageTextBlock" PointerPressed="UserManage_OnPointerPressed" VerticalAlignment="Center"
+                           HorizontalAlignment="Center" Foreground="#225EC9">
+                    好友
+                </TextBlock>
+                <TextBlock Grid.Column="1" Name="GroupTextBlock" PointerPressed="Group_OnPointerPressed" VerticalAlignment="Center"
+                           HorizontalAlignment="Center" Foreground="#94A9A9">
+                    群聊
+                </TextBlock>
+            </Grid>
+            
+        </Border>
+        <ListBox  Background="Transparent" ItemsSource="{Binding Users}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <WrapPanel >
+                        <!-- ClipToBounds="True"图片圆角 -->
+                        <Border ClipToBounds="True" Background="Transparent" CornerRadius="500">
+                            <Image Source="../Assets/avatar.png" Height="40" Width="40" />
+                        </Border>
+                        <StackPanel>
+                            <TextBlock FontWeight="Bold" Margin="5,0,0,0" Text="{Binding Name}"></TextBlock>
+                            <TextBlock Margin="5,0,0,0" >
+                                <Run Text="[在线]"></Run>
+                                <Run Text="不要浪费生..."></Run>
+                            </TextBlock>
+                        </StackPanel>
+                    </WrapPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</UserControl>

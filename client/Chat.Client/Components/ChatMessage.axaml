@@ -1,0 +1,119 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+             xmlns:components="clr-namespace:Chat.Client.Components"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chat.Client.Components.ChatMessage"
+             x:DataType="viewModels:ChatMessageViewModel">
+
+    <Design.DataContext>
+        <viewModels:ChatMessageViewModel />
+    </Design.DataContext>
+
+
+    <Grid RowDefinitions="35,1,*" Margin="0,30,0,0">
+        <Grid ColumnDefinitions="Auto,*">
+            <TextBlock Margin="20,0,0,0" FontSize="18" FontWeight="Bold" Text="{Binding MessageList.Name}"></TextBlock>
+            <WrapPanel VerticalAlignment="Top" HorizontalAlignment="Right" Grid.Column="1">
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20"
+                          Foreground="White"
+                          Data="{StaticResource chat_message_phone}" />
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20" Foreground="White"
+                          Data="{StaticResource chat_message_video}" />
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20" Foreground="White"
+                          Data="{StaticResource chat_message_Invitation}" />
+                <PathIcon Margin="10,0,10,0" Height="20" Width="20" Foreground="White"
+                          Data="{StaticResource chat_message_menu}" />
+            </WrapPanel>
+        </Grid>
+        <Border Grid.Row="1" Height="1" Background="#1F1F1F"></Border>
+        <Grid Grid.Row="2" ColumnDefinitions="*,1,180">
+            <Grid RowDefinitions="*,1,Auto" Name="MessageMainGrid">
+                <ItemsControl Name="MessageItems" ItemsSource="{Binding ChatMessageModels}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel Margin="5">
+                                <Border Height="35" Width="35" ClipToBounds="True" Background="Transparent"
+                                        CornerRadius="500">
+                                    <Image
+                                        Source="{Binding User.Avatar,Converter={StaticResource AvatarConverter},ConverterParameter={Binding User}}"
+                                        Height="35" Width="35" />
+                                </Border>
+                                <StackPanel Margin="5,5,30,0">
+                                    <TextBlock FontSize="13" Margin="5,0,0,5" VerticalAlignment="Center"
+                                               Text="{Binding User.Name}">
+                                    </TextBlock>
+                                    <Border Padding="10" Margin="0,5,0,0" CornerRadius="8" Background="#262626">
+                                        <TextBlock Foreground="Azure" Text="{Binding Content}"></TextBlock>
+                                    </Border>
+                                </StackPanel>
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Border PointerMoved="Message_OnPointerMoved"
+                        PointerPressed="Message_OnPointerPressed"
+                        PointerReleased="Message_OnPointerReleased" Cursor="SizeNorthSouth" Grid.Row="1" Height="1"
+                        Background="#1F1F1F">
+                </Border>
+                <Grid RowDefinitions="40,*" Grid.Row="2" Height="{Binding OperatingArea}" MaxHeight="400"
+                      MinHeight="160">
+                    <Grid Height="40" HorizontalAlignment="Left" ColumnDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+                        <PathIcon Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource chat_message_meme}" />
+                        <PathIcon Grid.Column="1" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource chat_message_screenshot}" />
+                        <PathIcon Grid.Column="2" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource folder}" />
+                        <PathIcon Grid.Column="3" Tapped="InputElement_OnTapped" Margin="10,10,10,10" Height="20"
+                                  Width="20" Foreground="White"
+                                  Data="{StaticResource image}" />
+                        <PathIcon Grid.Column="4" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource microphone}" />
+                        <PathIcon Grid.Column="5" Margin="10,10,10,10" Height="20" Width="20" Foreground="White"
+                                  Data="{StaticResource time}" />
+                    </Grid>
+                    <Grid RowDefinitions="*" Grid.Row="1">
+                        <components:Editor Name="Editor" OnClick="SendMessage" DataContext="{Binding EditorViewModel}" />
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Border Grid.Column="1" Width="1" Background="#1F1F1F"></Border>
+            <Grid RowDefinitions="50,*" Grid.Column="2">
+                <TextBlock Margin="15,20,0,0" FontSize="14" FontWeight="Bold">
+                    <Run Text="群成员"></Run>
+                    <Run Text="{Binding GroupInUserModels.Count}"></Run>
+                </TextBlock>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <ItemsControl ItemsSource="{Binding GroupInUserModels}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="3,1,1,3" CornerRadius="8" Margin="10,0,5,5">
+                                        <WrapPanel>
+                                            <Border ClipToBounds="True" Background="Transparent" CornerRadius="500">
+                                                <Image Source="../Assets/avatar.png" Height="25" Width="25" />
+                                            </Border>
+                                            <TextBlock FontSize="13" Margin="5,0,0,0" VerticalAlignment="Center"
+                                                       Text="{Binding User.Name}">
+                                            </TextBlock>
+                                        </WrapPanel>
+                                        <Border.Styles>
+                                            <Style Selector="Border:pointerover">
+                                                <Setter Property="Background" Value="#242424"></Setter>
+                                                <Setter Property="CornerRadius" Value="8"></Setter>
+                                            </Style>
+                                        </Border.Styles>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

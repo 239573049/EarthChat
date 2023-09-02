@@ -11,7 +11,7 @@
 
 <div align="center">
     <a href="#公众号"><img src="https://img.shields.io/badge/公众号-Token的技术分享-blue.svg?style=plasticr"></a>
-    <a href="#公众号"><img src="https://img.shields.io/badge/交流群-加入开发-green.svg?style=plasticr"></a>
+    <a href="#技术交流"><img src="https://img.shields.io/badge/交流群-加入开发-green.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat"><img src="https://img.shields.io/badge/github-项目地址-yellow.svg?style=plasticr"></a>
     <a href="https://gitee.com/hejiale010426/chat"><img src="https://img.shields.io/badge/码云-项目地址-orange.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat/blob/master/LICENSE" target="_blank">
@@ -41,12 +41,18 @@
  - Ant Design
  - Axios
  - Vite
+ - Avalonia
 
 ## 项目使用
 
  - [Docker compose部署](./docs/Install.md)
  - [数据迁移](./docs/Migration.md)
 
+## 技术交流
+
+qq群：737776595
+
+## 公众号
 
 <p align="center">
     <a href="" target="_blank">

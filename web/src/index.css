@@ -1,0 +1,29 @@
+/* 默认引用semi-ui的样式*/
+/* @import '@douyinfe/semi-ui/dist/css/semi.min.css'; */
+body{
+  padding: 0;
+  margin: 0;
+}
+
+/* 好看的滚动条 */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+::-webkit-scrollbar-track {
+  /* // 透明 */
+  background-color: transparent;
+}
+
+div{
+  display:block;
+}

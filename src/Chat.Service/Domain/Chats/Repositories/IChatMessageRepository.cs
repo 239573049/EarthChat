@@ -5,5 +5,5 @@ namespace Chat.Service.Domain.Chats.Repositories;
 
 public interface IChatMessageRepository : IRepository<ChatMessage, Guid>
 {
-    Task<List<ChatMessage>> GetListAsync(int page = 1, int pageSize = 20);
+    Task<List<ChatMessage>> GetListAsync(Guid queryGroupId, int page = 1, int pageSize = 20);
 }

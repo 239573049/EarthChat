@@ -1,0 +1,18 @@
+// 根据body的属性值来判断主题
+body[theme-mode="dark"] {
+    --select-background-color: #1a1a1a;
+    --sekect-chat-item-background-color: #2d2d2d;
+    --verticle-division-color: #1f1f1f;
+    --user-tab-background-color: #282828;
+    --user-tab-select-background-color: #353535;
+    --modal-background-color: #1f1f1f;
+}
+
+body:not([theme-mode="dark"]) {
+    --select-background-color: #eaeaea;
+    --sekect-chat-item-background-color: #f5f5f5;
+    --verticle-division-color: #e9e9e9;
+    --user-tab-background-color: #f5f5f5;
+    --user-tab-select-background-color: #FFFFFF;
+    --modal-background-color: #e9e9e9;
+}

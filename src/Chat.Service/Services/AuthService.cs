@@ -1,15 +1,10 @@
 ﻿using System.Net.Http.Headers;
-using System.Text.Json;
 using Chat.Service.Application.Users.Commands;
-using Chat.Service.Infrastructure.Extensions;
 using Chat.Service.Infrastructure.Helper;
-using Chat.Service.Options;
-using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 
 namespace Chat.Service.Services;
 
-public class AuthService : BaseService<AuthService>
+public class AuthService : BaseService<AuthService>, IAuthService
 {
     public async Task<ResultDto<string>> CreateAsync(string account, string password)
     {
@@ -74,7 +69,6 @@ public class AuthService : BaseService<AuthService>
         return token.CreateResult();
     }
 
-
     public async Task<ResultDto<string>> GiteeAuthAsync(string accessToken)
     {
         try
@@ -90,7 +84,7 @@ public class AuthService : BaseService<AuthService>
                     null);
 
             var json = await response.Content.ReadAsStringAsync();
-            
+
             _logger.LogWarning("Gitee授权 {json}", json);
             var result = JsonSerializer.Deserialize<GitTokenDto>(json, new JsonSerializerOptions
             {
@@ -140,4 +134,5 @@ public class AuthService : BaseService<AuthService>
             return "".CreateResult("500", e.Message);
         }
     }
+
 }

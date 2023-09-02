@@ -14,13 +14,16 @@ public class UserCommandHandler
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
+    private readonly IChatGroupRepository _chatGroupRepository;
 
-    public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper, IChatGroupInUserRepository chatGroupInUserRepository)
+    public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
+        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _chatGroupInUserRepository = chatGroupInUserRepository;
+        _chatGroupRepository = chatGroupRepository;
     }
 
     [EventHandler(1)]
@@ -39,20 +42,19 @@ public class UserCommandHandler
         await _userRepository.AddAsync(user);
         command.Result = _mapper.Map<UserDto>(user);
     }
-    
+
     [EventHandler(2)]
     public async Task DefaultGroupUserAsync(CreateUserCommand command)
     {
-        var user = await _userRepository.FindAsync(x => x.Id == command.Result.Id);
-        
+        var defaultGroup = await _chatGroupRepository.GetListAsync(x => x.Default);
+
         // TODO: 默认加入的群组
-        await _chatGroupInUserRepository.AddAsync(new ChatGroupInUser()
+        await _chatGroupInUserRepository.AddRangeAsync(defaultGroup.Select(x => new ChatGroupInUser()
         {
             UserId = command.Result.Id,
-            ChatGroupId = Guid.Empty
-        });
-        
-        await _unitOfWork.SaveChangesAsync();
+            ChatGroupId = x.Id
+        }));
+
     }
 
     [EventHandler]
@@ -63,12 +65,11 @@ public class UserCommandHandler
         {
             return;
         }
-        
+
         user.Name = command.name;
         user.Avatar = command.avatar;
 
         await _userRepository.UpdateAsync(user);
         await _unitOfWork.SaveChangesAsync();
-
     }
 }

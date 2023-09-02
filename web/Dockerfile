@@ -8,9 +8,9 @@ COPY . .
 WORKDIR "/src"
 RUN npm config set registry https://registry.npm.taobao.org
 RUN yarn
-RUN yarn build
+RUN yarn run build
 
-FROM base AS chat-web
+FROM base AS docs-web
 WORKDIR /wwwroot
 COPY --from=build /src/dist /wwwroot/
-COPY conf.d/default.conf /etc/nginx/conf.d/default.conf
+COPY web.conf /etc/nginx/conf.d/default.conf

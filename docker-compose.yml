@@ -42,6 +42,7 @@ services:
       context: ./web
       dockerfile: ./Dockerfile
     container_name: chat-web
+    image: registry.cn-shenzhen.aliyuncs.com/gotrays/chat-web
     restart: always
     depends_on:
      - redis
@@ -54,6 +55,7 @@ services:
       context: ./
       dockerfile: ./src/Chat.Service/Dockerfile
     container_name: chat-api
+    image: registry.cn-shenzhen.aliyuncs.com/gotrays/chat-api
     restart: always
     depends_on:
      - redis

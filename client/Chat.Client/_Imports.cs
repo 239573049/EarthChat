@@ -1,0 +1,10 @@
+﻿global using Chat.Contracts.Chats;
+global using System.Collections.ObjectModel;
+global using Chat.Client.Models;
+global using ReactiveUI;
+global using Avalonia.Controls;
+global using Avalonia.Interactivity;
+global using Avalonia.Media;
+global using System;
+global using Avalonia.Input;
+global using Infrastructure;

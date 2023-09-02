@@ -2,6 +2,15 @@
 
 public static class ResultExtension
 {
+    public static ResultDto CreateExceptionResult(this Exception exception, string code) 
+    {
+        return new()
+        {
+            Code = code,
+            Message = exception.Message
+        };
+    }
+    
     public static ResultDto<T> CreateResult<T>(this T data) where T : class
     {
         return new(data);
@@ -35,12 +44,4 @@ public static class ResultExtension
         };
     }
     
-    public static ResultDto<T> CreateResult<T>(this Exception exception, string code) where T : class
-    {
-        return new()
-        {
-            Code = code,
-            Message = exception.Message
-        };
-    }
 }

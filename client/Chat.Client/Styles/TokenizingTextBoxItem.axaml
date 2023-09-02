@@ -1,0 +1,67 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:texts="clr-namespace:Chat.Client.Components.Texts">
+    
+    <Design.PreviewWith>
+        <texts:EditorBox Width="500">
+            <texts:TokenizingTextBoxItem>
+                Text
+            </texts:TokenizingTextBoxItem>
+            <texts:TokenizingTextBoxItem>
+                Text1
+            </texts:TokenizingTextBoxItem>
+        </texts:EditorBox>
+    </Design.PreviewWith>
+
+	<Style Selector="Button.textBoxClearButton:pressed /template/ Border#PART_ButtonLayoutBorder">
+		<Setter Property="Background" Value="Transparent" />
+	</Style>
+
+	<Style Selector="texts|TokenizingTextBoxItem">
+		<Setter Property="Background" Value="{DynamicResource SystemAccentColorLight1}" />
+		<Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColorLight1}" />
+		<Setter Property="MinHeight" Value="25" />
+		<Setter Property="Padding" Value="5,0,0,0" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="Margin" Value="1" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate>
+					<Border Name="PART_Border"
+							BorderBrush="{TemplateBinding BorderBrush}"
+							Background="{TemplateBinding Background}"
+							BorderThickness="{TemplateBinding BorderThickness}"
+							Margin="{TemplateBinding Margin}">
+						<StackPanel Orientation="Horizontal">
+							<ContentPresenter Name="PART_ContentPresenter"
+											Content="{TemplateBinding Content}"
+											ContentTemplate="{TemplateBinding ContentTemplate}"
+											Padding="{TemplateBinding Padding}"
+											VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+							<Button Name="PART_Button" 
+									Classes="textBoxClearButton" 
+									Cursor="Hand"
+									/>
+						</StackPanel>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style Selector="texts|TokenizingTextBoxItem /template/ Border#PART_Border">
+		<Setter Property="CornerRadius" Value="10" />
+	</Style>
+
+	<Style Selector="texts|TokenizingTextBoxItem:selected /template/ Border#PART_Border">
+		<Setter Property="Background" Value="{DynamicResource SystemAccentColorLight3}" />
+	</Style>
+
+	<Style Selector="texts|TokenizingTextBoxItem:pressed /template/ Border#PART_Border">
+		<Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}" />
+	</Style>
+
+	<Style Selector="texts|TokenizingTextBoxItem:pointerover /template/ Border#PART_Border">
+		<Setter Property="Background" Value="{DynamicResource SystemAccentColorLight2}" />
+	</Style>
+</Styles>

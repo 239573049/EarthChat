@@ -1,9 +1,6 @@
-﻿using System.Text.Json;
-using Chat.Contracts.Chats;
+﻿using Chat.Contracts.Chats;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Chats.Queries;
-using FreeRedis;
-using Masa.BuildingBlocks.Dispatcher.Events;
 using Masa.Contrib.Authentication.Identity;
 using Microsoft.AspNetCore.SignalR;
 
@@ -74,7 +71,7 @@ public class ChatHub : Hub
         await Clients.All.SendAsync("UpdateOnline", count);
     }
 
-    public async Task SendMessage(string value, int type)
+    public async Task SendMessage(string value,Guid groupId, int type)
     {
         if (value.IsNullOrWhiteSpace())
         {
@@ -102,6 +99,7 @@ public class ChatHub : Hub
             Type = (ChatType)type,
             UserId = userId.Value,
             CreationTime = DateTime.Now,
+            GroupId= groupId,
             Id = Guid.NewGuid(),
             User = new GetUserDto
             {
@@ -115,14 +113,13 @@ public class ChatHub : Hub
         {
             Content = value,
             Id = message.Id,
+            ChatGroupId = groupId,
             Type = (ChatType)type,
             UserId = userId.Value
         });
 
-        _ = Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(message, new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        }));
+        // 转发到客户端
+        _ = Clients.All.SendAsync("ReceiveMessage", groupId,message);
 
         if (await _redisClient.ExistsAsync(key))
         {
@@ -134,14 +131,20 @@ public class ChatHub : Hub
             await _redisClient.ExpireAsync(key, 60);
         }
         
+        // 发送消息新增事件
         await _eventBus.PublishAsync(createChat);
         await _eventBus.CommitAsync();
 
+        // 发送智能助手订阅事件
         var chatGPT = new ChatGPTCommand(value, base.Context.ConnectionId);
         await _eventBus.PublishAsync(chatGPT);
         await _eventBus.CommitAsync();
     }
 
+    /// <summary>
+    /// 获取当前用户id
+    /// </summary>
+    /// <returns></returns>
     public Guid? GetUserId()
     {
         var userId = Context.User.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_ID);
@@ -153,6 +156,10 @@ public class ChatHub : Hub
         return Guid.Parse(userId.Value);
     }
 
+    /// <summary>
+    /// 获取当前用户头像
+    /// </summary>
+    /// <returns></returns>
     private string GetAvatar()
     {
         var avatar = Context.User.FindFirst(x => x.Type == "avatar");
@@ -160,6 +167,10 @@ public class ChatHub : Hub
         return avatar?.Value == null ? "" : avatar.Value;
     }
 
+    /// <summary>
+    /// 获取当前用户名称
+    /// </summary>
+    /// <returns></returns>
     private string GetName()
     {
         var name = Context.User.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_NAME);

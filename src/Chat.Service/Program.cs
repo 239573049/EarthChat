@@ -1,3 +1,7 @@
+using Chat.Service.Infrastructure.Middlewares;
+using MessagePack;
+using MessagePack.Formatters;
+using MessagePack.Resolvers;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 
@@ -6,16 +10,17 @@ var builder = WebApplication.CreateBuilder(args);
 // 解决pgsql的时间戳问题
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
-    .CreateLogger();
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
+//    .CreateLogger();
 
-builder.Host.UseSerilog(); // 将Serilog配置到Host中
+//builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
-    .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
-        options => { options.Configuration.ChannelPrefix = "Chat:"; });
+    // .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
+    //     options => { options.Configuration.ChannelPrefix = "Chat:"; })
+    ;
 
 #region Options
 
@@ -31,6 +36,8 @@ builder.Services.Configure<GiteeOptions>(gitee);
 
 #endregion
 
+builder.Services.AddScoped<ExceptionMiddleware>();
+
 builder.Services.AddMemoryCache();
 
 builder.Services.Configure<IpRateLimitOptions>
@@ -41,13 +48,13 @@ builder.Services.AddSingleton<IRateLimitConfiguration,
 
 builder.Services.AddInMemoryRateLimiting();
 
-builder.Services.AddHttpClient(Constant.ChatGPT, (services,c) =>
+builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
 {
     var options = services.GetRequiredService<IOptions<ChatGptOptions>>().Value;
-    c.BaseAddress =new Uri(options.Url);
+    c.BaseAddress = new Uri(options.Url);
     c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
-    c.DefaultRequestHeaders.Add("Authorization","Bearer "+ options.Token);
+    c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
 });
 
 
@@ -96,10 +103,10 @@ var app = builder.Services
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
 
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseIpRateLimiting();
 
-app.UseMasaExceptionHandler();
 
 if (app.Environment.IsDevelopment())
 {
@@ -126,7 +133,7 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
 
 #endregion
 
-app.UseSerilogRequestLogging();
+//app.UseSerilogRequestLogging();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization().UseCors("CorsPolicy");

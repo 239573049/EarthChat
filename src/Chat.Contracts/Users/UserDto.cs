@@ -20,9 +20,14 @@ public class UserDto
     public string Avatar { get; set; }
 
     /// <summary>
-    ///     昵称
+    /// 昵称
     /// </summary>
     public string Name { get; set; }
 
     public Dictionary<string, string> Extends { get; set; }
+    
+    /// <summary>
+    /// 是否在线
+    /// </summary>
+    public bool OnLine { get; set; }
 }

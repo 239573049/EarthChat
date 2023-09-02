@@ -1,0 +1,42 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Chat.Client.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chat.Client.Components.Message"
+             x:DataType="vm:MessageListViewModel">
+    
+    <Design.DataContext>
+        <vm:MessageListViewModel />
+    </Design.DataContext>
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical">
+            <ListBox SelectionChanged="UserListBox_OnSelectionChanged" Name="UserListBox" Background="Transparent" ItemsSource="{Binding MessageLists}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnDefinitions="30,*,45" Margin="10,5,0,5">
+                            <Border Height="40" Width="40" ClipToBounds="True" Background="Transparent" CornerRadius="500">
+                                <Image Source="{Binding Avatar,Converter={StaticResource AvatarConverter}}"></Image>
+                            </Border>
+                            <StackPanel Grid.Column="1">
+                                <!-- 显示标题加粗 -->
+                                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="16" Margin="10,0,0,0"></TextBlock>
+                                <TextBlock Margin="10,0,0,0" FontSize="12">您好</TextBlock>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock FontSize="12">11:58</TextBlock>
+                                <Border Margin="0,5,0,0" Background="#494949" CornerRadius="500" Height="19" Width="19" IsEnabled="False">
+                                    <TextBlock Foreground="Azure" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="10">
+                                        1
+                                    </TextBlock>
+                                </Border>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,4 +1,5 @@
 ﻿using Chat.Service.Domain.Chats.Aggregates;
+using Chat.Service.Domain.System.Aggregates;
 using Chat.Service.Domain.Users.Aggregates;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
@@ -18,6 +19,8 @@ public class ChatDbContext : MasaDbContext
     public DbSet<ChatGroup> ChatGroups { get; set; } = null!;
 
     public DbSet<ChatGroupInUser> ChatGroupInUsers { get; set; } = null!;
+    
+    public DbSet<FileSystem> FileSystems { get; set; } = null!;
 
     protected override void OnModelCreatingExecuting(ModelBuilder modelBuilder)
     {
@@ -85,6 +88,15 @@ public class ChatDbContext : MasaDbContext
                 .HasConstraintName("ChatGroupId");
         });
 
+        builder.Entity<FileSystem>(options =>
+        {
+            options.TryConfigureConcurrencyStamp();
+            
+            options.HasKey(x=>x.Id);
+
+            options.HasIndex(x => x.Id);
+        });
+
         #region Init Data
 
         var user = new User(Guid.NewGuid())
@@ -98,9 +110,10 @@ public class ChatDbContext : MasaDbContext
         builder.Entity<User>().HasData(user);
 
         // TODO: 定义空的Guid，用于表示世界频道
-        var group = new ChatGroup(Guid.Empty)
+        var group = new ChatGroup(Guid.NewGuid())
         {
             Name = "世界频道",
+            Default = true,
             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
             Description = "世界频道，所有人默认加入的频道"
         };

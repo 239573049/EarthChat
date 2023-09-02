@@ -11,16 +11,16 @@
     <ItemGroup>
         <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-        <PackageReference Include="FreeRedis" Version="1.1.5" />
-        <PackageReference Include="Masa.Contrib.Authentication.Identity" Version="1.0.0-rc.4.4" />
-        <PackageReference Include="Masa.Contrib.Data.EFCore.PostgreSql" Version="1.0.0-rc.4.4" />
-        <PackageReference Include="Masa.Contrib.Data.Mapping.Mapster" Version="1.0.0-rc.4.4" />
-        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.0-rc.4.4" />
-        <PackageReference Include="Masa.Contrib.Ddd.Domain" Version="1.0.0-rc.4.4" />
-        <PackageReference Include="Masa.Contrib.Ddd.Domain.Repository.EFCore" Version="1.0.0-rc.4.4" />
-        <PackageReference Include="Masa.Contrib.Dispatcher.Events" Version="1.0.0-rc.4.4" />
+        <PackageReference Include="FreeRedis" Version="1.1.6" />
+        <PackageReference Include="Masa.Contrib.Authentication.Identity" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Data.EFCore.PostgreSql" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Data.Mapping.Mapster" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Ddd.Domain" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Ddd.Domain.Repository.EFCore" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Dispatcher.Events" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Masa.Contrib.Exceptions" Version="$(MASAFrameworkVersion)" />
-        <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0-rc.4.4" />
+        <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
             <PrivateAssets>all</PrivateAssets>

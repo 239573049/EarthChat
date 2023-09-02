@@ -1,0 +1,37 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:Chat.Client.ViewModels"
+             xmlns:converter="clr-namespace:Chat.Client.Converter"
+             xmlns:texts="clr-namespace:Chat.Client.Components.Texts"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Chat.Client.Components.Editor"
+             x:DataType="viewModels:EditorViewModel">
+
+
+    <UserControl.Resources>
+        <converter:TypeToBoolConverter x:Key="TypeToBoolConverter" />
+        <SolidColorBrush x:Key="Transparent" >
+            Transparent
+        </SolidColorBrush>
+    </UserControl.Resources>
+    <Design.DataContext>
+        <viewModels:EditorViewModel />
+    </Design.DataContext>
+    <Grid RowDefinitions="*,55">
+        
+        <texts:EditorBox  Name="EditorBox" Text="{Binding Text}" Margin="8,0,8,0" Source="{Binding Editors}"/>
+        <Border HorizontalAlignment="Right" Margin="10" Width="95" Height="25" CornerRadius="5" Background="#0066CC"
+                Grid.Row="1">
+            <WrapPanel Tapped="Click">
+                <TextBlock Margin="15,3,0,0" Foreground="White" Tapped="Send_OnTapped">发送</TextBlock>
+                <Border Width="1" Margin="15,5,0,0" Background="Azure"></Border>
+                <PathIcon Height="5" Margin="5,5,0,0" Foreground="Azure"
+                          Data="{StaticResource chat_message_send_below}">
+                </PathIcon>
+            </WrapPanel>
+        </Border>
+    </Grid>
+
+</UserControl>
