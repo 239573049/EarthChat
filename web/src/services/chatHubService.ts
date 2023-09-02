@@ -2,10 +2,11 @@ import * as signalR from '@microsoft/signalr';
 import { HubConnectionBuilder } from '@microsoft/signalr';
 import * as msgpack from '@microsoft/signalr-protocol-msgpack';
 import PubSub from 'pubsub-js';
+import config from '../config';
 
 
 const connection = new HubConnectionBuilder()
-    .withUrl(import.meta.env.VITE_API+"/chathub", {
+    .withUrl(config.API+"/chathub", {
         accessTokenFactory: () => localStorage.getItem('token')!
     })
     .withAutomaticReconnect()

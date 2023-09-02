@@ -10,6 +10,7 @@ import Content from '../../components/content';
 import ChatHubService from '../../services/chatHubService';
 import FileService from '../../services/fileService';
 import Modal from '../../components/modal';
+import config from '../../config';
 
 interface AppState {
     middleWidth: number;
@@ -237,7 +238,7 @@ class Home extends Component<{}, AppState> {
                         <Row>
                             <Form.Upload field='头像'
                                 className="avatar-upload"
-                                action={import.meta.env.VITE_API + "/api/v1/Files/upload"}
+                                action={config.API + "/api/v1/Files/upload"}
                                 accept={'image/*'}
                                 ref={this.state.createGroupUpload}
                                 fileName='file'

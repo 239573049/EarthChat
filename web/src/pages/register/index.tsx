@@ -2,10 +2,10 @@
 import React, { Component, RefObject } from 'react';
 import './index.scss';
 import { Avatar, Button, Form, Row, Toast, Upload } from '@douyinfe/semi-ui';
-import AuthService from '../../services/authService';
 import { Link } from 'react-router-dom';
 import { IconCamera } from '@douyinfe/semi-icons';
 import userService from '../../services/userService';
+import config from '../../config';
 interface State {
     username: string;
     password: string;
@@ -75,7 +75,7 @@ class Register extends Component<{}, State> {
                                 <Row>
                                     <Form.Upload field='avatar'
                                         className="avatar-upload"
-                                        action={import.meta.env.VITE_API + "/api/v1/Files/upload"}
+                                        action={config.API + "/api/v1/Files/upload"}
                                         accept={'image/*'}
                                         ref={this.state.registerUpload}
                                         fileName='file'
@@ -121,6 +121,7 @@ class Register extends Component<{}, State> {
 
                                     }} label=' ' rules={[
                                         { required: true, message: '账号不能为空' },
+                                        // @ts-ignore
                                         { validator: (rule, value) => value.length >= 5, message: '账号长度不能小于5位' },
                                     ]} placeholder={'请输入账号'} field='account' />
                                     <Form.Input style={{
@@ -133,6 +134,7 @@ class Register extends Component<{}, State> {
 
                                     }} rules={[
                                         { required: true, message: '密码不能为空' },
+                                        // @ts-ignore
                                         { validator: (rule, value) => value.length >= 5, message: '密码长度不能小于5位' },
                                     ]} type='password' placeholder={'请输入密码'} label=' ' field='password' />
                                     <Button block htmlType='submit' style={{

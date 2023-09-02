@@ -7,8 +7,8 @@ WORKDIR /src
 COPY . .
 WORKDIR "/src"
 RUN npm config set registry https://registry.npm.taobao.org
-RUN npm i
-RUN npm run build
+RUN yarn
+RUN yarn run build
 
 FROM base AS docs-web
 WORKDIR /wwwroot

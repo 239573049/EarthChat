@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import config from '../config';
 
 class Request {
     private instance: AxiosInstance | undefined
@@ -87,12 +88,12 @@ class Request {
         })
     }
 }
-export default new Request({ 
+
+export default new Request({
     timeout: 60000,
-    baseURL: import.meta.env.VITE_API+"/api/",
+    baseURL: config.API + "/api/",
     headers: {
         'Content-Type': 'application/json',
         'X-Client': 'web',
     },
-
- })
+})

@@ -4,8 +4,17 @@ import { IconMoon, IconSun } from '@douyinfe/semi-icons';
 
 const body = document.body;
 
+const theme = localStorage.getItem('theme-mode');
+if (theme) {
+    if (theme === "light") {
+        body.removeAttribute('theme-mode');
+    } else if (theme === "dark") {
+        body.setAttribute('theme-mode', 'dark');
+    }
+}
+
 export default class Theme extends Component {
-    
+
     changeTheme = (ev: any) => {
 
         var d = document as any;
@@ -15,10 +24,12 @@ export default class Theme extends Component {
         if (body.hasAttribute('theme-mode')) {
             d.startViewTransition(() => {
                 body.removeAttribute('theme-mode');
+                localStorage.setItem('theme-mode', 'light')
             });
         } else {
             d.startViewTransition(() => {
                 body.setAttribute('theme-mode', 'dark');
+                localStorage.setItem('theme-mode', 'dark')
             });
         }
     }

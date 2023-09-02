@@ -211,12 +211,9 @@ export default class Content extends Component<IProps, IState> {
     rowRenderer({
         key, // Unique key within array of rows
         index, // Index of row within collection
-        isScrolling, // The List is currently being scrolled
-        isVisible, // This row is visible within the List (eg it is not an overscanned row)
         style, // Style object to be applied to row (to position it)
         parent
     }: any) {
-        console.log(isScrolling, isVisible);
         const { data } = this.state;
         const item = data[index];
         item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
@@ -327,9 +324,7 @@ export default class Content extends Component<IProps, IState> {
      scrollToBottom() {
         var element = document.getElementById('message-list')!;
         var scrollHeight = element.scrollHeight;
-        var clientHeight = element.clientHeight;
         var scrollTop = element.scrollTop;
-        var scrollStep = Math.PI / (scrollHeight / 2);
         var scrollCount = 0;
         var scrollMargin;
       
