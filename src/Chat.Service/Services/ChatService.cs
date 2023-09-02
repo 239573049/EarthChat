@@ -44,11 +44,16 @@ public class ChatService : BaseService<ChatService>, IChatService
         throw new NotImplementedException();
     }
 
-    public async Task<List<UserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
     {
         var query = new GetGroupInUserQuery(groupId);
         await PublishAsync(query);
-        return query.Result;
+        
+        var redis = GetService<RedisClient>();
+        var users = await redis?.LRangeAsync<Guid>("onlineUsers", 0, -1);
+        foreach (var userDto in query.Result) userDto.OnLine = users?.Any(x => x == userDto.Id) ?? false;
+        
+        return query.Result.OrderByDescending(x=>x.OnLine);
     }
 
     public async Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id)

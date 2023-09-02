@@ -3,7 +3,7 @@ import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast } from '@douyinfe/semi-ui';
+import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
 import { IconFile, IconSearch } from '@douyinfe/semi-icons';
@@ -117,8 +117,8 @@ export default class Content extends Component<IProps, IState> {
         if (group.id === data.groupId) {
             this.setState({
                 data: [...this.state.data, data]
-            },()=>{
-                if(data.user.id === user.id){
+            }, () => {
+                if (data.user.id === user.id) {
                     this.scrollToBottom();
                 }
             })
@@ -511,7 +511,10 @@ export default class Content extends Component<IProps, IState> {
                         renderItem={item =>
                             <div className='grou-user-item'>
                                 <div className='grou-user-item-content'>
-                                    <Avatar size='extra-small' src={item.avatar} />
+                                    {item.onLine ? <Badge dot type='success' >
+                                        <Avatar size='extra-small' src={item.avatar} />
+                                    </Badge> :
+                                        <Avatar size='extra-small' src={item.avatar} />}
                                     <span style={{
                                         marginLeft: '10px',
                                         userSelect: 'none',

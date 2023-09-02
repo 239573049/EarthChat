@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Chat.Contracts.Core;
@@ -38,7 +39,7 @@ public class ChatService : IChatService
     }
 
     /// <inheritdoc />
-    public async Task<List<UserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
     {
         return await Caller.GetAsync<List<ChatGroupInUserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }
