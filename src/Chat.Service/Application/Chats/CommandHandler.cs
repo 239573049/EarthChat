@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using Chat.Contracts.Chats;
+using Chat.Contracts.Hubs;
 using Chat.Service.Application.Chats.Commands;
+using Chat.Service.Application.Hubs.Commands;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Microsoft.AspNetCore.SignalR;
@@ -14,15 +16,18 @@ public class CommandHandler
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
     private readonly IUserContext _userContext;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IFriendRepository _friendRepository;
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly ILogger<CommandHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEventBus _eventBus;
+    private readonly IFriendRequestRepository _friendRequestRepository;
 
     public CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,
         IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus,
         ILogger<CommandHandler> logger, IChatGroupRepository chatGroupRepository, IUnitOfWork unitOfWork,
-        IChatGroupInUserRepository chatGroupInUserRepository)
+        IChatGroupInUserRepository chatGroupInUserRepository, IFriendRepository friendRepository,
+        IFriendRequestRepository friendRequestRepository)
     {
         _chatMessageRepository = chatMessageRepository;
         _userContext = userContext;
@@ -33,6 +38,8 @@ public class CommandHandler
         _chatGroupRepository = chatGroupRepository;
         _unitOfWork = unitOfWork;
         _chatGroupInUserRepository = chatGroupInUserRepository;
+        _friendRepository = friendRepository;
+        _friendRequestRepository = friendRequestRepository;
     }
 
     [EventHandler]
@@ -185,7 +192,75 @@ public class CommandHandler
             ChatGroupId = command.id,
             UserId = _userContext.GetUserId<Guid>()
         });
-        
-        
+    }
+
+    [EventHandler]
+    public async Task ApplyForFriendAsync(ApplyForFriendCommand command)
+    {
+        if (await _friendRepository.GetCountAsync(x => x.FriendId == command.Dto.BeAppliedForId) > 0)
+        {
+            throw new UserFriendlyException("已经存在好友关系");
+        }
+
+        if (await _friendRequestRepository.GetCountAsync(x =>
+                x.RequestId == _userContext.GetUserId<Guid>() && x.State == FriendState.ApplyFor) > 0)
+        {
+            throw new UserFriendlyException("已经存在申请");
+        }
+
+        var value = new FriendRequest()
+        {
+            ApplicationDate = DateTime.Now,
+            RequestId = _userContext.GetUserId<Guid>(),
+            BeAppliedForId = command.Dto.BeAppliedForId,
+            Description = command.Dto.Description,
+            State = FriendState.ApplyFor
+        };
+
+        await _friendRequestRepository.AddAsync(value);
+
+        var systemCommand = new SystemCommand(new Notification()
+        {
+            createdTime = DateTime.Now,
+            type = NotificationType.FriendRequest,
+            content = "发起新的好友申请",
+        }, new[] { command.Dto.BeAppliedForId }, false);
+        await _eventBus.PublishAsync(systemCommand);
+    }
+
+    [EventHandler]
+    public async Task ApplicationProcessingAsync(ApplicationProcessingCommand command)
+    {
+        var value = await _friendRequestRepository.FindAsync(x => x.Id == command.Id);
+
+        if (value?.State == FriendState.ApplyFor)
+        {
+            if (command.State == FriendState.Consent)
+            {
+                await _friendRepository.AddAsync(new Friend()
+                {
+                    SelfId = _userContext.GetUserId<Guid>(),
+                    FriendId = value.RequestId
+                });
+
+                await _friendRepository.AddAsync(new Friend()
+                {
+                    SelfId = value.RequestId,
+                    FriendId = _userContext.GetUserId<Guid>()
+                });
+
+                var systemCommand = new SystemCommand(new Notification()
+                {
+                    createdTime = DateTime.Now,
+                    type = NotificationType.FriendRequest,
+                    content = "同意了好友申请",
+                }, new[] { value.RequestId }, false);
+                await _eventBus.PublishAsync(systemCommand);
+            }
+
+            value.State = command.State;
+
+            await _friendRequestRepository.UpdateAsync(value);
+        }
     }
 }

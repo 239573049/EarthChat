@@ -70,12 +70,14 @@ export default class Content extends Component<IProps, IState> {
         this.onScroll = this.onScroll.bind(this);
         this.rowRenderer = this.rowRenderer.bind(this);
         this.loadingMessage = this.loadingMessage.bind(this);
+        this.onNotification = this.onNotification.bind(this)
         this.resizableRef = React.createRef();
 
     }
 
     componentDidMount() {
         PubSub.subscribe('changeGroup', this.onMessage)
+        PubSub.subscribe('Notification', this.onNotification)
 
         this.loadingMessage();
     }
@@ -110,6 +112,21 @@ export default class Content extends Component<IProps, IState> {
 
     componentWillUnmount() {
         PubSub.unsubscribe('changeGroup');
+        PubSub.unsubscribe('Notification');
+    }
+
+    onNotification(_: any, data: any) {
+        if (data.type === "GroupUserNew") {
+            this.loadingGroupUser();
+        } else if (data.type === "FriendRequest") {
+            Notification.info({
+                content: data.content
+            })
+        } else if (data.type === "System") {
+            Notification.info({
+                content: data.content
+            })
+        }
     }
 
     onMessage = (_: any, data: any) => {
@@ -189,13 +206,14 @@ export default class Content extends Component<IProps, IState> {
                 <span>
                     <Image
                         preview={false}
+                        width={'70%'}
                         className={className}
                         style={{
                             width: 'auto',
                             // 图片显示自适应
                             height: 'auto',
                             marginBottom: '20px',
-                            marginLeft: '10px'
+                            marginLeft: '10px',
                         }}
                         src={item.content}
                     />
@@ -206,12 +224,11 @@ export default class Content extends Component<IProps, IState> {
             return (
                 <Card
                     className='message-item-content '
-                    title={name}
                     style={{ width: 300, display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}
                 >
-                    <Avatar>
-                        <IconFile />
-                    </Avatar>
+                    <span>
+                        {item.content.substring(item.content.lastIndexOf("/") + 1)}
+                    </span>
                     <Button onClick={() => this.download(item.content)} style={{
                         float: 'right'
                     }}>下载</Button>
@@ -312,6 +329,7 @@ export default class Content extends Component<IProps, IState> {
     download(url: string) {
         var a = document.createElement('a');
         a.href = url;
+        a.target = '_blank'
         a.download = url.split('/')[url.split('/').length - 1];
         a.click();
     }
@@ -345,7 +363,7 @@ export default class Content extends Component<IProps, IState> {
             element.scrollTop += scrollMargin / 20;
             scrollCount++;
 
-            if (scrollCount < 20) {
+            if (scrollCount < 30) {
                 requestAnimationFrame(scroll);
             }
         }
@@ -355,9 +373,6 @@ export default class Content extends Component<IProps, IState> {
 
 
     selectPicture() {
-        // 打开文件选择器，选择图片
-        console.log('selectPicture');
-
         var input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/png, image/jpeg, image/gif';
@@ -382,6 +397,27 @@ export default class Content extends Component<IProps, IState> {
                 .then((res: any) => {
                     if (res.code === '200') {
                         ChatHubService.send('SendMessage', res.data, this.props.group.id, 1);
+                    }
+                })
+
+        }
+    }
+
+    selectFile() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = false;
+        input.click();
+        input.onchange = (e: any) => {
+            var files = e.target.files;
+            // 将文件放到form
+            var formData = new FormData();
+            formData.append('file', files[0]);
+            // 上传图片
+            fileService.upload(formData)
+                .then((res: any) => {
+                    if (res.code === '200') {
+                        ChatHubService.send('SendMessage', res.data, this.props.group.id, 2);
                     }
                 })
 
@@ -450,7 +486,7 @@ export default class Content extends Component<IProps, IState> {
                             }} svg={
                                 <svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M437.76 430.08L170.496 79.36C156.672 61.44 159.232 35.84 176.64 20.48c16.896-14.848 42.496-12.8 56.832 4.096L512 344.576l278.528-320c14.848-16.896 39.936-18.432 56.832-4.096 17.408 14.848 19.968 40.448 6.144 58.88L586.24 430.08l165.888 190.976c92.672-33.792 196.096 4.096 245.248 89.6 49.152 85.504 29.184 194.048-47.104 256.512-76.288 62.464-186.368 61.44-260.608-3.072-74.752-64.512-92.16-173.056-40.96-257.536-1.536-1.536-3.072-3.584-4.096-5.12L512 527.872 437.76 430.08zM383.488 492.544l77.824 101.888L379.904 701.44c-1.536 1.536-2.56 3.584-4.096 5.12 50.688 84.48 33.792 193.024-40.96 257.536-74.752 64.512-184.832 65.536-260.608 3.072-76.288-62.464-95.744-171.008-47.104-256.512 49.152-85.504 152.576-123.392 245.248-89.6l111.104-128.512zM215.04 931.84c44.032-3.584 82.432-30.72 100.352-70.656 17.92-39.936 13.312-86.528-12.8-122.368-26.112-35.328-69.12-53.76-112.64-48.64-65.536 8.192-112.64 67.584-105.472 133.12 6.656 66.048 64.512 114.176 130.56 108.544z m593.92 0c43.52 5.632 86.528-13.312 112.64-48.64 26.112-35.328 30.72-81.92 12.8-121.856-17.92-39.936-56.32-67.072-100.352-70.656-66.048-5.632-124.416 42.496-131.072 108.032-6.656 65.536 40.448 124.928 105.984 133.12z m0 0" p-id="3601"></path></svg>
                             } />
-                            <Icon style={{
+                            <Icon onClick={() => this.selectFile()} style={{
                                 float: 'left',
                                 marginLeft: '15px',
                             }} svg={

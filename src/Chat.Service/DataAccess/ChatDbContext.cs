@@ -22,6 +22,10 @@ public class ChatDbContext : MasaDbContext
     
     public DbSet<FileSystem> FileSystems { get; set; } = null!;
 
+    public DbSet<FriendRequest> FriendRequests { get; set; }
+
+    public DbSet<Friend> Friends { get; set; }
+
     protected override void OnModelCreatingExecuting(ModelBuilder modelBuilder)
     {
         base.OnModelCreatingExecuting(modelBuilder);
@@ -95,6 +99,28 @@ public class ChatDbContext : MasaDbContext
             options.HasKey(x=>x.Id);
 
             options.HasIndex(x => x.Id);
+        });
+
+        builder.Entity<Friend>(options =>
+        {
+            options.TryConfigureConcurrencyStamp();
+
+            options.HasKey(x => x.Id);
+            options.HasIndex(x => x.Id);
+
+            options.HasIndex(x => x.SelfId);
+        });
+
+        builder.Entity<FriendRequest>(options =>
+        {
+            options.TryConfigureConcurrencyStamp();
+
+            options.HasKey(x => x.Id);
+            options.HasIndex(x => x.Id);
+
+            options.HasIndex(x => x.RequestId);
+            options.HasIndex(x => x.BeAppliedForId);
+
         });
 
         #region Init Data

@@ -6,7 +6,7 @@ import config from '../config';
 
 
 const connection = new HubConnectionBuilder()
-    .withUrl(config.API+"/chathub", {
+    .withUrl(config.API + "/chathub", {
         accessTokenFactory: () => localStorage.getItem('token')!
     })
     .withAutomaticReconnect()
@@ -17,6 +17,10 @@ const connection = new HubConnectionBuilder()
 connection.on("ReceiveMessage", (_, message) => {
     PubSub.publish('changeGroup', message);
 });
+
+connection.on("Notification", message => {
+    PubSub.publish('Notification', message);
+})
 
 
 export default connection;
