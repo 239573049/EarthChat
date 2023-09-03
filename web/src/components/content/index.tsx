@@ -3,7 +3,7 @@ import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
 import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge } from '@douyinfe/semi-ui';
+import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
 import { IconFile, IconSearch } from '@douyinfe/semi-icons';
@@ -205,16 +205,15 @@ export default class Content extends Component<IProps, IState> {
             return (
                 <span>
                     <Image
-                        preview={false}
-                        width={'70%'}
+                        width={'50%'}
                         className={className}
                         style={{
                             width: 'auto',
-                            // 图片显示自适应
                             height: 'auto',
                             marginBottom: '20px',
                             marginLeft: '10px',
                         }}
+                        height={'100%'}
                         src={item.content}
                     />
                 </span>
@@ -249,7 +248,7 @@ export default class Content extends Component<IProps, IState> {
         return (
             <CellMeasurer
                 cache={cache}
-                columnIndex={10}
+                columnIndex={100}
                 key={key}
                 parent={parent}
                 rowIndex={index}
@@ -431,6 +430,38 @@ export default class Content extends Component<IProps, IState> {
         Toast.success('邀请地址已经复制');
     }
 
+    renderInfo(item: any) {
+        return (<div>
+            <div style={{
+                width: "320px",
+                height: '120px',
+            }}>
+                <Avatar size="large" src={item.avatar} style={{ margin: 4, float: 'left' }} alt='User'>
+                </Avatar>
+                <div style={{
+                    float: 'left',
+                    margin: "5px"
+                }}>
+                    <div style={{
+                        fontSize: '20px',
+                        fontWeight: 'bold',
+                        color: "red",
+                        marginBottom: '10px',
+                        width:"120px"
+                    }}>
+                        昵称：{item.name}
+                    </div>
+                    <div>
+                        账号：{item.account}
+                    </div>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>)
+    }
+
     render() {
         const { groupinUsers } = this.state;
         const { group } = this.props;
@@ -542,22 +573,36 @@ export default class Content extends Component<IProps, IState> {
                             flexBasis: '100%',
                             flexShrink: 0,
                             height: 'calc(100% - 50px)',
-                            borderBottom: '1px solid var(--semi-color-border)'
+                            borderBottom: '1px solid var(--semi-color-border)',
+                            overflow: 'auto',
+                            maxHeight: 'calc(100vh - 65px)'
                         }}
+
                         renderItem={item =>
                             <div className='grou-user-item'>
                                 <div className='grou-user-item-content'>
-                                    {item.onLine ? <Badge dot type='success' >
-                                        <Avatar size='extra-small' src={item.avatar} />
-                                    </Badge> :
-                                        <Avatar size='extra-small' src={item.avatar} />}
-                                    <span style={{
+                                    <div style={{
+                                        float: 'left'
+                                    }}>
+                                        <Tooltip position='leftTop' content={() => this.renderInfo(item)} trigger="click" >
+                                            {item.onLine ? <Badge dot type='success' >
+                                                <Avatar size='extra-small' src={item.avatar} />
+                                            </Badge> :
+                                                <Avatar size='extra-small' src={item.avatar} />}
+                                        </Tooltip>
+                                    </div>
+                                    <div style={{
                                         marginLeft: '10px',
                                         userSelect: 'none',
                                         fontSize: '14px',
+                                        width:"80px",
+                                        float: 'left',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis'
                                     }}>
                                         {item.name}
-                                    </span>
+                                    </div>
                                     {item.id === "00000000-0000-0000-0000-000000000000" ?
                                         <Tag style={{
                                             boxSizing: 'content-box',
