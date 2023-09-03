@@ -447,7 +447,7 @@ export default class Content extends Component<IProps, IState> {
                         fontWeight: 'bold',
                         color: "red",
                         marginBottom: '10px',
-                        width:"120px"
+                        width: "120px"
                     }}>
                         昵称：{item.name}
                     </div>
@@ -595,7 +595,7 @@ export default class Content extends Component<IProps, IState> {
                                         marginLeft: '10px',
                                         userSelect: 'none',
                                         fontSize: '14px',
-                                        width:"80px",
+                                        width: "75px",
                                         float: 'left',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
