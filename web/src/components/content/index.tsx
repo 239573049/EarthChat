@@ -2,7 +2,7 @@ import React, { Component, RefObject } from 'react';
 import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
-import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
+// import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
@@ -30,16 +30,16 @@ interface IState {
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-const cache = new CellMeasurerCache({
-    defaultHeight: 100,
-    fixedWidth: true,
-});
+// const cache = new CellMeasurerCache({
+//     defaultHeight: 100,
+//     fixedWidth: true,
+// });
 
 
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
 
-    private listRef = React.createRef<List>();
+    private listRef = React.createRef<SList>();
     private mentionRef = React.createRef<Mention>();
 
     private groupinUsers: any[] = [];
@@ -62,7 +62,7 @@ export default class Content extends Component<IProps, IState> {
             unread: 0,
             page: 1,
             groupinUsers: [],
-            pageSize: 20
+            pageSize: 10
         }
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -86,8 +86,6 @@ export default class Content extends Component<IProps, IState> {
     componentWillReceiveProps(nextProps: any) {
         const { group } = nextProps;
         if (group.id !== this.props.group.id) {
-            console.log(group.id, this.props.group.id);
-
             this.setState({
                 data: [],
                 page: 1,
@@ -103,10 +101,12 @@ export default class Content extends Component<IProps, IState> {
         const { group } = this.props;
         ChatService.getGroupInUser(group.id)
             .then((res: any) => {
-                this.groupinUsers = res;
-                this.setState({
-                    groupinUsers: res
-                })
+                if (res) {
+                    this.groupinUsers = res;
+                    this.setState({
+                        groupinUsers: res
+                    })
+                }
             })
     }
 
@@ -236,33 +236,16 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    rowRenderer({
-        key, // Unique key within array of rows
-        index, // Index of row within collection
-        style, // Style object to be applied to row (to position it)
-        parent
-    }: any) {
-        const { data } = this.state;
-        const item = data[index];
+    rowRenderer(item: any) {
         item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
         return (
-            <CellMeasurer
-                cache={cache}
-                columnIndex={100}
-                key={key}
-                parent={parent}
-                rowIndex={index}
-            >
-                {({ measure }: any) => (
-                    <div key={item.Id} onLoad={measure} style={{ margin: '15px', ...style }}>
-                        <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
-                        <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                            {item.user.name}
-                        </div>
-                        {this.rendetContent(item)}
-                    </div>
-                )}
-            </CellMeasurer>
+            <div key={item.Id} style={{ margin: '15px' }}>
+                <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
+                <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
+                    {item.user.name}
+                </div>
+                {this.rendetContent(item)}
+            </div>
         );
     }
 
@@ -272,11 +255,13 @@ export default class Content extends Component<IProps, IState> {
         ChatService.getList(group.id, page, pageSize)
             .then((res: any) => {
                 this.loadingGroupUser();
-                this.setState({
-                    data: res.data.result,
-                }, () => {
-                    this.scrollToBottom();
-                })
+                if (res.code === "200") {
+                    this.setState({
+                        data: res.data.result,
+                    }, () => {
+                        this.scrollToBottom();
+                    })
+                }
             })
 
     }
@@ -300,29 +285,18 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    ListComponent = () => {
+    ListComponent = (height: any) => {
+        const { data } = this.state;
         return (
-            <>
-                <div style={{ height: '100%' }}>
-                    <AutoSizer>
-                        {({ height, width }: any) => (
-                            <List
-                                id='message-list'
-                                ref={this.listRef}
-                                onFocus={() => this.setState({
-                                    unread: 0
-                                })}
-                                width={width}
-                                onScroll={this.onScroll}
-                                height={height}
-                                rowCount={this.state.data.length}
-                                rowHeight={cache.rowHeight}
-                                rowRenderer={this.rowRenderer}
-                            />
-                        )}
-                    </AutoSizer>
-                </div >
-            </>
+            <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
+                {data.map(x => {
+                    return (<div style={{
+
+                    }}>
+                        {this.rowRenderer(x)}
+                    </div>)
+                })}
+            </div>
         );
     };
     download(url: string) {
@@ -496,7 +470,7 @@ export default class Content extends Component<IProps, IState> {
                     width: 'calc(100% - 180px)',
                 }}>
                     <div className="content-box " style={{ flexBasis: `calc(100% - ${this.state.height}px - 10px)` }}>
-                        {this.ListComponent()}
+                        {this.ListComponent(this.state.height)}
                     </div>
                     <div className="draggable-line" onMouseDown={this.handleMouseDown}></div>
                     <div
