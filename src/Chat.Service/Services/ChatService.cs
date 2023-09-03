@@ -32,11 +32,13 @@ public class ChatService : BaseService<ChatService>, IChatService
         return query.Result;
     }
 
-    public async Task CreateGroupAsync(CreateGroupDto dto)
+    public async Task<ResultDto> CreateGroupAsync(CreateGroupDto dto)
     {
         var command = new CreateGroupCommand(dto);
 
         await PublishAsync(command);
+
+        return new ResultDto();
     }
 
     public Task AddUserToGroupAsync(Guid groupId, Guid userId)

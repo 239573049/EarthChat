@@ -11,6 +11,7 @@ import ChatHubService from '../../services/chatHubService';
 import FileService from '../../services/fileService';
 import Modal from '../../components/modal';
 import config from '../../config';
+import chatService from '../../services/chatService';
 
 interface AppState {
     middleWidth: number;
@@ -48,6 +49,7 @@ class Home extends Component<{}, AppState> {
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.getFormApi = this.getFormApi.bind(this);
+        this.createGroup = this.createGroup.bind(this)
     }
 
     componentDidMount() {
@@ -129,6 +131,34 @@ class Home extends Component<{}, AppState> {
         if (this.state.createGroupAvatar) {
             FileService.deleteFile(this.state.createGroupAvatar)
         }
+    }
+
+    createGroup(value: any) {
+        if (value.avatar.length === 0) {
+            Toast.error("未上传头像")
+            return;
+        }
+
+        var avatar = value.avatar[0]?.response?.data;
+
+        if (!avatar) {
+            Toast.error("未上传头像")
+            return;
+        }
+        var v = {
+            avatar,
+            description:value.description,
+            name:value.name
+        }
+
+        chatService.createGroup(v)
+            .then(res=>{
+                if(res.code === "200"){
+                    Toast.success("添加成功");
+                    this.loadingGroups()
+                    this.createGroupClose();
+                }
+            })
     }
 
     render() {
@@ -234,9 +264,10 @@ class Home extends Component<{}, AppState> {
                 <Modal width={300} title='添加群聊' isOpen={createGroupVisible} onClose={() => this.createGroupClose()}>
                     <Form
                         getFormApi={this.getFormApi}
+                        onSubmit={this.createGroup}
                     >
                         <Row>
-                            <Form.Upload field='头像'
+                            <Form.Upload field='avatar'
                                 className="avatar-upload"
                                 action={config.API + "/api/v1/Files/upload"}
                                 accept={'image/*'}
@@ -262,8 +293,9 @@ class Home extends Component<{}, AppState> {
                                 onError={() => Toast.error('上传失败')}>
                                 <Avatar src={createGroupAvatar} style={{ margin: 4 }} hoverMask={<IconCamera />} />
                             </Form.Upload>
-                            <Form.Input field='phone' label='群聊名称' style={{ width: '100%' }} ></Form.Input>
+                            <Form.Input field='name' label='群聊名称' style={{ width: '100%' }} ></Form.Input>
                             <Form.TextArea rows={5} field='description' label='群聊描述' style={{ width: '100%' }} ></Form.TextArea>
+                            <Button htmlType='submit' block>新增群聊</Button>
                         </Row>
                     </Form>
                 </Modal>

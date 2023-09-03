@@ -32,7 +32,7 @@ public interface IChatService
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
-    Task CreateGroupAsync(CreateGroupDto dto);
+    Task<ResultDto> CreateGroupAsync(CreateGroupDto dto);
     
     /// <summary>
     /// 将用户添加到群组。

@@ -562,7 +562,7 @@ export default class Content extends Component<IProps, IState> {
                                         marginLeft: '10px',
                                         userSelect: 'none',
                                         fontSize: '14px',
-                                        width: "75px",
+                                        width: "70px",
                                         float: 'left',
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',
