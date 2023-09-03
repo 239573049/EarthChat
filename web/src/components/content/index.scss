@@ -122,3 +122,10 @@ body:not([theme-mode='dark']) {
 .grou-user-item-content:hover{
     background-color: var(--select-group-item-background-color);
 }
+
+.user-group{
+    .semi-list-items{
+        overflow: auto;
+        max-height: calc(100vh - 120px);
+    }
+}

@@ -135,9 +135,7 @@ export default class Content extends Component<IProps, IState> {
             this.setState({
                 data: [...this.state.data, data]
             }, () => {
-                if (data.user.id === user.id) {
-                    this.scrollToBottom();
-                }
+                this.scrollToBottom();
             })
         }
     }
@@ -219,7 +217,6 @@ export default class Content extends Component<IProps, IState> {
                 </span>
             )
         } else if (item.type === "File" || item.type === 2) {
-            var name = item.content.split('/')[item.content.split('/').length - 1];
             return (
                 <Card
                     className='message-item-content '
@@ -266,8 +263,9 @@ export default class Content extends Component<IProps, IState> {
 
     }
 
-    onScroll(onScrollProps: any) {
-        if (onScrollProps.scrollTop === 0) {
+    onScroll(_: any) {
+        var element = document.getElementById('message-list')!;
+        if (element.scrollTop === 0) {
             const { group } = this.props;
             const { page, pageSize } = this.state;
             ChatService.getList(group.id, page + 1, pageSize)
@@ -278,8 +276,6 @@ export default class Content extends Component<IProps, IState> {
                     this.setState({
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
-                    }, () => {
-                        // this.listRef.current?.scrollToRow(res.data.result.length);
                     })
                 })
         }
@@ -290,15 +286,14 @@ export default class Content extends Component<IProps, IState> {
         return (
             <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
                 {data.map(x => {
-                    return (<div style={{
-
-                    }}>
+                    return (<div>
                         {this.rowRenderer(x)}
                     </div>)
                 })}
             </div>
         );
     };
+
     download(url: string) {
         var a = document.createElement('a');
         a.href = url;
@@ -548,10 +543,8 @@ export default class Content extends Component<IProps, IState> {
                             flexShrink: 0,
                             height: 'calc(100% - 50px)',
                             borderBottom: '1px solid var(--semi-color-border)',
-                            overflow: 'auto',
-                            maxHeight: 'calc(100vh - 65px)'
                         }}
-
+                        className='user-group'
                         renderItem={item =>
                             <div className='grou-user-item'>
                                 <div className='grou-user-item-content'>
