@@ -29,7 +29,7 @@ public class ChatHub : Hub
 
         await _redisClient.LPushAsync("onlineUsers", userId);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
-        
+
         var groupsQuery = new GetUserGroupQuery(userId.Value);
         await _eventBus.PublishAsync(groupsQuery);
         foreach (var groupDto in groupsQuery.Result)
@@ -37,13 +37,13 @@ public class ChatHub : Hub
             // 加入群组
             await Groups.AddToGroupAsync(Context.ConnectionId, groupDto.Id.ToString("N"));
         }
-        
+
         var systemCommand = new SystemCommand(new Notification()
         {
             createdTime = DateTime.Now,
             type = NotificationType.GroupUserNew,
             content = "新人用户上线",
-        },groupsQuery.Result.Select(x=>x.Id).ToArray(),true);
+        }, groupsQuery.Result.Select(x => x.Id).ToArray(), true);
         await _eventBus.PublishAsync(systemCommand);
     }
 
@@ -55,21 +55,27 @@ public class ChatHub : Hub
         {
             await _redisClient.LRemAsync("onlineUsers", 0, GetUserId().ToString());
             await _redisClient.LRemAsync("Connections:" + userId, 0, Context.ConnectionId);
-            
+
             var groupsQuery = new GetUserGroupQuery(GetUserId().Value);
             await _eventBus.PublishAsync(groupsQuery);
-        
+
             var systemCommand = new SystemCommand(new Notification()
             {
                 createdTime = DateTime.Now,
                 type = NotificationType.GroupUserNew,
                 content = "用户下线",
-            },groupsQuery.Result.Select(x=>x.Id).ToArray(),true);
-            
+            }, groupsQuery.Result.Select(x => x.Id).ToArray(), true);
+
             await _eventBus.PublishAsync(systemCommand);
         }
     }
 
+    /// <summary>
+    /// 群聊消息转发
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="groupId"></param>
+    /// <param name="type"></param>
     public async Task SendMessage(string value, Guid groupId, int type)
     {
         if (value.IsNullOrWhiteSpace())
@@ -118,7 +124,7 @@ public class ChatHub : Hub
         });
 
         // 转发到客户端
-        _ = Clients.All.SendAsync("ReceiveMessage", groupId, message);
+        _ = Clients.Groups(groupId.ToString("N")).SendAsync("ReceiveMessage", groupId, message);
 
         if (await _redisClient.ExistsAsync(key))
         {
@@ -135,7 +141,7 @@ public class ChatHub : Hub
         await _eventBus.CommitAsync();
 
         // 发送智能助手订阅事件
-        var chatGPT = new ChatGPTCommand(value, base.Context.ConnectionId);
+        var chatGPT = new ChatGPTCommand(value, groupId, true);
         await _eventBus.PublishAsync(chatGPT);
         await _eventBus.CommitAsync();
     }

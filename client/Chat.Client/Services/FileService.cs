@@ -13,4 +13,9 @@ public class FileService : IFileService
         
         return await response.Content.ReadFromJsonAsync<ResultDto<string>>();
     }
+
+    public Task DeleteAsync(string uri)
+    {
+        throw new NotImplementedException();
+    }
 }

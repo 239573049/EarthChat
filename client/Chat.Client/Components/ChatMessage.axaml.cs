@@ -46,7 +46,7 @@ public partial class ChatMessage : UserControl
         // 使用ui更新
         Dispatcher.UIThread.InvokeAsync(() =>
         {
-            if (ViewModel.MessageList.Id.ToString("N") == dto.GroupId)
+            if (ViewModel.MessageList.Id.ToString("N") == dto.GroupId.ToString("N"))
             {
                 ViewModel.ChatMessageModels.Add(dto);
             }
@@ -124,8 +124,8 @@ public partial class ChatMessage : UserControl
             var chatService = await MainAppHelper.GetService<IChatService>().GetGroupInUserAsync(messageList.Id);
             if (!_groupInUserModels.ContainsKey(messageList.Id))
             {
-                _groupInUserModels.TryAdd(messageList.Id, chatService);
-                list = chatService;
+                // _groupInUserModels.TryAdd(messageList.Id.ToString("N"), chatService);
+                // list = chatService;
             }
         }
 

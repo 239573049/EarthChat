@@ -5,4 +5,6 @@ namespace Chat.Service.Application.Chats.Commands;
 /// </summary>
 /// <param name="value"></param>
 /// <param name="connectionId"></param>
-public record ChatGPTCommand(string value,string connectionId) : Command;
+public record ChatGPTCommand(string value,Guid id, bool group) : Command
+{
+}

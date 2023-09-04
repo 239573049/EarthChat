@@ -27,6 +27,11 @@ public class ChatService : IChatService
         return Caller.GetHttpClient().GetFromJsonAsync<IReadOnlyList<ChatGroupDto>>("Chats/UserGroup");
     }
 
+    Task<ResultDto> IChatService.CreateGroupAsync(CreateGroupDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <inheritdoc />
     public async Task CreateGroupAsync(CreateGroupDto dto)
     {
@@ -41,6 +46,11 @@ public class ChatService : IChatService
     /// <inheritdoc />
     public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
     {
-        return await Caller.GetAsync<List<ChatGroupInUserDto>>("Chats/GroupInUser?groupId=" + groupId);
+        return await Caller.GetAsync<IOrderedEnumerable<UserDto>>("Chats/GroupInUser?groupId=" + groupId);
+    }
+
+    public Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id)
+    {
+        throw new NotImplementedException();
     }
 }

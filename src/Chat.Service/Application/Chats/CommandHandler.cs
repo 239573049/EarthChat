@@ -99,23 +99,32 @@ public class CommandHandler
                     content = result?.choices.FirstOrDefault()?.message.content ?? "聊天机器人出错了";
                 }
 
-
-                await _hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(new ChatMessageDto
+                if (command.group)
                 {
-                    Content = content,
-                    Type = ChatType.Text,
-                    User = new GetUserDto
+                    var message = new ChatMessageDto
                     {
-                        Id = Guid.Empty,
-                        Name = "聊天机器人",
-                        Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png"
-                    },
-                    CreationTime = DateTime.Now
-                }, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                }));
+                        Content = content,
+                        Type = ChatType.Text,
+                        UserId = Guid.Empty,
+                        CreationTime = DateTime.Now,
+                        GroupId = command.id,
+                        Id = Guid.NewGuid(),
+                        User = new GetUserDto
+                        {
+                            Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+                            Id = Guid.Empty,
+                            Name = "聊天机器人",
+                        }
+                    };
 
+                    await _hubContext.Clients.All.SendAsync("ReceiveMessage", command.id,message);
+                }
+                else
+                {
+                    
+                }
+
+                // 创建助手的消息
                 var chatMessage = new ChatMessage(Guid.NewGuid(), DateTime.Now)
                 {
                     Content = content,
@@ -128,19 +137,25 @@ public class CommandHandler
             }
             catch (Exception e)
             {
-                _logger.LogError("智能助手出现异常", e);
-                await _hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(new ChatMessageDto
+                _logger.LogError("智能助手出现异常 {e}", e);
+                
+                var message = new ChatMessageDto
                 {
                     Content = "机器人出错了，请联系管理员检查！",
                     Type = ChatType.Text,
+                    UserId = Guid.Empty,
+                    CreationTime = DateTime.Now,
+                    GroupId = command.id,
+                    Id = Guid.NewGuid(),
                     User = new GetUserDto
                     {
+                        Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
                         Id = Guid.Empty,
                         Name = "聊天机器人",
-                        Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png"
-                    },
-                    CreationTime = DateTime.Now
-                }, new JsonSerializerOptions
+                    }
+                };
+                
+                await _hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(message, new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                 }));

@@ -10,4 +10,9 @@ public class UserService : IUserService
     {
         return Caller.GetAsync<ResultDto<GetUserDto>>("Users");
     }
+
+    public Task<ResultDto> CreateAsync(CreateUserDto dto)
+    {
+        throw new NotImplementedException();
+    }
 }
