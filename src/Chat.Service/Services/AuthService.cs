@@ -45,7 +45,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
             var command = new CreateUserCommand(new CreateUserDto
             {
                 Account = "guest_" + StringHelper.RandomString(8),
-                Avatar = githubUser.avatar_url,
+                Avatar = "/favicon.png",
                 Password = "Aa123456",
                 Name = githubUser.name,
                 GithubId = githubUser.id.ToString()

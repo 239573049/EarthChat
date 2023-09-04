@@ -44,6 +44,8 @@ services:
     container_name: chat-web
     image: registry.cn-shenzhen.aliyuncs.com/gotrays/chat-web
     restart: always
+    volumes:
+      - ./node_modules:/src/node_modules
     depends_on:
      - redis
      - postgres

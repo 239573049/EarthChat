@@ -1,4 +1,5 @@
 using Chat.Service.Infrastructure.Middlewares;
+using Chat.Service.Services;
 using MessagePack;
 using MessagePack.Formatters;
 using MessagePack.Resolvers;
@@ -57,6 +58,8 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
     c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
 });
+
+builder.Services.AddSingleton<SystemService>();
 
 
 var app = builder.Services

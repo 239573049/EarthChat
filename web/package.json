@@ -13,6 +13,7 @@
     "@douyinfe/semi-ui": "^2.38.1",
     "@microsoft/signalr": "^7.0.10",
     "@microsoft/signalr-protocol-msgpack": "^7.0.10",
+    "@types/crypto-js": "^4.1.2",
     "@types/pubsub-js": "^1.8.3",
     "axios": "^1.4.0",
     "copy-to-clipboard": "^3.3.3",

@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import config from '../config';
 
+
 class Request {
     private instance: AxiosInstance | undefined
 
@@ -13,6 +14,7 @@ class Request {
                 if (token) {
                     config.headers.Authorization = `Bearer ${token}`
                 }
+
                 return config
             },
             (error) => {
@@ -23,10 +25,16 @@ class Request {
         // 全局响应拦截
         this.instance.interceptors.response.use(
             (res) => {
+                console.log(res);
                 return res.data
                 // 只需要返回data即可
             },
             (error) => {
+                if(error.response.status === 401){
+                    localStorage.clear();
+                    location.href = '/login';
+                }
+                
                 return error
             },
         )

@@ -1,4 +1,6 @@
-﻿using Chat.Service.Application.System.Commands;
+﻿using System.Security.Cryptography;
+using System.Text;
+using Chat.Service.Application.System.Commands;
 using Chat.Service.Domain.System.Aggregates;
 using Chat.Service.Domain.System.Repositories;
 
@@ -8,7 +10,6 @@ public class CommandHandler
 {
     private readonly IFileSystemRepository _fileSystemRepository;
     private readonly IUserContext _userContext;
-
 
     public CommandHandler(IFileSystemRepository fileSystemRepository, IUserContext userContext)
     {
@@ -42,4 +43,5 @@ public class CommandHandler
         else
             throw new UserFriendlyException("文件不存在");
     }
+
 }

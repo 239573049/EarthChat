@@ -30,24 +30,13 @@ class Register extends Component<{}, State> {
     }
 
     handleSubmit = (e: any) => {
-        debugger;
-        if(!e.avatar){
-            Toast.error('请上传头像');
-            return;
-        }
-        const avatar = e?.avatar[0]?.response?.data;
 
         var value = {
             account: e.account,
             password: e.password,
             name: e.name,
-            avatar: avatar
+            avatar: "test"
         };
-
-        if(!value.avatar){
-            Toast.error('请上传头像');
-            return;
-        }
 
         userService.create(value)
             .then((res: any) => {

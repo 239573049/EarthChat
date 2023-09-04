@@ -8,25 +8,28 @@ public class ExceptionMiddleware : IMiddleware
         {
             await next(context);
         }
+        catch (UnauthorizedAccessException)
+        {
+            context.Response.StatusCode = 401;
+        }
         catch (UserFriendlyException e)
         {
             context.Response.StatusCode = 200;
-            await context.Response.Body.WriteAsync(JsonSerializer.SerializeToUtf8Bytes(e.CreateExceptionResult("400"),new JsonSerializerOptions()
-            {
-                PropertyNameCaseInsensitive = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                
-            }));
+            await context.Response.Body.WriteAsync(JsonSerializer.SerializeToUtf8Bytes(e.CreateExceptionResult("400"),
+                new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                }));
         }
         catch (Exception e)
         {
             context.Response.StatusCode = 200;
             await context.Response.Body.WriteAsync(
-                JsonSerializer.SerializeToUtf8Bytes(e.CreateExceptionResult("400"),new JsonSerializerOptions()
+                JsonSerializer.SerializeToUtf8Bytes(e.CreateExceptionResult("400"), new JsonSerializerOptions()
                 {
                     PropertyNameCaseInsensitive = true,
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                
                 }));
         }
     }
