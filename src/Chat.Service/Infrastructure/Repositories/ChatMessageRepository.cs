@@ -15,7 +15,7 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
     {
         var query =
             from messages in Context.ChatMessages
-            join contextUser in Context.Users on messages.UserId equals contextUser.Id into users
+            join contextUser in Context.Users on messages.UserId equals contextUser.Id  into users
             from user in users.DefaultIfEmpty()
             where messages.ChatGroupId == queryGroupId
             orderby messages.CreationTime descending
@@ -25,7 +25,7 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
                 Extends = messages.Extends,
                 Type = messages.Type,
                 User = user,
-                UserId = messages.UserId
+                UserId = messages.UserId ?? Guid.Empty
             };
 
         return await query

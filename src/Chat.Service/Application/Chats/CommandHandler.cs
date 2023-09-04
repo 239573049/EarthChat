@@ -117,7 +117,7 @@ public class CommandHandler
                         }
                     };
 
-                    await _hubContext.Clients.All.SendAsync("ReceiveMessage", command.id,message);
+                    await _hubContext.Clients.Group(command.id.ToString("N")).SendAsync("ReceiveMessage", command.id,message);
                 }
                 else
                 {
@@ -130,7 +130,7 @@ public class CommandHandler
                     Content = content,
                     Extends = new Dictionary<string, string>(),
                     Type = ChatType.Text,
-                    UserId = Guid.Empty
+                    ChatGroupId = command.id
                 };
 
                 await _chatMessageRepository.AddAsync(chatMessage);

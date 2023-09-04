@@ -52,6 +52,7 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
 {
     var options = services.GetRequiredService<IOptions<ChatGptOptions>>().Value;
     c.BaseAddress = new Uri(options.Url);
+    c.DefaultRequestHeaders.Add("X-Token", "token");
     c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
     c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);

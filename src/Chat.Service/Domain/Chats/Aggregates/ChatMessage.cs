@@ -29,7 +29,7 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
     /// <summary>
     ///     id
     /// </summary>
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     public Guid ChatGroupId { get; set; }
     

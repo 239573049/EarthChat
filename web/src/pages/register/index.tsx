@@ -30,6 +30,11 @@ class Register extends Component<{}, State> {
     }
 
     handleSubmit = (e: any) => {
+        debugger;
+        if(!e.avatar){
+            Toast.error('请上传头像');
+            return;
+        }
         const avatar = e?.avatar[0]?.response?.data;
 
         var value = {

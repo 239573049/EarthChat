@@ -135,7 +135,7 @@ export default class Content extends Component<IProps, IState> {
             this.setState({
                 data: [...this.state.data, data]
             }, () => {
-                this.scrollToBottom();
+                this.scrollToBottom(false);
             })
         }
     }
@@ -256,7 +256,7 @@ export default class Content extends Component<IProps, IState> {
                     this.setState({
                         data: res.data.result,
                     }, () => {
-                        this.scrollToBottom();
+                        this.scrollToBottom(true);
                     })
                 }
             })
@@ -265,6 +265,7 @@ export default class Content extends Component<IProps, IState> {
 
     onScroll(_: any) {
         var element = document.getElementById('message-list')!;
+
         if (element.scrollTop === 0) {
             const { group } = this.props;
             const { page, pageSize } = this.state;
@@ -319,20 +320,23 @@ export default class Content extends Component<IProps, IState> {
     /**
      * 慢慢移动到尾部
      */
-    scrollToBottom() {
+    scrollToBottom(value: boolean) {
         var element = document.getElementById('message-list')!;
         var scrollHeight = element.scrollHeight;
         var scrollTop = element.scrollTop;
+
         var scrollCount = 0;
         var scrollMargin;
 
         function scroll() {
-            scrollMargin = scrollHeight - scrollTop;
-            element.scrollTop += scrollMargin / 20;
-            scrollCount++;
-
-            if (scrollCount < 30) {
-                requestAnimationFrame(scroll);
+            // 计算滚动条，当滚动条位置位于最下面的高度的百分之三十则自动滚动。
+            if ((element.scrollTop + element.clientHeight + (element.scrollHeight * 0.3) > element.scrollHeight) || value) {
+                scrollMargin = scrollHeight - scrollTop;
+                element.scrollTop += scrollMargin / 20;
+                scrollCount++;
+                if (scrollCount < 30) {
+                    requestAnimationFrame(scroll);
+                }
             }
         }
 

@@ -134,17 +134,13 @@ class Home extends Component<{}, AppState> {
     }
 
     createGroup(value: any) {
-        if (value.avatar.length === 0) {
+        if (!value.avatar) {
             Toast.error("未上传头像")
             return;
         }
 
         var avatar = value.avatar[0]?.response?.data;
 
-        if (!avatar) {
-            Toast.error("未上传头像")
-            return;
-        }
         var v = {
             avatar,
             description:value.description,
@@ -154,9 +150,9 @@ class Home extends Component<{}, AppState> {
         chatService.createGroup(v)
             .then(res=>{
                 if(res.code === "200"){
-                    Toast.success("添加成功");
                     this.loadingGroups()
                     this.createGroupClose();
+                    Toast.success("添加成功");
                 }
             })
     }
