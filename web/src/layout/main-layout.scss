@@ -1,28 +1,14 @@
-
 .container {
   display: flex;
   height: 100vh;
 }
 
 .left {
-  body[theme-mode='dark'] & {
-    background-color: #111111;
-  }
-
-  body:not([theme-mode='dark']) & {
-    background-color: #F2F2F2;
-  }
-
+  background-color: var(--chat-menu-background-color);
 }
 
 .middle {
-  body[theme-mode='dark'] & {
-    background-color: #1B1B1B;
-  }
-
-  body:not([theme-mode='dark']) & {
-    background-color: #FFFFFF;
-  }
+  background-color: var(--chat-list-background-color);
 
   .chat-item {
     height: 70px;
@@ -39,16 +25,9 @@
 }
 
 
-
 .right {
-  body[theme-mode='dark'] & {
-    background-color: #111111;
-  }
-
-  body:not([theme-mode='dark']) & {
-    background-color: #F2F2F2;
-  }
-
+  
+  background-color: var(--chat-panel-background-color);
   flex-grow: 1;
 }
 
@@ -114,11 +93,11 @@ htmL {
 }
 
 
-.menu{
+.menu {
   background-color: var(--select-background-color);
 }
 
-.menu-item{
+.menu-item {
   height: 25px;
   user-select: none;
   cursor: pointer;
@@ -127,6 +106,6 @@ htmL {
   line-height: 20px;
 }
 
-.menu-item:hover{
+.menu-item:hover {
   background-color: var(--sekect-chat-item-background-color);
 }

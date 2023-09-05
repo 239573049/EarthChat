@@ -32,9 +32,9 @@ public class ChatService : BaseService<ChatService>, IChatService
         return query.Result;
     }
 
-    public async Task<ResultDto> CreateGroupAsync(CreateGroupDto dto)
+    public async Task<ResultDto> CreateGroupAsync(CreateGroupDto dto, string connections)
     {
-        var command = new CreateGroupCommand(dto);
+        var command = new CreateGroupCommand(dto, connections);
 
         await PublishAsync(command);
 
@@ -50,12 +50,12 @@ public class ChatService : BaseService<ChatService>, IChatService
     {
         var query = new GetGroupInUserQuery(groupId);
         await PublishAsync(query);
-        
+
         var redis = GetService<RedisClient>();
         var users = await redis?.LRangeAsync<Guid>("onlineUsers", 0, -1);
         foreach (var userDto in query.Result) userDto.OnLine = users?.Any(x => x == userDto.Id) ?? false;
-        
-        return query.Result.OrderByDescending(x=>x.OnLine);
+
+        return query.Result.OrderByDescending(x => x.OnLine);
     }
 
     public async Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id)

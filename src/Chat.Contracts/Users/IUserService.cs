@@ -11,4 +11,11 @@ public interface IUserService
     /// </summary>
     /// <returns></returns>
     Task<ResultDto> CreateAsync(CreateUserDto dto);
+
+    /// <summary>
+    /// 更新用户资料
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    Task<ResultDto> UpdateAsync(UpdateUserDto dto);
 }

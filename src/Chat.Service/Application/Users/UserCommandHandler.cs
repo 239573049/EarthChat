@@ -13,17 +13,19 @@ public class UserCommandHandler
     private readonly IMapper _mapper;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly IUserContext _userContext;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
     private readonly IChatGroupRepository _chatGroupRepository;
 
     public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
-        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository)
+        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository, IUserContext userContext)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
         _mapper = mapper;
         _chatGroupInUserRepository = chatGroupInUserRepository;
         _chatGroupRepository = chatGroupRepository;
+        _userContext = userContext;
     }
 
     [EventHandler(1)]
@@ -71,5 +73,20 @@ public class UserCommandHandler
 
         await _userRepository.UpdateAsync(user);
         await _unitOfWork.SaveChangesAsync();
+    }
+
+    [EventHandler]
+    public async Task UpdateAsync(UpdateUserCommand command)
+    {
+        var user = await _userRepository.FindAsync(x => x.Id == _userContext.GetUserId<Guid>());
+        if (user == null)
+        {
+            return;
+        }
+
+        user.Name = command.Dto.Name;
+        user.Avatar = command.Dto.Avatar;
+
+        await _userRepository.UpdateAsync(user);
     }
 }

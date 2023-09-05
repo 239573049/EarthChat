@@ -27,4 +27,13 @@ public class UserService : BaseService<UserService>,IUserService
 
         return new ResultDto();
     }
+
+    [Authorize]
+    public async Task<ResultDto> UpdateAsync(UpdateUserDto dto)
+    {
+        var command = new UpdateUserCommand(dto);
+        await PublishAsync(command);
+
+        return new ResultDto();
+    }
 }

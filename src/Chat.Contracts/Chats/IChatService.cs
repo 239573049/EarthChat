@@ -31,8 +31,9 @@ public interface IChatService
     /// 创建群组。
     /// </summary>
     /// <param name="dto"></param>
+    /// <param name="connections"></param>
     /// <returns></returns>
-    Task<ResultDto> CreateGroupAsync(CreateGroupDto dto);
+    Task<ResultDto> CreateGroupAsync(CreateGroupDto dto,string connections);
     
     /// <summary>
     /// 将用户添加到群组。

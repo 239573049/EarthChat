@@ -1,10 +1,14 @@
 import { Component } from 'react';
 import './main-layout.scss'
-import { Avatar, Badge, Tooltip } from '@douyinfe/semi-ui';
+import { Avatar, Badge, Button, Divider, Input, Modal, Popover, Toast, Tooltip, Upload } from '@douyinfe/semi-ui';
 import { ChatGroupDto, GetUserDto } from '../dto';
 import UserService from '../services/userService';
 import ChatHubService from '../services/chatHubService';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { IconEdit, IconCamera } from '@douyinfe/semi-icons';
+import config from '../config';
+import userService from '../services/userService';
+import Setting from '../components/setting';
 
 const Message = (color: string = '#A4A4A4') => {
     return <svg
@@ -42,6 +46,19 @@ const Function = (color: string = '#A4A4A4') => {
 }
 
 
+const style = {
+    backgroundColor: 'var(--semi-color-overlay-bg)',
+    height: '100%',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'var(--semi-color-white)',
+};
+const hoverMask = (<div style={style}>
+    <IconCamera />
+</div>);
+
 
 interface state {
     middleWidth: number;
@@ -49,7 +66,9 @@ interface state {
     user: GetUserDto,
     groups: ChatGroupDto[],
     selectGroup: ChatGroupDto,
-    menu: any[]
+    menu: any[],
+    settingVisible: boolean,
+    updateUserVisible: boolean,
 }
 
 
@@ -57,7 +76,12 @@ class App extends Component<any, state> {
     state: state = {
         middleWidth: 230,
         selectid: 0,
-        user: {} as GetUserDto,
+        user: {
+            name: "",
+            avatar: "",
+
+        } as GetUserDto,
+        settingVisible: false,
         groups: [],
         selectGroup: {} as ChatGroupDto,
         menu: [{
@@ -70,7 +94,8 @@ class App extends Component<any, state> {
             name: '用户',
             icon: User(),
             path: '/user'
-        }]
+        }],
+        updateUserVisible: false
     };
 
     constructor(props: any) {
@@ -123,17 +148,122 @@ class App extends Component<any, state> {
     }
 
     renderFunction() {
-        return(
+        return (
             <div className='menu'>
-                <div className='menu-item'>设置</div>
+                <div className='menu-item' onClick={()=>this.setState({
+                    settingVisible:true
+                })}>设置</div>
                 <div className='menu-item'>关于</div>
                 <div className='menu-item' onClick={() => this.onExit()}>退出登录</div>
             </div>
         )
     }
 
+    renderInfo() {
+        const { user } = this.state;
+        return <div style={{
+            height: '300px',
+            width: '315px',
+            backgroundColor: "var(--chat-list-background-color)",
+            borderRadius: '8px',
+            paddingTop: '30px',
+            paddingLeft: '20px',
+
+        }}>
+            <div style={{
+                height: "120px",
+                width: "100%",
+            }}>
+                <Avatar style={{
+                    float: "left",
+                }} size="large" alt='User' src={user.avatar}>
+                </Avatar>
+                <div style={{
+                    float: "left",
+                    marginLeft: '15px'
+                }}>
+                    <div style={{
+                        color: 'red',
+                        fontSize: '17x'
+                    }}>
+                        {user.name}
+                    </div>
+                    <div style={{
+                        color: 'var(--semi-color-text-0)',
+                        marginTop: "5px",
+                    }}>
+                        账号 {user.account}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div style={{
+                    fontSize: "16px",
+                    color: 'var(--semi-color-text-1)',
+                    width: '80px',
+                    float: 'left'
+                }}>
+                    状态
+                </div>
+                <div style={{
+                    fontSize: "16px",
+                    color: 'var(--semi-color-text-2)',
+                }}>
+                    在线
+                </div>
+            </div>
+            <div style={{
+                marginTop: "20px",
+                marginBottom: "10px"
+            }}>
+                <div style={{
+                    fontSize: "16px",
+                    color: 'var(--semi-color-text-1)',
+                    width: '80px',
+                    float: 'left'
+                }}>
+                    签名
+                </div>
+                <div style={{
+                    fontSize: "14px",
+                    color: 'var(--semi-color-text-2)',
+                }}>
+                    不要浪费生命，你还有很多事情要做！
+                </div>
+            </div>
+            <Divider></Divider>
+            <div style={{
+                border: '1px solid #878787',
+                borderRadius: '500px',
+                width: "40px",
+                float: "right",
+                margin: '10px'
+            }} onClick={() => this.setState({ updateUserVisible: true })}>
+                <Button theme='borderless' size='large' icon={<IconEdit size='large' />}></Button>
+            </div>
+        </div>
+    }
+
+    updateUser() {
+        const { user } = this.state;
+
+        userService.update(user)
+            .then(res => {
+                if (res.code === "200") {
+                    Toast.success("编辑成功")
+                } else {
+                    Toast.success("错误编辑")
+                }
+            }).finally(() => {
+                this.setState({
+                    updateUserVisible: false,
+                })
+            })
+    }
+
     render() {
-        const { selectid, user, menu } = this.state;
+        const { selectid, settingVisible, user, menu, updateUserVisible } = this.state;
+        let imageOnly = 'image/*';
 
         return (
             <div className="container">
@@ -141,16 +271,18 @@ class App extends Component<any, state> {
                     <div style={{
                         margin: "30px 0 0 10px"
                     }}>
-                        <Badge dot position='rightBottom' style={{
-                            backgroundColor: '#2CEA8C',
-                            top: '20px',
-                            left: '20px',
-                            height: '13px',
-                            width: '13px',
-                        }}>
-                            <Avatar size="default" alt='User' src={user.avatar}>
-                            </Avatar>
-                        </Badge>
+                        <Popover position='rightBottom' content={this.renderInfo()} trigger="click">
+                            <Badge dot position='rightBottom' style={{
+                                backgroundColor: '#2CEA8C',
+                                top: '20px',
+                                left: '20px',
+                                height: '13px',
+                                width: '13px',
+                            }}>
+                                <Avatar size="default" alt='User' src={user.avatar}>
+                                </Avatar>
+                            </Badge>
+                        </Popover>
                     </div>
                     <div style={{
                         margin: "25px 0 0 12px"
@@ -172,7 +304,7 @@ class App extends Component<any, state> {
                     }}>
                         <Tooltip style={{
                             backgroundColor: 'var(--select-background-color)',
-                            color:'var(--semi-color-text-0)'
+                            color: 'var(--semi-color-text-0)'
                         }} position='rightBottom' content={this.renderFunction()}>
                             {Function()}
                         </Tooltip>
@@ -180,6 +312,62 @@ class App extends Component<any, state> {
 
                 </div>
                 <Outlet />
+                <Modal
+                    title="编辑资料"
+                    visible={updateUserVisible}
+                    onOk={() => this.updateUser()}
+                    onCancel={() => this.setState({ updateUserVisible: true })}
+
+                >
+                    <div style={{ display: "flex", justifyContent: "center", }}>
+
+                        <Upload
+                            className="avatar-upload"
+                            action={config.API + "/api/v1/Files/upload"}
+                            headers={{
+                                "Authorization": "Bearer " + localStorage.getItem('token')
+                            }}
+                            fileName='file'
+                            onSuccess={(e) => {
+                                if (e.code === '200') {
+                                    this.setState({
+                                        user: {
+                                            ...user,
+                                            avatar: e.data
+                                        }
+                                    })
+                                } else {
+                                    Toast.error(e.message)
+                                }
+                            }}
+                            accept={imageOnly}
+                            showUploadList={false}
+                        >
+                            <Avatar size='large' src={user.avatar} style={{ margin: 4 }} hoverMask={hoverMask} />
+                        </Upload>
+                    </div>
+                    <div>
+                        <Input style={{
+                            margin: "10px",
+                        }} prefix='昵称' suffix={`${user.name.length}/36`} value={user.name} onChange={(e) => {
+                            if (e.length > 36) {
+                                return;
+                            }
+                            this.setState({
+                                user: {
+                                    ...user,
+                                    name: e
+                                }
+                            })
+                        }} showClear></Input>
+                    </div>
+
+                </Modal>
+                <Setting onCancel={()=>{
+                    this.setState({
+                        settingVisible:false
+                    })
+                }} visible={settingVisible} />
             </div>
         );
     }

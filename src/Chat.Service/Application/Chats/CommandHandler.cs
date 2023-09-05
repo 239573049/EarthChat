@@ -55,6 +55,7 @@ public class CommandHandler
         };
 
         await _chatMessageRepository.AddAsync(chatMessage);
+        
     }
 
     [EventHandler]
@@ -186,6 +187,9 @@ public class CommandHandler
         };
 
         await _chatGroupInUserRepository.AddAsync(chatGroupInUser);
+
+        // 新建群聊的时候想要将当前链接加入群聊。
+        await _hubContext.Groups.AddToGroupAsync(command.connections, chatGroup.Id.ToString("N"));
     }
 
     [EventHandler]

@@ -1,5 +1,7 @@
 import { CreateGroupDto } from '../dto'
 import Request from './baseService'
+import connection from './chatHubService'
+
 
 const baseURL = "v1/Chats"
 
@@ -10,13 +12,13 @@ class ChatService {
     }
     
     createGroup(value:CreateGroupDto){
-        return Request.post(`${baseURL}/Group`,value)
+        return Request.post(`${baseURL}/Group?connections=`+connection.connectionId,value)
     }
 
     getGroupInUser(groupId:string){
         return Request.get(`${baseURL}/GroupInUser`,{
             params:{
-                groupId
+                groupId,
             }
         })
     }

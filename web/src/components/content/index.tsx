@@ -2,18 +2,17 @@ import React, { Component, RefObject } from 'react';
 import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
-// import { List, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip } from '@douyinfe/semi-ui';
+import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
-import { IconFile, IconSearch } from '@douyinfe/semi-icons';
+import { IconSearch } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
-import ChatService from '../../services/chatService';
-import AutoSizer from "react-virtualized-auto-sizer";
-import Theme from '../Theme';
 import copy from 'copy-to-clipboard';
+import InfiniteScroll from 'react-infinite-scroller';
+import ChatService from '../../services/chatService';
+import chatService from '../../services/chatService';
 
 interface IProps {
     group: ChatGroupDto;
@@ -25,7 +24,8 @@ interface IState {
     unread: number,
     page: number,
     groupinUsers: any[],
-    pageSize: number,
+    groudUserPage: number,
+    groupLoading: boolean,
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -34,6 +34,14 @@ const user = JSON.parse(localStorage.getItem('user') || '{}');
 //     defaultHeight: 100,
 //     fixedWidth: true,
 // });
+
+const invitationIcon = () => {
+    return <svg className='icon-function' viewBox="0 0 1029 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12791" width="20" height="20"><path d="M991.601847 386.035547c-22.031805-13.410664-49.811038-13.410664-71.842844 0l-347.719364 229.8971c-36.400374 24.905519-84.295603 24.905519-120.695977 0L107.455916 388.909261c-22.031805-14.368569-49.811038-16.284378-71.842844-3.831618C12.623362 396.572498-1.745206 421.478017 0.170603 447.341441V871.693171c0 58.43218 47.895229 106.327409 105.369504 106.327409h819.008419c27.779233 0 53.642657-10.53695 73.758653-30.652947 20.115996-20.115996 31.610851-46.937325 31.610851-74.716557V447.341441c0-24.905519-14.368569-49.811038-38.316183-61.305894z m-31.610851 70.884939v402.319926c0 22.031805-18.200187 49.811038-38.316184 49.811038H122.78239c-22.031805 0-55.558466-29.695042-55.558466-49.811038v-402.319926l347.719364 230.855005c59.390084 38.316183 136.022451 38.316183 194.45463 0l350.593078-230.855005z m66.095416 415.73059z" p-id="12792"></path><path d="M175.467142 387.951356l7.663236 0.957905c16.284378 0 29.695042-12.45276 32.568756-28.737138V170.507016c0-22.98971 19.158092-42.147802 42.147802-42.147802h513.436857c10.53695 0 21.073901 3.831618 29.695042 12.45276 7.663237 7.663237 12.45276 18.200187 12.452759 29.695042v189.665107c0 17.242283 22.031805 28.737138 36.400375 28.737138s36.400374-12.45276 36.400374-28.737138V154.222638c0-26.821328-10.53695-51.726848-29.695042-70.884939s-44.063611-28.737138-69.927035-28.737138H243.478367c-54.600561 0-99.622077 45.021515-99.622077 100.579982v205.949485c0.957905 15.326473 15.326473 27.779233 31.610852 26.821328z" p-id="12793"></path><path d="M514.565364 525.889616c13.410664 0 36.400374-5.747428 36.400374-42.147801v-85.253508h75.674463c35.44247 0 41.189897-22.98971 41.189897-36.400374S662.08267 325.687558 626.640201 325.687558h-75.674463v-69.927034c0-36.400374-22.98971-42.147802-36.400374-42.147802s-36.400374 5.747428-36.400374 42.147802V325.687558h-75.674462c-35.44247 0-41.189897 22.98971-41.189897 36.400375s5.747428 36.400374 41.189897 36.400374h75.674462v85.253508c0 36.400374 22.98971 42.147802 36.400374 42.147801z" p-id="12794"></path></svg>
+}
+
+const menuFunctionIcon = () => {
+    return <svg className='icon-function' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7571" width="20" height="20"><path d="M820.8 512c0 44.8 36 80.8 80.8 80.8s80.8-36 80.8-80.8-36-80.8-80.8-80.8-80.8 36-80.8 80.8zM431.2 512c0 44.8 36 80.8 80.8 80.8S592.8 556.8 592.8 512 556.8 431.2 512 431.2 431.2 467.2 431.2 512zM40.8 512c0 44.8 36 80.8 80.8 80.8S203.2 556.8 203.2 512s-36-80.8-80.8-80.8S41.6 467.2 40.8 512z" fill="" p-id="7572"></path></svg>
+}
 
 
 export default class Content extends Component<IProps, IState> {
@@ -44,13 +52,34 @@ export default class Content extends Component<IProps, IState> {
 
     private groupinUsers: any[] = [];
 
+    menuFunction = () => {
+        return <Tooltip
+            content='功能'
+            arrowPointAtCenter={false}
+            position='bottom'
+        ><Icon svg={menuFunctionIcon()} />
+        </Tooltip>
+    }
+
+    invitaionFunction = () => {
+        return <Tooltip
+            content='邀请'
+            arrowPointAtCenter={false}
+            position='bottom'
+        ><Icon style={{
+            marginRight: '15px'
+        }} onClick={() => this.invitation()} svg={invitationIcon()} />
+        </Tooltip>
+    }
+
     state: Readonly<IState> = {
         height: 270,
         data: [],
         unread: 0,
         page: 1,
+        groupLoading: false,
         groupinUsers: [],
-        pageSize: 20
+        groudUserPage: 1,
     }
 
 
@@ -61,8 +90,9 @@ export default class Content extends Component<IProps, IState> {
             data: [],
             unread: 0,
             page: 1,
-            groupinUsers: [],
-            pageSize: 10
+            groupLoading: false,
+            groudUserPage: 1,
+            groupinUsers: []
         }
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -70,6 +100,7 @@ export default class Content extends Component<IProps, IState> {
         this.onScroll = this.onScroll.bind(this);
         this.rowRenderer = this.rowRenderer.bind(this);
         this.loadingMessage = this.loadingMessage.bind(this);
+        this.groupLoad = this.groupLoad.bind(this);
         this.onNotification = this.onNotification.bind(this)
         this.resizableRef = React.createRef();
 
@@ -89,7 +120,7 @@ export default class Content extends Component<IProps, IState> {
             this.setState({
                 data: [],
                 page: 1,
-                pageSize: 20,
+                groudUserPage: 1,
             }, () => {
                 this.loadingMessage();
             });
@@ -99,7 +130,8 @@ export default class Content extends Component<IProps, IState> {
 
     loadingGroupUser() {
         const { group } = this.props;
-        ChatService.getGroupInUser(group.id)
+        const { groudUserPage } = this.state;
+        ChatService.getGroupInUser(group.id, groudUserPage, 40)
             .then((res: any) => {
                 if (res) {
                     this.groupinUsers = res;
@@ -248,8 +280,8 @@ export default class Content extends Component<IProps, IState> {
 
     loadingMessage() {
         const { group } = this.props;
-        const { page, pageSize } = this.state;
-        ChatService.getList(group.id, page, pageSize)
+        const { page } = this.state;
+        ChatService.getList(group.id, page, 20)
             .then((res: any) => {
                 this.loadingGroupUser();
                 if (res.code === "200") {
@@ -268,8 +300,8 @@ export default class Content extends Component<IProps, IState> {
 
         if (element.scrollTop === 0) {
             const { group } = this.props;
-            const { page, pageSize } = this.state;
-            ChatService.getList(group.id, page + 1, pageSize)
+            const { page } = this.state;
+            ChatService.getList(group.id, page + 1, 20)
                 .then((res: any) => {
                     if (res.data.result.length === 0) {
                         return;
@@ -435,6 +467,43 @@ export default class Content extends Component<IProps, IState> {
         </div>)
     }
 
+    groupLoad() {
+        const { groudUserPage, groupLoading } = this.state;
+        if (groupLoading) {
+            return;
+        }
+        this.setState({
+            groupLoading: true,
+            groudUserPage: groudUserPage + 1
+        }, () => {
+
+            const { group } = this.props;
+
+            ChatService.getGroupInUser(group.id, groudUserPage, 40)
+                .then((res: any) => {
+                    if (res) {
+                        if (res.length !== 0) {
+                            const { groupinUsers } = this.state;
+                            res.forEach((x: any) => {
+                                if (groupinUsers.indexOf((a: any) => a.id === x.id) === -1) {
+                                    groupinUsers.push(x)
+                                }
+                            });
+                            this.setState({
+                                groupinUsers: [...groupinUsers],
+                                groudUserPage: groudUserPage + 1
+                            })
+                        }
+                    }
+                }).finally(() => {
+                    this.setState({
+                        groupLoading: false,
+                    })
+                })
+        })
+
+    }
+
     render() {
         const { groupinUsers } = this.state;
         const { group } = this.props;
@@ -458,8 +527,8 @@ export default class Content extends Component<IProps, IState> {
                         paddingTop: '25px',
                         paddingRight: '10px',
                     }}>
-                        <Button theme='borderless' onClick={() => this.invitation()}>邀请</Button>
-                        <Theme />
+                        {this.invitaionFunction()}
+                        {this.menuFunction()}
                     </div>
                 </div>
                 <div className="content-divider">

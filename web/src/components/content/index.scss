@@ -28,17 +28,18 @@ body:not([theme-mode='dark']) {
         width: 100%;
         align-items: center;
 
-        .icon-function {
-            fill: var(--semi-color-text-0) !important;
-            cursor: pointer;
-        }
-
-        .icon-function:hover {
-            fill: #0065C9 !important;
-        }
     }
 
 
+}
+
+.icon-function {
+    fill: var(--semi-color-text-0) !important;
+    cursor: pointer;
+}
+
+.icon-function:hover {
+    fill: #0065C9 !important;
 }
 
 .content-divider {

@@ -60,7 +60,7 @@ public partial class CreateGroupWindow : Window
             Avatar = result.Data,
             Name = GroupName.Text,
             Description = GroupDescription.Text
-        });
+        }, "");
         
     }
 
