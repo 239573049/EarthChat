@@ -67,6 +67,12 @@ public class CommandHandler
             // 判断是否需要获取当前服务的状态
 
             string value = command.value[2..].Trim();
+
+            if (value.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+            
             try
             {
                 string content = string.Empty;

@@ -16,16 +16,12 @@ class Request {
                 }
 
                 return config
-            },
-            (error) => {
-                console.log("全局请求拦截失败", error);
-            },
+            }
         )
 
         // 全局响应拦截
         this.instance.interceptors.response.use(
             (res) => {
-                console.log(res);
                 return res.data
                 // 只需要返回data即可
             },

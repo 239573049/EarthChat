@@ -1,21 +1,33 @@
-import { Divider} from '@douyinfe/semi-ui';
+import { Avatar, Divider, Icon } from '@douyinfe/semi-ui';
 import React, { Component } from 'react';
 import './index.scss'
+import chatService from '../../services/chatService';
+import { ChatGroupDto } from '../../dto';
+import PubSub from 'pubsub-js';
 
 
 interface IState {
     middleWidth: number;
     selectid: number;
+    selectValue: any,
     slidingBlock: number;
+    data: any[]
 }
 
+
+const message = () => {
+    return (<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2477" width="25" height="25"><path d="M996.515019 454.715319c0 55.483662-12.576433 109.289102-37.371142 159.91206-23.822568 48.65821-57.878199 92.302219-101.204983 129.714294-43.11189 37.238113-93.253894 66.443271-149.044548 86.827531-57.601906 21.039175-118.754684 31.702026-181.759647 31.702026-11.307533 0-20.466124-9.15859-20.466124-20.466124 0-11.2973 9.15859-20.466124 20.466124-20.466124 58.205657 0 114.63076-9.82374 167.719886-29.215392 51.114145-18.675338 96.988961-45.373397 136.335085-79.357396 80.20674-69.27783 124.393101-161.129794 124.393101-258.650875 0-97.510848-44.186362-189.373045-124.393101-258.650875-39.346123-33.983999-85.22094-60.682058-136.335085-79.347163-53.089126-19.391652-109.514229-29.225625-167.719886-29.225625s-114.63076 9.833973-167.719886 29.225625c-51.124378 18.665105-96.988961 45.363164-136.335085 79.347163-80.216973 69.27783-124.393101 161.129794-124.393101 258.650875 0 59.024302 15.861246 115.39824 47.133483 167.535691 30.04427 50.101071 73.933873 94.338598 126.930901 127.923508 5.904477 3.755534 9.496282 10.263761 9.506515 17.263176 0 2.691295-0.470721 58.71731-42.395576 132.927475 33.850969-5.761214 66.586534-19.24839 97.715509-40.328497 32.694633-22.144346 51.216475-44.779879 51.40067-45.005007 7.101745-8.769734 19.98517-10.151197 28.765137-3.059686s10.181897 19.934005 3.121084 28.724205c-0.86981 1.084705-21.745257 26.841322-59.065234 52.362578-49.210795 33.666774-104.530728 51.441603-160.065556 51.441603l-1.166569 0c-7.633864-0.040932-14.602579-4.308119-18.102287-11.092639-3.489474-6.774287-2.926656-14.94027 1.463328-21.172205 29.379121-41.679261 43.418882-78.815043 50.019207-102.637612 3.735068-13.46671 5.577019-24.313755 6.487761-31.630395-53.713342-36.102243-98.401124-82.44778-129.724527-134.667096-34.638915-57.765635-52.956096-122.970706-52.956096-188.585099 0-55.483662 12.576433-109.289102 37.360909-159.91206 23.832801-48.647977 57.878199-92.302219 101.204983-129.714294 43.11189-37.227879 93.253894-66.443271 149.044548-86.827531 57.601906-21.039175 118.754684-31.702026 181.76988-31.702026 63.004963 0 124.157741 10.662851 181.759647 31.702026 55.790654 20.384259 105.932658 49.599651 149.044548 86.827531 43.326784 37.412075 77.382415 81.066317 101.204983 129.714294C983.938586 345.426217 996.515019 399.231657 996.515019 454.715319z" p-id="2478"></path></svg>)
+}
 
 class User extends Component<any, IState> {
 
     state: Readonly<IState> = {
         middleWidth: 230,
         selectid: 0,
-        slidingBlock: 0
+        slidingBlock: 0,
+
+        data: [],
+        selectValue: undefined
     }
 
     handleMouseDown = (e: React.MouseEvent) => {
@@ -38,18 +50,92 @@ class User extends Component<any, IState> {
 
     selectUser() {
         this.setState({
-            slidingBlock: 0
+            slidingBlock: 0,
+            data:[]
         })
     }
 
     selectGroup() {
+        chatService.getUserGroup()
+            .then((res: ChatGroupDto[]) => {
+
+                res.forEach(x => {
+                    x.type = 'group';
+                })
+
+                this.setState({
+                    slidingBlock: 50,
+                    data: res
+                })
+            })
+
+    }
+
+    onClick(item: any) {
         this.setState({
-            slidingBlock: 50
+            selectValue: item
         })
     }
 
+    Group(item: any) {
+        PubSub.publish('selectGroup',item);
+    }
+
+    renderValue() {
+        const { selectValue } = this.state;
+
+        if (!selectValue) {
+            return;
+        }
+
+        if (selectValue.type === 'group') {
+            return (<div>
+                <div style={{
+                    height: "115px",
+                    margin: 'auto',
+                    width: '500px',
+                    paddingTop: "50px"
+                }}>
+                    <Avatar style={{
+                        float: 'left'
+                    }} size='large' src={selectValue.avatar} />
+                    <div style={{
+                        margin: '8px',
+                        float: 'left'
+                    }}>
+                        <div style={{
+                            fontSize: '18px',
+
+                        }}>
+                            {selectValue.name}
+                        </div>
+                        <div style={{
+                            marginTop: "10px"
+                        }}>
+                            {selectValue.id}
+                        </div>
+                    </div>
+                    <div style={{
+                        float: 'left',
+                        borderRadius: '500px',
+                        backgroundColor: '#1472D0',
+                        width: '50px',
+                        height: '50px',
+                        cursor: "pointer"
+                    }} onClick={() => this.Group(selectValue)}>
+                        <Icon style={{
+                            margin: '13px'
+                        }} svg={message()} />
+                    </div>
+                </div>
+                <Divider></Divider>
+
+            </div>)
+        }
+    }
+
     render() {
-        const { middleWidth, slidingBlock } = this.state;
+        const { middleWidth, slidingBlock, selectValue, data } = this.state;
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
         return (
             <>
@@ -106,11 +192,30 @@ class User extends Component<any, IState> {
                             }}>
                             </div>
                         </div>
-                        
+
+                        {data.map((item: any) => {
+                            return (<div onClick={() => this.onClick(item)} className='manager'>
+                                <Avatar style={{
+                                    float: 'left',
+                                    marginTop: '8px'
+                                }} src={item.avatar}></Avatar>
+                                <div style={{
+                                    fontSize: '18px',
+                                    textAlign: 'center',
+                                    float: 'left',
+                                    userSelect: 'none',
+                                    marginLeft: '15px',
+                                    marginTop: '18px'
+                                }}>
+                                    {item.name}
+                                </div>
+                            </div>)
+                        })}
                     </div>
                 </div>
                 <div className="resizer" onMouseDown={this.handleMouseDown}></div>
                 <div className="right" style={{ width: rightWidth }}>
+                    {selectValue && this.renderValue()}
                 </div>
             </>
         );

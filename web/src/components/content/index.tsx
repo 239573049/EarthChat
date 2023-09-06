@@ -5,14 +5,12 @@ import moment from 'moment/moment';
 import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
-import { IconSearch } from '@douyinfe/semi-icons';
+import { IconSearch, IconLoading } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
 import copy from 'copy-to-clipboard';
-import InfiniteScroll from 'react-infinite-scroller';
 import ChatService from '../../services/chatService';
-import chatService from '../../services/chatService';
 
 interface IProps {
     group: ChatGroupDto;
@@ -22,6 +20,7 @@ interface IState {
     height: number;
     data: any[],
     unread: number,
+    loading: boolean,
     page: number,
     groupinUsers: any[],
     groudUserPage: number,
@@ -29,11 +28,6 @@ interface IState {
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-// const cache = new CellMeasurerCache({
-//     defaultHeight: 100,
-//     fixedWidth: true,
-// });
 
 const invitationIcon = () => {
     return <svg className='icon-function' viewBox="0 0 1029 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12791" width="20" height="20"><path d="M991.601847 386.035547c-22.031805-13.410664-49.811038-13.410664-71.842844 0l-347.719364 229.8971c-36.400374 24.905519-84.295603 24.905519-120.695977 0L107.455916 388.909261c-22.031805-14.368569-49.811038-16.284378-71.842844-3.831618C12.623362 396.572498-1.745206 421.478017 0.170603 447.341441V871.693171c0 58.43218 47.895229 106.327409 105.369504 106.327409h819.008419c27.779233 0 53.642657-10.53695 73.758653-30.652947 20.115996-20.115996 31.610851-46.937325 31.610851-74.716557V447.341441c0-24.905519-14.368569-49.811038-38.316183-61.305894z m-31.610851 70.884939v402.319926c0 22.031805-18.200187 49.811038-38.316184 49.811038H122.78239c-22.031805 0-55.558466-29.695042-55.558466-49.811038v-402.319926l347.719364 230.855005c59.390084 38.316183 136.022451 38.316183 194.45463 0l350.593078-230.855005z m66.095416 415.73059z" p-id="12792"></path><path d="M175.467142 387.951356l7.663236 0.957905c16.284378 0 29.695042-12.45276 32.568756-28.737138V170.507016c0-22.98971 19.158092-42.147802 42.147802-42.147802h513.436857c10.53695 0 21.073901 3.831618 29.695042 12.45276 7.663237 7.663237 12.45276 18.200187 12.452759 29.695042v189.665107c0 17.242283 22.031805 28.737138 36.400375 28.737138s36.400374-12.45276 36.400374-28.737138V154.222638c0-26.821328-10.53695-51.726848-29.695042-70.884939s-44.063611-28.737138-69.927035-28.737138H243.478367c-54.600561 0-99.622077 45.021515-99.622077 100.579982v205.949485c0.957905 15.326473 15.326473 27.779233 31.610852 26.821328z" p-id="12793"></path><path d="M514.565364 525.889616c13.410664 0 36.400374-5.747428 36.400374-42.147801v-85.253508h75.674463c35.44247 0 41.189897-22.98971 41.189897-36.400374S662.08267 325.687558 626.640201 325.687558h-75.674463v-69.927034c0-36.400374-22.98971-42.147802-36.400374-42.147802s-36.400374 5.747428-36.400374 42.147802V325.687558h-75.674462c-35.44247 0-41.189897 22.98971-41.189897 36.400375s5.747428 36.400374 41.189897 36.400374h75.674462v85.253508c0 36.400374 22.98971 42.147802 36.400374 42.147801z" p-id="12794"></path></svg>
@@ -47,7 +41,6 @@ const menuFunctionIcon = () => {
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
 
-    private listRef = React.createRef<SList>();
     private mentionRef = React.createRef<Mention>();
 
     private groupinUsers: any[] = [];
@@ -80,6 +73,7 @@ export default class Content extends Component<IProps, IState> {
         groupLoading: false,
         groupinUsers: [],
         groudUserPage: 1,
+        loading: false
     }
 
 
@@ -91,6 +85,7 @@ export default class Content extends Component<IProps, IState> {
             unread: 0,
             page: 1,
             groupLoading: false,
+            loading: false,
             groudUserPage: 1,
             groupinUsers: []
         }
@@ -99,8 +94,8 @@ export default class Content extends Component<IProps, IState> {
         this.download = this.download.bind(this);
         this.onScroll = this.onScroll.bind(this);
         this.rowRenderer = this.rowRenderer.bind(this);
+        this.onScrollGroupInUser = this.onScrollGroupInUser.bind(this);
         this.loadingMessage = this.loadingMessage.bind(this);
-        this.groupLoad = this.groupLoad.bind(this);
         this.onNotification = this.onNotification.bind(this)
         this.resizableRef = React.createRef();
 
@@ -131,7 +126,7 @@ export default class Content extends Component<IProps, IState> {
     loadingGroupUser() {
         const { group } = this.props;
         const { groudUserPage } = this.state;
-        ChatService.getGroupInUser(group.id, groudUserPage, 40)
+        ChatService.getGroupInUser(group.id)
             .then((res: any) => {
                 if (res) {
                     this.groupinUsers = res;
@@ -235,12 +230,14 @@ export default class Content extends Component<IProps, IState> {
             return (
                 <span>
                     <Image
-                        width={'50%'}
+                        width={'100%'}
                         className={className}
                         style={{
                             width: 'auto',
                             height: 'auto',
                             marginBottom: '20px',
+                            marginTop: '8px',
+                            borderRadius: '8px',
                             marginLeft: '10px',
                         }}
                         height={'100%'}
@@ -269,7 +266,9 @@ export default class Content extends Component<IProps, IState> {
         item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
         return (
             <div key={item.Id} style={{ margin: '15px' }}>
-                <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
+                <Tooltip position='right' content={() => this.renderInfo(item.user)} trigger="click" >
+                    <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
+                </Tooltip>
                 <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
                     {item.user.name}
                 </div>
@@ -297,10 +296,18 @@ export default class Content extends Component<IProps, IState> {
 
     onScroll(_: any) {
         var element = document.getElementById('message-list')!;
-
         if (element.scrollTop === 0) {
+            // 这是当前滚动条的高度
+            console.log(element.scrollHeight);
+            const height = element.scrollHeight;
+
             const { group } = this.props;
             const { page } = this.state;
+
+            this.setState({
+                loading: true,
+            })
+
             ChatService.getList(group.id, page + 1, 20)
                 .then((res: any) => {
                     if (res.data.result.length === 0) {
@@ -309,6 +316,18 @@ export default class Content extends Component<IProps, IState> {
                     this.setState({
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
+                    }, () => {
+                        console.log(element.scrollHeight);
+                        const newHeight = element.scrollHeight;
+                        if (height !== newHeight) {
+                            // 移动当之前定位
+                            element.scrollTop = newHeight - height
+                        }
+                    })
+                }).finally(() => {
+
+                    this.setState({
+                        loading: false,
                     })
                 })
         }
@@ -436,6 +455,8 @@ export default class Content extends Component<IProps, IState> {
     }
 
     renderInfo(item: any) {
+        console.log(item);
+        
         return (<div>
             <div style={{
                 width: "320px",
@@ -467,45 +488,19 @@ export default class Content extends Component<IProps, IState> {
         </div>)
     }
 
-    groupLoad() {
-        const { groudUserPage, groupLoading } = this.state;
-        if (groupLoading) {
-            return;
+    onScrollGroupInUser(value: any) {
+        console.log(value);
+
+        var element = document.getElementById('group-in-user')!;
+
+        if (element.scrollTop + element.clientHeight === element.scrollHeight) {
+            console.log('到底底部');
+
         }
-        this.setState({
-            groupLoading: true,
-            groudUserPage: groudUserPage + 1
-        }, () => {
-
-            const { group } = this.props;
-
-            ChatService.getGroupInUser(group.id, groudUserPage, 40)
-                .then((res: any) => {
-                    if (res) {
-                        if (res.length !== 0) {
-                            const { groupinUsers } = this.state;
-                            res.forEach((x: any) => {
-                                if (groupinUsers.indexOf((a: any) => a.id === x.id) === -1) {
-                                    groupinUsers.push(x)
-                                }
-                            });
-                            this.setState({
-                                groupinUsers: [...groupinUsers],
-                                groudUserPage: groudUserPage + 1
-                            })
-                        }
-                    }
-                }).finally(() => {
-                    this.setState({
-                        groupLoading: false,
-                    })
-                })
-        })
-
     }
 
     render() {
-        const { groupinUsers } = this.state;
+        const { groupinUsers, loading } = this.state;
         const { group } = this.props;
 
         return (
@@ -537,7 +532,7 @@ export default class Content extends Component<IProps, IState> {
                     float: 'left',
                     width: 'calc(100% - 180px)',
                 }}>
-                    <div className="content-box " style={{ flexBasis: `calc(100% - ${this.state.height}px - 10px)` }}>
+                    <div className="content-box " style={{ flexBasis: `calc(100% - ${this.state.height}px - 10px)`, }}>
                         {this.ListComponent(this.state.height)}
                     </div>
                     <div className="draggable-line" onMouseDown={this.handleMouseDown}></div>
@@ -606,63 +601,62 @@ export default class Content extends Component<IProps, IState> {
                     width: '179px',
                     height: '100%'
                 }}>
-                    <SList
-                        dataSource={groupinUsers}
-                        split={false}
-                        header={<Input onCompositionEnd={(v: any) => this.onSearch(v.target.value)} onChange={(v) => !v ? this.onSearch() : null} placeholder='搜索' prefix={<IconSearch />} />}
-                        size='small'
-                        style={{
-                            flexBasis: '100%',
-                            flexShrink: 0,
-                            height: 'calc(100% - 50px)',
-                            borderBottom: '1px solid var(--semi-color-border)',
-                        }}
-                        className='user-group'
-                        renderItem={item =>
-                            <div className='grou-user-item'>
-                                <div className='grou-user-item-content'>
-                                    <div style={{
-                                        float: 'left'
-                                    }}>
-                                        <Tooltip position='leftTop' content={() => this.renderInfo(item)} trigger="click" >
-                                            {item.onLine ? <Badge dot type='success' >
-                                                <Avatar size='extra-small' src={item.avatar} />
-                                            </Badge> :
-                                                <Avatar size='extra-small' src={item.avatar} />}
-                                        </Tooltip>
-                                    </div>
-                                    <div style={{
-                                        marginLeft: '10px',
-                                        userSelect: 'none',
-                                        fontSize: '14px',
-                                        width: "70px",
-                                        float: 'left',
-                                        whiteSpace: 'nowrap',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis'
-                                    }}>
-                                        {item.name}
-                                    </div>
-                                    {item.id === "00000000-0000-0000-0000-000000000000" ?
-                                        <Tag style={{
-                                            boxSizing: 'content-box',
-                                            float: 'right',
-                                        }} color="blue">机器人</Tag> : (
-                                            item.id === group.creator ?
-                                                <Tag style={{
-                                                    boxSizing: 'content-box',
-                                                    float: 'right',
-                                                }} color='red'>频道主人</Tag> :
-                                                <Tag style={{
-                                                    boxSizing: 'content-box',
-                                                    float: 'right',
-                                                }} color="grey">成员</Tag>
+                    <div style={{
+                        flexBasis: '100%',
+                        flexShrink: 0,
+                        height: 'calc(100% - 67px)',
+                        borderBottom: '1px solid var(--semi-color-border)',
+                        overflow: 'auto',
+                    }}
+                        id='group-in-user'
+                        onScroll={this.onScrollGroupInUser}
+                        className='user-group'>
+                        {groupinUsers.map(item => {
+                            return (
+                                <div className='grou-user-item'>
+                                    <div className='grou-user-item-content'>
+                                        <div style={{
+                                            float: 'left'
+                                        }}>
+                                            <Tooltip position='leftTop' content={() => this.renderInfo(item)} trigger="click" >
+                                                {item.onLine ? <Badge dot type='success' >
+                                                    <Avatar size='extra-small' src={item.avatar} />
+                                                </Badge> :
+                                                    <Avatar size='extra-small' src={item.avatar} />}
+                                            </Tooltip>
+                                        </div>
+                                        <div style={{
+                                            marginLeft: '10px',
+                                            userSelect: 'none',
+                                            fontSize: '14px',
+                                            width: "70px",
+                                            float: 'left',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
+                                        }}>
+                                            {item.name}
+                                        </div>
+                                        {item.id === "00000000-0000-0000-0000-000000000000" ?
+                                            <Tag style={{
+                                                boxSizing: 'content-box',
+                                                float: 'right',
+                                            }} color="blue">机器人</Tag> : (
+                                                item.id === group.creator ?
+                                                    <Tag style={{
+                                                        boxSizing: 'content-box',
+                                                        float: 'right',
+                                                    }} color='red'>频道主人</Tag> :
+                                                    <Tag style={{
+                                                        boxSizing: 'content-box',
+                                                        float: 'right',
+                                                    }} color="grey">成员</Tag>
 
-                                        )}
-                                </div>
-                            </div>
-                        }
-                    />
+                                            )}
+                                    </div>
+                                </div>)
+                        })}
+                    </div>
                 </div>
             </>
         );

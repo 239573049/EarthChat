@@ -120,9 +120,11 @@ body:not([theme-mode='dark']) {
     max-height: 25px;
     border-radius: 8px;
 }
+
 .grou-user-item-content:hover{
     background-color: var(--select-group-item-background-color);
 }
+
 
 .user-group{
     .semi-list-items{

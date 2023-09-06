@@ -10,6 +10,17 @@ import config from '../config';
 import userService from '../services/userService';
 import Setting from '../components/setting';
 
+const body = document.body;
+
+const theme = localStorage.getItem('theme-mode');
+if (theme) {
+    if (theme === "light") {
+        body.removeAttribute('theme-mode');
+    } else if (theme === "dark") {
+        body.setAttribute('theme-mode', 'dark');
+    }
+}
+
 const Message = (color: string = '#A4A4A4') => {
     return <svg
         style={{

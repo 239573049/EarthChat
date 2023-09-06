@@ -47,6 +47,7 @@
 
  - [Docker compose部署](./docs/Install.md)
  - [数据迁移](./docs/Migration.md)
+ - [好友关系设计](./docs/Friend-Chart.md)
 
 ## 技术交流
 

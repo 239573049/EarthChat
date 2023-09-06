@@ -19,9 +19,8 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
-    // .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
-    //     options => { options.Configuration.ChannelPrefix = "Chat:"; })
-    ;
+    .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
+        options => { options.Configuration.ChannelPrefix = "Chat:"; });
 
 #region Options
 

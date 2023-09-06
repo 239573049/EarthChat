@@ -83,3 +83,13 @@
   width: 40%;
   background-color: var(--user-tab-select-background-color);
 }
+
+.manager{
+  width: 100%;
+  padding-left: 20px;
+  cursor: pointer;
+  height: 65px;
+}
+.manager:hover{
+  background-color: var(--sekect-chat-item-background-color);
+}
