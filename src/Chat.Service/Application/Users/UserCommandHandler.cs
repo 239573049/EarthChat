@@ -16,9 +16,11 @@ public class UserCommandHandler
     private readonly IUserContext _userContext;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
     private readonly IChatGroupRepository _chatGroupRepository;
+    private readonly IEmojiRepository _emojiRepository;
 
     public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
-        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository, IUserContext userContext)
+        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository,
+        IUserContext userContext, IEmojiRepository emojiRepository)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
@@ -26,6 +28,7 @@ public class UserCommandHandler
         _chatGroupInUserRepository = chatGroupInUserRepository;
         _chatGroupRepository = chatGroupRepository;
         _userContext = userContext;
+        _emojiRepository = emojiRepository;
     }
 
     [EventHandler(1)]
@@ -56,7 +59,6 @@ public class UserCommandHandler
             UserId = command.Result.Id,
             ChatGroupId = x.Id
         }));
-
     }
 
     [EventHandler]
@@ -88,5 +90,24 @@ public class UserCommandHandler
         user.Avatar = command.Dto.Avatar;
 
         await _userRepository.UpdateAsync(user);
+    }
+
+    [EventHandler]
+    public async Task AddEmojiAsync(AddEmojiCommand command)
+    {
+        var emoji = new Emoji()
+        {
+            Path = command.path,
+            Sort = 1,
+            CreationTime = DateTime.Now
+        };
+
+        await _emojiRepository.AddAsync(emoji);
+    }
+
+    [EventHandler]
+    public async Task DeleteEmojiAsync(DeleteEmojiCommand command)
+    {
+        await _emojiRepository.RemoveAsync(command.Id);
     }
 }

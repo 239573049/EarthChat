@@ -54,12 +54,6 @@ public class AuthService : BaseService<AuthService>, IAuthService
             await _eventBus.PublishAsync(command);
             query.Result = command.Result;
         }
-        else
-        {
-            // 更新用户信息
-            var authUpdateCommand = new AuthUpdateCommand(query.Result.Id, githubUser.name, githubUser.avatar_url);
-            await _eventBus.PublishAsync(authUpdateCommand);
-        }
 
         var claims = JwtHelper.GetClaimsIdentity(query.Result);
         var jwt = GetService<IOptions<JwtOptions>>()?.Value;
@@ -114,13 +108,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
                 await _eventBus.PublishAsync(command);
                 query.Result = command.Result;
             }
-            else
-            {
-                // 更新用户信息
-                var authUpdateCommand = new AuthUpdateCommand(query.Result.Id, githubUser.name, githubUser.avatar_url);
-                await _eventBus.PublishAsync(authUpdateCommand);
-            }
-
+            
             var claims = JwtHelper.GetClaimsIdentity(query.Result);
             var jwt = GetService<IOptions<JwtOptions>>()?.Value;
 

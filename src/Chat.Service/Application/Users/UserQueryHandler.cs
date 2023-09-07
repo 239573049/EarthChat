@@ -7,13 +7,18 @@ public class UserQueryHandler
 {
     private readonly IMapper _mapper;
     private readonly RedisClient _redisClient;
+    private readonly IUserContext _userContext;
+    private readonly IEmojiRepository _emojiRepository;
     private readonly IUserRepository _userRepository;
 
-    public UserQueryHandler(IUserRepository userRepository, IMapper mapper, RedisClient redisClient)
+    public UserQueryHandler(IUserRepository userRepository, IMapper mapper, RedisClient redisClient,
+        IEmojiRepository emojiRepository, IUserContext userContext)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _redisClient = redisClient;
+        _emojiRepository = emojiRepository;
+        _userContext = userContext;
     }
 
     [EventHandler]
@@ -62,5 +67,12 @@ public class UserQueryHandler
 
         query.Result = _mapper.Map<GetUserDto>(user);
     }
-    
+
+    [EventHandler]
+    public async Task GetEmojiAsync(GetEmojiQuery query)
+    {
+        var value = await _emojiRepository.GetListAsync(x => x.UserId == _userContext.GetUserId<Guid>());
+
+        query.Result = _mapper.Map<IReadOnlyList<EmojiDto>>(value);
+    }
 }

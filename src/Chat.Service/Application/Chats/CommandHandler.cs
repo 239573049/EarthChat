@@ -5,6 +5,8 @@ using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Hubs.Commands;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
+using Chat.Service.Domain.Users.Aggregates;
+using Chat.Service.Domain.Users.Repositories;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Service.Application.Chats;

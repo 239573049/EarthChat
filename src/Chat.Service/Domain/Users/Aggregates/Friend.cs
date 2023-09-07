@@ -1,4 +1,4 @@
-﻿namespace Chat.Service.Domain.Chats.Aggregates;
+﻿namespace Chat.Service.Domain.Users.Aggregates;
 
 /// <summary>
 /// 好友表

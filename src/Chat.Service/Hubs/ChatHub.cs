@@ -24,6 +24,7 @@ public class ChatHub : Hub
         var userId = GetUserId();
         if (userId == null)
         {
+            return;
             throw new UnauthorizedAccessException();
         }
 

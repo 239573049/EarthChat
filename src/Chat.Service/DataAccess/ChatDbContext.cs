@@ -123,6 +123,14 @@ public class ChatDbContext : MasaDbContext
 
         });
 
+        builder.Entity<Emoji>(options =>
+        {
+            options.HasKey(x => x.Id);
+            options.HasIndex(x => x.Id);
+
+            options.HasIndex(x => x.UserId);
+        });
+
         #region Init Data
 
         var user = new User(Guid.NewGuid())

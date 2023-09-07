@@ -1,6 +1,6 @@
 ﻿using Chat.Contracts.Chats;
 
-namespace Chat.Service.Domain.Chats.Aggregates;
+namespace Chat.Service.Domain.Users.Aggregates;
 
 public class FriendRequest : Entity<Guid>
 {

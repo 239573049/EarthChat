@@ -46,4 +46,8 @@
     <ItemGroup>
       <Folder Include="wwwroot\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Domain\Chats\Repositories\IFriendRepository.cs" />
+    </ItemGroup>
 </Project>
