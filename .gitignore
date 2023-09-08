@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 /.vscode
 /postgres_data
 /redisdata
+/service
+/DevOps/nginx/conf/wwwroot

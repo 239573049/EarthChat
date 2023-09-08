@@ -7,13 +7,13 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
 {
     protected ChatMessage()
     {
-        Extends = new Dictionary<string, string>();
+        Extends = new Dictionary<string, string>(0);
     }
     
     public ChatMessage(Guid id,DateTime creationTime) : base(id)
     {
         CreationTime = creationTime;
-        Extends = new Dictionary<string, string>();
+        Extends = new Dictionary<string, string>(0);
     }
 
     /// <summary>
@@ -38,5 +38,5 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
     /// <summary>
     ///     扩展参数
     /// </summary>
-    public Dictionary<string, string> Extends { get; set; }
+    public Dictionary<string, string> Extends { get; set; } 
 }

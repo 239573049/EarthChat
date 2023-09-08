@@ -1,15 +1,9 @@
 using Chat.Service.Infrastructure.Middlewares;
 using Chat.Service.Services;
-using MessagePack;
-using MessagePack.Formatters;
-using MessagePack.Resolvers;
-using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
+
+var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
 
 var builder = WebApplication.CreateBuilder(args);
-
-// 解决pgsql的时间戳问题
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
@@ -19,8 +13,9 @@ builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
-    .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"],
-        options => { options.Configuration.ChannelPrefix = "Chat:"; });
+    // .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"], // 可以根据情况是否使用横向扩展，一般单机部署不需要使用。
+    //     options => { options.Configuration.ChannelPrefix = "Chat:"; })
+    ;
 
 #region Options
 
@@ -60,7 +55,6 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
 
 builder.Services.AddSingleton<SystemService>();
 
-
 var app = builder.Services
     .AddEndpointsApiExplorer()
     .AddAutoMapper(typeof(Program))
@@ -88,7 +82,19 @@ var app = builder.Services
     .AddEventBus()
     .AddMasaDbContext<ChatDbContext>(opt =>
     {
-        opt.UseNpgsql(builder.Configuration["ConnectionStrings:DefaultConnection"]);
+        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")?? builder.Configuration["ConnectionStrings:DefaultConnection"];
+        sqlType = sqlType?.ToLower();
+        // 根据工具变量传递的数据库类型处理。
+        if (sqlType == "postgresql" || sqlType == "pgsql")
+        {
+            // 解决pgsql的时间戳问题
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            opt.UseNpgsql(connectionString);
+        }
+        else if (sqlType.IsNullOrWhiteSpace() || sqlType == "sqlite")
+        {
+            opt.UseSqlite(connectionString);
+        }
     })
     .AddCors(options =>
     {
@@ -123,8 +129,14 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
 {
     try
     {
-        // 执行sql
-        await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
+        sqlType = sqlType?.ToLower();
+        // 根据工具变量传递的数据库类型处理。
+        if (sqlType == "postgresql" || sqlType == "pgsql")
+        {
+            // 执行sql
+            await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
+        }
+
     }
     catch (Exception e)
     {

@@ -35,10 +35,10 @@
  - [MasaFramework](https://docs.masastack.com/framework/concepts/overview)
  - DDD领域驱动设计模式 CQRS架构模式   
  - SignalR （实现对话并且使用redis支持横向扩展）
-
+   
 ### 前端架构
  - React 
- - Ant Design
+ - [Semi UI](https://semi.design/zh-CN/start/getting-started)
  - Axios
  - Vite
  - Avalonia
@@ -46,6 +46,7 @@
 ## 项目使用
 
  - [Docker compose部署](./docs/Install.md)
+ - [Window 单机部署](./docs/Window-DevOps.md)
  - [数据迁移](./docs/Migration.md)
  - [好友关系设计](./docs/Friend-Chart.md)
 

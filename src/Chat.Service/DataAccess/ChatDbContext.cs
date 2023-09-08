@@ -19,7 +19,7 @@ public class ChatDbContext : MasaDbContext
     public DbSet<ChatGroup> ChatGroups { get; set; } = null!;
 
     public DbSet<ChatGroupInUser> ChatGroupInUsers { get; set; } = null!;
-    
+
     public DbSet<FileSystem> FileSystems { get; set; } = null!;
 
     public DbSet<FriendRequest> FriendRequests { get; set; }
@@ -57,6 +57,10 @@ public class ChatDbContext : MasaDbContext
             options.Property(x => x.Content).HasMaxLength(2000);
 
             // 设置userId为逻辑外键
+            options.Property(x => x.Extends)
+                .HasConversion(x => JsonSerializer.Serialize(x, new JsonSerializerOptions()),
+                    op => JsonSerializer.Deserialize<Dictionary<string, string>>(op, new JsonSerializerOptions()) ??
+                          new Dictionary<string, string>());
 
             options.HasOne(o => o.User)
                 .WithMany()
@@ -79,6 +83,9 @@ public class ChatDbContext : MasaDbContext
 
         builder.Entity<ChatGroupInUser>(options =>
         {
+            options.HasKey(x => x.Id);
+            options.HasIndex(x => x.Id);
+
             options.HasKey(x => new { x.UserId, x.ChatGroupId });
 
             options.HasOne(o => o.User)
@@ -95,8 +102,8 @@ public class ChatDbContext : MasaDbContext
         builder.Entity<FileSystem>(options =>
         {
             options.TryConfigureConcurrencyStamp();
-            
-            options.HasKey(x=>x.Id);
+
+            options.HasKey(x => x.Id);
 
             options.HasIndex(x => x.Id);
         });
@@ -120,7 +127,6 @@ public class ChatDbContext : MasaDbContext
 
             options.HasIndex(x => x.RequestId);
             options.HasIndex(x => x.BeAppliedForId);
-
         });
 
         builder.Entity<Emoji>(options =>

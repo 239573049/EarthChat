@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Service.Services;
 
+/// <summary>
+/// 后台任务。
+/// </summary>
 public class BackgroundTaskService : ISingletonDependency, IDisposable
 {
     /// <summary>
@@ -38,7 +41,9 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
         _serviceScope = serviceProvider.CreateScope();
         _chatMessageRepository = _serviceScope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
         _hubContext = _serviceScope.ServiceProvider.GetRequiredService<IHubContext<ChatHub>>();
-        _channel = Channel.CreateBounded<AssistantDto>(1000);
+        
+        // 使用管道的话会控制ChatGPT的数量，相当于当前系统只运行一个服务。
+        _channel = Channel.CreateBounded<AssistantDto>(5000);
         _cancellationTokenSource = new CancellationTokenSource();
         Task.Factory.StartNew(Start);
     }
@@ -136,6 +141,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                     {
                         _logger.LogError("智能助手出现异常 {e}", e);
 
+                        // 这里需要通知用户服务出现异常。
                         var message = new ChatMessageDto
                         {
                             Content = "机器人出错了，请联系管理员检查！",
