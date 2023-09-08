@@ -2,6 +2,7 @@ using Chat.Service.Infrastructure.Middlewares;
 using Chat.Service.Services;
 
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
+var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,7 +62,7 @@ var app = builder.Services
     .AddJwtBearerAuthentication(jwtSection.Get<JwtOptions>())
     .AddSingleton(_ =>
     {
-        var client = new RedisClient(builder.Configuration["ConnectionStrings:Redis"]);
+        var client = new RedisClient(redisConnectionString ?? builder.Configuration["ConnectionStrings:Redis"]);
         client.Serialize = o => JsonSerializer.Serialize(o);
         client.Deserialize = (s, t) => JsonSerializer.Deserialize(s, t);
         return client;
@@ -82,7 +83,8 @@ var app = builder.Services
     .AddEventBus()
     .AddMasaDbContext<ChatDbContext>(opt =>
     {
-        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")?? builder.Configuration["ConnectionStrings:DefaultConnection"];
+        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
+                               builder.Configuration["ConnectionStrings:DefaultConnection"];
         sqlType = sqlType?.ToLower();
         // 根据工具变量传递的数据库类型处理。
         if (sqlType == "postgresql" || sqlType == "pgsql")
@@ -136,7 +138,6 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
             // 执行sql
             await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
         }
-
     }
     catch (Exception e)
     {

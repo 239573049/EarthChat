@@ -43,6 +43,18 @@
  - Vite
  - Avalonia
 
+## 后端环境变量配置
+
+当环境变量为空则读取配置文件的值
+
+| 环境变量名称            | 环境变量值                                 |
+| ----------------------- | ------------------------------------------ |
+| REDIS_CONNECTION_STRING | Redis连接字符串                            |
+| SQLTYPE                 | 数据库类型 `sqlite`|[`pgsql`|`postgresql`] |
+| CONNECTION_STRING       | 数据库连接字符串                           |
+
+
+
 ## 项目使用
 
  - [Docker compose部署](./docs/Install.md)
@@ -61,6 +73,5 @@ qq群：737776595
       <img src="./docs/img/qrcode.jpg" width="280" />
     </a>
 </p>
-
 
 

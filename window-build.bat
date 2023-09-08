@@ -31,7 +31,7 @@ if %errorlevel% equ 0 (
     if %errorlevel% equ 0 (
         echo dotnet已安装,开始构建后端
 
-        dotnet  publish -c Release --output service src/Chat.Service/Chat.Service.csproj
+        dotnet  publish -c Release --output DevOps/service src/Chat.Service/Chat.Service.csproj
 
         echo 后端构建完成。
 
