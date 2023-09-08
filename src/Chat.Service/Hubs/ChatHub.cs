@@ -3,6 +3,7 @@ using Chat.Contracts.Hubs;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Chats.Queries;
 using Chat.Service.Application.Hubs.Commands;
+using Chat.Service.Services;
 using Masa.Contrib.Authentication.Identity;
 using Microsoft.AspNetCore.SignalR;
 
@@ -12,11 +13,13 @@ public class ChatHub : Hub
 {
     private readonly IEventBus _eventBus;
     private readonly RedisClient _redisClient;
-
-    public ChatHub(RedisClient redisClient, IEventBus eventBus)
+    private readonly BackgroundTaskService _backgroundTaskService;
+    
+    public ChatHub(RedisClient redisClient, IEventBus eventBus, BackgroundTaskService backgroundTaskService)
     {
         _redisClient = redisClient;
         _eventBus = eventBus;
+        _backgroundTaskService = backgroundTaskService;
     }
 
     public override async Task OnConnectedAsync()
@@ -142,9 +145,13 @@ public class ChatHub : Hub
         await _eventBus.CommitAsync();
 
         // 发送智能助手订阅事件
-        var chatGPT = new ChatGPTCommand(value, groupId, true);
-        await _eventBus.PublishAsync(chatGPT);
-        await _eventBus.CommitAsync();
+        await _backgroundTaskService.WriteAsync(new AssistantDto()
+        {
+            Id = groupId,
+            Value = value,
+            Group = true,
+            UserId = userId.Value
+        });
     }
 
     /// <summary>

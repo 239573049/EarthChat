@@ -50,4 +50,10 @@
     <ItemGroup>
       <Compile Remove="Domain\Chats\Repositories\IFriendRepository.cs" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Content Update="appsettings.development.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 </Project>

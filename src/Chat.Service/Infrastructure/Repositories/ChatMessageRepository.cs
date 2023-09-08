@@ -33,4 +33,10 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
             .Take(pageSize)
             .ToListAsync();
     }
+
+    public async Task CreateAsync(ChatMessage message)
+    {
+        await Context.ChatMessages.AddAsync(message); 
+        await Context.SaveChangesAsync();
+    }
 }
