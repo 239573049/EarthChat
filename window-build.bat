@@ -19,7 +19,7 @@ if %errorlevel% equ 0 (
     cd /d "%currentDir%"
     
     set "websourceDir=web\dist"
-    set "webtargetDir=DevOps\nginx\conf\wwwroot"
+    set "webtargetDir=DevOps\nginx\wwwroot"
 
     xcopy /Y /E /I "%websourceDir%" "%webtargetDir%"
 

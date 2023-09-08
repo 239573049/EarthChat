@@ -485,3 +485,4 @@ $RECYCLE.BIN/
 /service
 /DevOps/nginx/conf/wwwroot
 /DevOps/service
+/DevOps/nginx/wwwroot
