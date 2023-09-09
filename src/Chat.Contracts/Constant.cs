@@ -9,4 +9,6 @@ public class Constant
     public const string Success = "200";
     
     public const string GetUserGroup  = "GetUserGroup";
+
+    public const string OnLineKey = "OnLineKey:";
 }

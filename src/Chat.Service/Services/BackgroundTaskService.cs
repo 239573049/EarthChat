@@ -130,7 +130,6 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                         var chatMessage = new ChatMessage(Guid.NewGuid(), DateTime.Now)
                         {
                             Content = content,
-                            Extends = new Dictionary<string, string>(),
                             Type = ChatType.Text,
                             ChatGroupId = item.Id
                         };

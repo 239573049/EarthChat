@@ -10,6 +10,11 @@ public class ChatGroup: AuditAggregateRoot<Guid, Guid>
 
     public bool Default { get; set; }
 
+    protected override DateTime GetCurrentTime()
+    {
+        return DateTime.Now;
+    }
+    
     protected ChatGroup()
     {
     }

@@ -50,7 +50,6 @@ public class CommandHandler
         var chatMessage = new ChatMessage(command.Dto.Id, DateTime.Now)
         {
             Content = command.Dto.Content,
-            Extends = command.Dto.Extends ?? new Dictionary<string, string>(),
             Type = command.Dto.Type,
             ChatGroupId = command.Dto.ChatGroupId,
             UserId = _userContext.GetUserId<Guid>()

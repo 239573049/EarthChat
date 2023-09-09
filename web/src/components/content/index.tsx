@@ -11,6 +11,7 @@ import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
 import copy from 'copy-to-clipboard';
 import ChatService from '../../services/chatService';
+import chatService from '../../services/chatService';
 
 interface IProps {
     group: ChatGroupDto;
@@ -123,6 +124,43 @@ export default class Content extends Component<IProps, IState> {
 
     }
 
+
+    getOnLineUserIds() {
+        const { group } = this.props;
+        chatService.getOnLineUserIds(group.id)
+            .then(res => {
+                if (res.code === "200") {
+                    const { groupinUsers } = this.state;
+                    const updatedGroupinUsers = groupinUsers.map(user => {
+                        if (res.data.includes(user.id)) {
+                            return {
+                                ...user,
+                                onLine: true
+                            };
+                        } else {
+                            return user;
+                        }
+                    });
+
+                    this.setState({ groupinUsers: updatedGroupinUsers.sort((a, b) => {
+                        if (a.onLine && !b.onLine) {
+                            return -1;
+                        } else if (!a.onLine && b.onLine) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }) });
+
+                } else {
+                    Toast.error(res.message)
+                }
+
+
+            })
+    }
+
+
     loadingGroupUser() {
         const { group } = this.props;
         const { groudUserPage } = this.state;
@@ -132,6 +170,9 @@ export default class Content extends Component<IProps, IState> {
                     this.groupinUsers = res;
                     this.setState({
                         groupinUsers: res
+                    },()=>{
+                        // 获取群聊所有的用户成功以后获取用户状态
+                        this.getOnLineUserIds()
                     })
                 }
             })
@@ -144,7 +185,8 @@ export default class Content extends Component<IProps, IState> {
 
     onNotification(_: any, data: any) {
         if (data.type === "GroupUserNew") {
-            this.loadingGroupUser();
+            // 当存在新用户登录则刷新状态。
+            this.getOnLineUserIds()
         } else if (data.type === "FriendRequest") {
             Notification.info({
                 content: data.content
@@ -499,17 +541,17 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    renderEmoji(){
-        return(<div className='emoji'>
+    renderEmoji() {
+        return (<div className='emoji'>
             <div style={{
-                height:"calc(100% - 50px)"
+                height: "calc(100% - 50px)"
             }}> test</div>
             <div style={{
-                height:'50px'
+                height: '50px'
             }}>
                 <div style={{
-                    height:'40px',
-                    width:'40px'
+                    height: '40px',
+                    width: '40px'
                 }}>
 
                 </div>
@@ -560,7 +602,7 @@ export default class Content extends Component<IProps, IState> {
                         style={{ height: `${this.state.height}px` }}
                     >
                         <div className='content-function'>
-                            <Popover position='top'  content={this.renderEmoji()} trigger="click">
+                            <Popover position='top' content={this.renderEmoji()} trigger="click">
                                 <Icon style={{
                                     float: 'left',
                                 }} svg={

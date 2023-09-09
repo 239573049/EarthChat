@@ -21,4 +21,9 @@ public class FileSystem  : AuditAggregateRoot<Guid, Guid>
     /// 访问地址
     /// </summary>
     public string Uri { get; set; }
+
+    protected override DateTime GetCurrentTime()
+    {
+        return DateTime.Now;
+    }
 }

@@ -51,7 +51,7 @@ class User extends Component<any, IState> {
     selectUser() {
         this.setState({
             slidingBlock: 0,
-            data:[]
+            data: []
         })
     }
 
@@ -78,7 +78,10 @@ class User extends Component<any, IState> {
     }
 
     Group(item: any) {
-        PubSub.publish('selectGroup',item);
+        console.log(this.props);
+
+        PubSub.publish('selectGroup', item);
+
     }
 
     renderValue() {
@@ -89,12 +92,15 @@ class User extends Component<any, IState> {
         }
 
         if (selectValue.type === 'group') {
-            return (<div>
+            return (<div style={{
+                height: "115px",
+                margin: 'auto',
+                width: '500px',
+                paddingTop: "50px"
+            }}>
                 <div style={{
-                    height: "115px",
-                    margin: 'auto',
-                    width: '500px',
-                    paddingTop: "50px"
+                    marginBottom:'20px',
+                    height:'75px'
                 }}>
                     <Avatar style={{
                         float: 'left'

@@ -14,7 +14,7 @@ public class ChatHub : Hub
     private readonly IEventBus _eventBus;
     private readonly RedisClient _redisClient;
     private readonly BackgroundTaskService _backgroundTaskService;
-    
+
     public ChatHub(RedisClient redisClient, IEventBus eventBus, BackgroundTaskService backgroundTaskService)
     {
         _redisClient = redisClient;
@@ -27,11 +27,10 @@ public class ChatHub : Hub
         var userId = GetUserId();
         if (userId == null)
         {
-            return;
             throw new UnauthorizedAccessException();
         }
 
-        await _redisClient.LPushAsync("onlineUsers", userId);
+        await _redisClient.SetAsync(Constant.OnLineKey + userId.Value.ToString("N"), userId.Value);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
 
         var groupsQuery = new GetUserGroupQuery(userId.Value);
@@ -54,13 +53,13 @@ public class ChatHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         // 移除在线用户
-        var userId = GetUserId().ToString();
-        if (userId != null)
+        var userId = GetUserId();
+        if (userId.HasValue)
         {
-            await _redisClient.LRemAsync("onlineUsers", 0, GetUserId().ToString());
+            await _redisClient.DelAsync(Constant.OnLineKey + userId.Value.ToString("N"));
             await _redisClient.LRemAsync("Connections:" + userId, 0, Context.ConnectionId);
 
-            var groupsQuery = new GetUserGroupQuery(GetUserId().Value);
+            var groupsQuery = new GetUserGroupQuery(userId.Value);
             await _eventBus.PublishAsync(groupsQuery);
 
             var systemCommand = new SystemCommand(new Notification()

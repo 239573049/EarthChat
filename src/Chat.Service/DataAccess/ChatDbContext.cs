@@ -56,12 +56,6 @@ public class ChatDbContext : MasaDbContext
 
             options.Property(x => x.Content).HasMaxLength(2000);
 
-            // 设置userId为逻辑外键
-            options.Property(x => x.Extends)
-                .HasConversion(x => JsonSerializer.Serialize(x, new JsonSerializerOptions()),
-                    op => JsonSerializer.Deserialize<Dictionary<string, string>>(op, new JsonSerializerOptions()) ??
-                          new Dictionary<string, string>());
-
             options.HasOne(o => o.User)
                 .WithMany()
                 .HasForeignKey(o => o.UserId)

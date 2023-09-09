@@ -24,4 +24,6 @@ public class Emoji : Entity<Guid>, IAuditEntity<Guid>
     public Guid Modifier { get; set; }
 
     public DateTime ModificationTime { get; set; }
+    
+    
 }

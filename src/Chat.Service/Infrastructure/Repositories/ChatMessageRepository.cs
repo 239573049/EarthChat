@@ -22,7 +22,6 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
             select new ChatMessage(messages.Id, messages.CreationTime)
             {
                 Content = messages.Content,
-                Extends = messages.Extends,
                 Type = messages.Type,
                 User = user,
                 UserId = messages.UserId ?? Guid.Empty

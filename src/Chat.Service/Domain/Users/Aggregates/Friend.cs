@@ -19,4 +19,5 @@ public class Friend : Entity<Guid>
     /// 好友备注
     /// </summary>
     public string Remark { get; set; }
+    
 }

@@ -42,4 +42,9 @@ public class User : AuditAggregateRoot<Guid, Guid>
     public string? GiteeId { get; set; }
 
     public string? GithubId { get; set; }
+    
+    protected override DateTime GetCurrentTime()
+    {
+        return DateTime.Now;
+    }
 }

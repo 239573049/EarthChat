@@ -1,5 +1,6 @@
 ﻿using Chat.Service.Application.Files.Commands;
 using Chat.Service.Application.System.Commands;
+using Chat.Service.Application.System.Queries;
 using Chat.Service.Infrastructure.Helper;
 
 namespace Chat.Service.Application.Files;
@@ -8,11 +9,13 @@ public class CommandHandler
 {
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly IEventBus _eventBus;
+    private readonly IUserContext _userContext;
 
-    public CommandHandler(IHttpContextAccessor contextAccessor, IEventBus eventBus)
+    public CommandHandler(IHttpContextAccessor contextAccessor, IEventBus eventBus, IUserContext userContext)
     {
         _contextAccessor = contextAccessor;
         _eventBus = eventBus;
+        _userContext = userContext;
     }
 
     [EventHandler]
@@ -24,6 +27,15 @@ public class CommandHandler
         var info = new FileInfo(filePath);
         try
         {
+            var dayUploadQuantityQuery = new DayUploadQuantityQuery(_userContext.GetUserId<Guid>());
+            await _eventBus.PublishAsync(dayUploadQuantityQuery);
+
+            if (dayUploadQuantityQuery.Result > 500)
+            {
+                throw new UserFriendlyException("您已经超出当天限量。");
+            }
+            
+            
             if (!info.Directory.Exists)
             {
                 info.Directory.Create();

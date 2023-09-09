@@ -9,9 +9,11 @@ import { IconEdit, IconCamera } from '@douyinfe/semi-icons';
 import config from '../config';
 import userService from '../services/userService';
 import Setting from '../components/setting';
+import PubSub from 'pubsub-js';
 
 const body = document.body;
 
+// 用于获取记忆的主题并且修改主题
 const theme = localStorage.getItem('theme-mode');
 if (theme) {
     if (theme === "light") {
@@ -121,9 +123,36 @@ class App extends Component<any, state> {
             this.props.navigation('/login')
         }
 
+        this.selectGroup = this.selectGroup.bind(this)
+
+    }
+
+    selectGroup(name:string,value:any){
+        debugger;
+        if(value){
+            const {menu} = this.state;
+            this.selectMenu(menu[0])
+            setTimeout(()=>{
+                PubSub.publish('selectGroupInfo',value)
+            },500);
+        }
+        
+    }
+
+    componentWillUnmount(){
+        console.log('卸载组件');
+        
+        PubSub.unsubscribe('selectGroup')
     }
 
     componentDidMount() {
+        PubSub.subscribe('selectGroup',this.selectGroup)
+        const {menu} = this.state;
+        const item = menu.find(x=>x.path == location.pathname);
+        if(item){
+            this.selectMenu(item)
+        }
+
         UserService.get()
             .then((res: any) => {
                 if (res.code === '200') {
@@ -169,6 +198,8 @@ class App extends Component<any, state> {
             </div>
         )
     }
+
+    
 
     renderInfo() {
         const { user } = this.state;
@@ -327,8 +358,7 @@ class App extends Component<any, state> {
                     title="编辑资料"
                     visible={updateUserVisible}
                     onOk={() => this.updateUser()}
-                    onCancel={() => this.setState({ updateUserVisible: true })}
-
+                    onCancel={() => this.setState({ updateUserVisible: false })}
                 >
                     <div style={{ display: "flex", justifyContent: "center", }}>
 

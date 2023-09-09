@@ -25,12 +25,14 @@ interface AppState {
     createGroupFormApi: any
 }
 
+const groups = await ChatService.getUserGroup()
+
 class Home extends Component<{}, AppState> {
     state: AppState = {
         middleWidth: 230,
         selectid: 0,
         user: {} as GetUserDto,
-        groups: [],
+        groups: groups,
         selectGroup: {} as ChatGroupDto,
         createGroupVisible: false,
         createGroupUpload: React.createRef<Upload>(),
@@ -48,8 +50,21 @@ class Home extends Component<{}, AppState> {
 
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.selectGroup = this.selectGroup.bind(this)
         this.getFormApi = this.getFormApi.bind(this);
         this.createGroup = this.createGroup.bind(this)
+    }
+
+    selectGroup(name:string,value:any){
+        const {groups} = this.state;
+        const item = groups.find(x=>x.id == value.id);
+        if(item){
+            this.selectChat(item)
+        }
+    }
+
+    componentWillUnmount(){
+        PubSub.unsubscribe('selectGroupInfo')
     }
 
     componentDidMount() {
@@ -64,6 +79,7 @@ class Home extends Component<{}, AppState> {
             })
 
         this.loadingGroups()
+        PubSub.subscribe('selectGroupInfo',this.selectGroup)
     }
 
     handleMouseDown = (e: React.MouseEvent) => {
@@ -99,16 +115,16 @@ class Home extends Component<{}, AppState> {
     }
 
     loadingGroups() {
-        ChatService.getUserGroup()
-            .then((res: ChatGroupDto[]) => {
-                res.forEach(x => {
-                    x.lastMessage = '最新回复';
-                })
-                this.setState({
-                    groups: res,
-                    selectGroup: res[0]
-                })
-            })
+        // ChatService.getUserGroup()
+        //     .then((res: ChatGroupDto[]) => {
+        //         res.forEach(x => {
+        //             x.lastMessage = '最新回复';
+        //         })
+        //         this.setState({
+        //             groups: res,
+        //             selectGroup: res[0]
+        //         })
+        //     })
 
     }
 

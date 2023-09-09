@@ -7,12 +7,6 @@ namespace Chat.Contracts.Chats;
 public interface IChatService
 {
     /// <summary>
-    /// 获取当前在线用户。
-    /// </summary>
-    /// <returns></returns>
-    Task<ResultDto<GetUserDto[]>?> GetOnlineUsersAsync();
-
-    /// <summary>
     /// 获取指定群组的聊天记录。
     /// </summary>
     /// <param name="groupId"></param>
@@ -49,6 +43,13 @@ public interface IChatService
     /// <param name="groupId"></param>
     /// <returns></returns>
     Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId);
+
+    /// <summary>
+    /// 只获取群组在线用户id
+    /// </summary>
+    /// <param name="groupId"></param>
+    /// <returns></returns>
+    Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId); 
 
     /// <summary>
     /// 通过id获取指定群聊基本信息
