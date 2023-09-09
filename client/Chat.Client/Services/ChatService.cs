@@ -43,6 +43,16 @@ public class ChatService : IChatService
         throw new NotImplementedException();
     }
 
+    public Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId)
+    {
+        throw new NotImplementedException();
+    }
+
     /// <inheritdoc />
     public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId, int page, int pageSize)
     {

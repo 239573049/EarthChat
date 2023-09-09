@@ -15,4 +15,9 @@ public class UserService : IUserService
     {
         throw new NotImplementedException();
     }
+
+    public Task<ResultDto> UpdateAsync(UpdateUserDto dto)
+    {
+        throw new NotImplementedException();
+    }
 }
