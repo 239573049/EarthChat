@@ -56,7 +56,7 @@ services:
       dockerfile: ./src/Chat.Service/Dockerfile
     container_name: chat-api
     image: registry.cn-shenzhen.aliyuncs.com/gotrays/chat-api
-    entrypoint: 
+    environment:
       SQLTYPE: pgsql
     restart: always
     depends_on:
