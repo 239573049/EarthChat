@@ -5,6 +5,7 @@
 准备环境
 
 - Redis [安装Redis](#安装Redis)
+- .NET 7 [安装.NET7](https://dotnet.microsoft.com/zh-cn/download/dotnet/thank-you/sdk-7.0.400-windows-x64-installer)
 
 使用根目录下的`window-build.bat`构建前端项目和后端项目，
 
