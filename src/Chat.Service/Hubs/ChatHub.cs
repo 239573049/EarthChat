@@ -30,6 +30,12 @@ public class ChatHub : Hub
             throw new UnauthorizedAccessException();
         }
 
+        // 判断当前用户是否已登录 
+        var value= await _redisClient.GetAsync<Guid?>(Constant.OnLineKey + userId.Value.ToString("N"));
+        if (value != null)
+        {
+            throw new UserFriendlyException("已经在其他位置登录");
+        }
         await _redisClient.SetAsync(Constant.OnLineKey + userId.Value.ToString("N"), userId.Value);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
 

@@ -25,15 +25,12 @@ interface AppState {
     createGroupFormApi: any
 }
 
-// @ts-ignore
-const groups = await ChatService.getUserGroup()
-
 class Home extends Component<{}, AppState> {
     state: AppState = {
         middleWidth: 230,
         selectid: 0,
         user: {} as GetUserDto,
-        groups: groups,
+        groups: await ChatService.getUserGroup(),
         selectGroup: {} as ChatGroupDto,
         createGroupVisible: false,
         createGroupUpload: React.createRef<Upload>(),

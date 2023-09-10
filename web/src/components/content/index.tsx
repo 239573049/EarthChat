@@ -541,7 +541,6 @@ export default class Content extends Component<IProps, IState> {
     onScroll(_: any) {
         var element = document.getElementById('message-list')!;
         if (element.scrollTop === 0) {
-            const height = element.scrollHeight;
 
             const { group } = this.props;
             const { page } = this.state;
@@ -550,6 +549,8 @@ export default class Content extends Component<IProps, IState> {
                 loading: true,
             })
 
+            const height = element.scrollHeight;
+            
             ChatService.getList(group.id, page + 1, 20)
                 .then((res: any) => {
                     if (res.data.result.length === 0) {
@@ -559,12 +560,13 @@ export default class Content extends Component<IProps, IState> {
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
                     }, () => {
-                        console.log(element.scrollHeight);
-                        const newHeight = element.scrollHeight;
-                        if (height !== newHeight) {
-                            // 移动当之前定位
-                            element.scrollTop = newHeight - height
-                        }
+                        setTimeout(()=>{
+                            const newHeight = element.scrollHeight;
+                            if (height !== newHeight) {
+                                // 移动当之前定位
+                                element.scrollTop = newHeight - height
+                            }
+                        },10);
                     })
                 }).finally(() => {
 

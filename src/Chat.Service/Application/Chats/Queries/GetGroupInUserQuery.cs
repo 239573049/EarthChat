@@ -1,6 +1,4 @@
-﻿using Chat.Contracts.Chats;
-
-namespace Chat.Service.Application.Chats.Queries;
+﻿namespace Chat.Service.Application.Chats.Queries;
 
 /// <summary>
 /// 获取指定群组的所有成员

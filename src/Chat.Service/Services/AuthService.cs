@@ -44,7 +44,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
         {
             var command = new CreateUserCommand(new CreateUserDto
             {
-                Account = "guest_" + StringHelper.RandomString(8),
+                Account = "chat_" + StringHelper.RandomString(8),
                 Avatar = "/favicon.png",
                 Password = "Aa123456",
                 Name = githubUser.name,
@@ -98,7 +98,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
             {
                 var command = new CreateUserCommand(new CreateUserDto
                 {
-                    Account = "guest_" + StringHelper.RandomString(8),
+                    Account = "chat_" + StringHelper.RandomString(8),
                     Avatar = githubUser.avatar_url,
                     Name = githubUser.name,
                     Password = "Aa123456",

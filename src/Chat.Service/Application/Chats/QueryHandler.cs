@@ -71,7 +71,7 @@ public class QueryHandler
     [EventHandler]
     public async Task GetGroupAsync(GetGroupQuery query)
     {
-        var value = await _chatGroupRepository.FindAsync(x => x.Id == query.id);
+        var value = await _chatGroupRepository.FindAsync(x => x.Id == query.Id);
 
         query.Result = _mapper.Map<ChatGroupDto>(value);
     }
