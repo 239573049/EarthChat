@@ -26,20 +26,22 @@ interface AppState {
 }
 
 class Home extends Component<{}, AppState> {
-    state: AppState = {
-        middleWidth: 230,
-        selectid: 0,
-        user: {} as GetUserDto,
-        groups: await ChatService.getUserGroup(),
-        selectGroup: {} as ChatGroupDto,
-        createGroupVisible: false,
-        createGroupUpload: React.createRef<Upload>(),
-        createGroupAvatar: '',
-        createGroupFormApi: undefined
-    };
 
     constructor(props: any) {
         super(props);
+
+        this.state ={
+            
+            middleWidth: 230,
+            selectid: 0,
+            user: {} as GetUserDto,
+            groups: [],
+            selectGroup: {} as ChatGroupDto,
+            createGroupVisible: false,
+            createGroupUpload: React.createRef<Upload>(),
+            createGroupAvatar: '',
+            createGroupFormApi: undefined
+        }
 
         if (!localStorage.getItem('token')) {
             ChatHubService.stop();
@@ -70,7 +72,7 @@ class Home extends Component<{}, AppState> {
     componentDidMount() {
 
         this.setState({
-            selectGroup:groups[0]
+            selectGroup:this.state.groups[0]
         })
         UserService.get()
             .then((res: any) => {
@@ -119,16 +121,16 @@ class Home extends Component<{}, AppState> {
     }
 
     loadingGroups() {
-        // ChatService.getUserGroup()
-        //     .then((res: ChatGroupDto[]) => {
-        //         res.forEach(x => {
-        //             x.lastMessage = '最新回复';
-        //         })
-        //         this.setState({
-        //             groups: res,
-        //             selectGroup: res[0]
-        //         })
-        //     })
+        ChatService.getUserGroup()
+            .then((res: ChatGroupDto[]) => {
+                res.forEach(x => {
+                    x.lastMessage = '最新回复';
+                })
+                this.setState({
+                    groups: res,
+                    selectGroup: res[0]
+                })
+            })
 
     }
 
