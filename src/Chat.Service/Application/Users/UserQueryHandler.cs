@@ -73,6 +73,6 @@ public class UserQueryHandler
     {
         var value = await _emojiRepository.GetListAsync(x => x.UserId == _userContext.GetUserId<Guid>());
 
-        query.Result = _mapper.Map<IReadOnlyList<EmojiDto>>(value);
+        query.Result = _mapper.Map<IReadOnlyList<EmojiDto>>(value.OrderBy(x=>x.Sort));
     }
 }

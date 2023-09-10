@@ -95,10 +95,16 @@ public class UserCommandHandler
     [EventHandler]
     public async Task AddEmojiAsync(AddEmojiCommand command)
     {
+        if (await _emojiRepository.GetCountAsync(x => x.UserId == _userContext.GetUserId<Guid>()) > 500)
+        {
+            throw new UserFriendlyException("您的表情包超出最大限额。");
+        }
+        
         var emoji = new Emoji()
         {
             Path = command.path,
             Sort = 1,
+            UserId = _userContext.GetUserId<Guid>(),
             CreationTime = DateTime.Now
         };
 

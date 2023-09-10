@@ -26,6 +26,8 @@ public class ChatDbContext : MasaDbContext
 
     public DbSet<Friend> Friends { get; set; }
 
+    public DbSet<Emoji> Emojis { get; set; }
+    
     protected override void OnModelCreatingExecuting(ModelBuilder modelBuilder)
     {
         base.OnModelCreatingExecuting(modelBuilder);
@@ -130,7 +132,7 @@ public class ChatDbContext : MasaDbContext
 
             options.HasIndex(x => x.UserId);
         });
-
+        
         #region Init Data
 
         var user = new User(Guid.NewGuid())

@@ -3,14 +3,14 @@ body[theme-mode='dark'] {
     --select-background-color: #1A1A1A;
     --sekect-chat-item-background-color: #2D2D2D;
     --select-group-item-background-color: #242424;
-    --message-item-content-background-color:#262626;
+    --message-item-content-background-color: #262626;
 }
 
 body:not([theme-mode='dark']) {
     --select-background-color: #EAEAEA;
     --sekect-chat-item-background-color: #F5F5F5;
     --select-group-item-background-color: #E9E9E9;
-    --message-item-content-background-color:#FFFFFF;
+    --message-item-content-background-color: #FFFFFF;
 }
 
 
@@ -91,13 +91,13 @@ body:not([theme-mode='dark']) {
     color-scheme: dark;
 }
 
-.message{
+.message {
     float: left;
     width: 75%;
     height: 100%;
 }
 
-.message-item-content{
+.message-item-content {
     margin-top: 5px;
     padding: 8px;
     border-radius: 8px;
@@ -105,35 +105,62 @@ body:not([theme-mode='dark']) {
     word-wrap: break-word;
     background-color: var(--message-item-content-background-color);
 }
-.message-item-content-user{
-}
 
-.grou-user-item{
+.message-item-content-user {}
+
+.grou-user-item {
     height: 25px;
     max-height: 25px;
     cursor: pointer;
     width: 100%;
 }
-.grou-user-item-content{
+
+.grou-user-item-content {
     margin: 5px;
     height: 25px;
     max-height: 25px;
     border-radius: 8px;
 }
 
-.grou-user-item-content:hover{
+.grou-user-item-content:hover {
     background-color: var(--select-group-item-background-color);
 }
 
 
-.user-group{
-    .semi-list-items{
+.user-group {
+    .semi-list-items {
         overflow: auto;
         max-height: calc(100vh - 120px);
     }
 }
 
-.emoji{
+.emoji {
     height: 350px;
     width: 450px;
+}
+
+.emoji-item {
+    user-select: none;
+    border-radius: 8px;
+    padding: 6px;
+}
+
+.emoji-item:hover {
+    background-color: var(--user-tab-background-color) ;
+}
+
+.emoji-select {
+    background-color: #0066CC !important;
+    border-radius: 8px;
+}
+
+.emoji-menu {
+    height: 40px;
+    float: left;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.emoji-menu:hover {
+    background-color: var(--chat-panel-background-color);
 }

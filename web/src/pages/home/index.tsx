@@ -25,6 +25,7 @@ interface AppState {
     createGroupFormApi: any
 }
 
+// @ts-ignore
 const groups = await ChatService.getUserGroup()
 
 class Home extends Component<{}, AppState> {
@@ -56,6 +57,8 @@ class Home extends Component<{}, AppState> {
     }
 
     selectGroup(name:string,value:any){
+        console.log(name);
+        
         const {groups} = this.state;
         const item = groups.find(x=>x.id == value.id);
         if(item){
@@ -68,6 +71,10 @@ class Home extends Component<{}, AppState> {
     }
 
     componentDidMount() {
+
+        this.setState({
+            selectGroup:groups[0]
+        })
         UserService.get()
             .then((res: any) => {
                 if (res.code === '200') {

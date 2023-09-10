@@ -2,16 +2,17 @@ import React, { Component, RefObject } from 'react';
 import { ChatGroupDto } from '../../dto';
 
 import moment from 'moment/moment';
-import { Avatar, Input, List as SList, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover } from '@douyinfe/semi-ui';
+import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../Mention';
-import { IconSearch, IconLoading } from '@douyinfe/semi-icons';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
 import copy from 'copy-to-clipboard';
 import ChatService from '../../services/chatService';
-import chatService from '../../services/chatService';
+import emojiService from '../../services/emojiService';
+import { IconPlus } from '@douyinfe/semi-icons';
+
 
 interface IProps {
     group: ChatGroupDto;
@@ -24,8 +25,10 @@ interface IState {
     loading: boolean,
     page: number,
     groupinUsers: any[],
+    custom: any[],
     groudUserPage: number,
     groupLoading: boolean,
+    emojiKey: number
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -38,6 +41,198 @@ const menuFunctionIcon = () => {
     return <svg className='icon-function' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7571" width="20" height="20"><path d="M820.8 512c0 44.8 36 80.8 80.8 80.8s80.8-36 80.8-80.8-36-80.8-80.8-80.8-80.8 36-80.8 80.8zM431.2 512c0 44.8 36 80.8 80.8 80.8S592.8 556.8 592.8 512 556.8 431.2 512 431.2 431.2 467.2 431.2 512zM40.8 512c0 44.8 36 80.8 80.8 80.8S203.2 556.8 203.2 512s-36-80.8-80.8-80.8S41.6 467.2 40.8 512z" fill="" p-id="7572"></path></svg>
 }
 
+const emoji = [
+    '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚',
+    '😙', '😋',
+    '😛', '😜',
+    '🤪', '😝',
+    '🤑',
+    '🤗',
+    '🤭',
+    '🤫',
+    '🤔',
+    '🤐',
+    '🤨',
+    '😐',
+    '😑',
+    '😶',
+    '😏',
+    '😒',
+    '🙄',
+    '😬',
+    '🤥',
+    '😌',
+    '😔',
+    '😪',
+    '🤤',
+    '😴',
+    '😷',
+    '🤒',
+    '🤕',
+    '🤢',
+    '🤮',
+    '🤧',
+    '🥵',
+    '🥶',
+    '🥴',
+    '😵',
+    '🤯',
+    '🤠',
+    '🥳',
+    '😎',
+    '🤓',
+    '🧐',
+    '😕',
+    '😟',
+    '🙁',
+    '☹️',
+    '😮',
+    '😯',
+    '😲',
+    '😳',
+    '🥺',
+    '😦',
+    '😧',
+    '😨',
+    '😰',
+    '😥',
+    '😢',
+    '😭',
+    '😱',
+    '😖',
+    '😣',
+    '😞',
+    '😓',
+    '😩',
+    '😫',
+    '🥱',
+    '😤',
+    '😡',
+    '😠',
+    '🤬',
+    '😈',
+    '👿',
+    '💀',
+    '☠️',
+    '💩',
+    '🤡',
+    '👹',
+    '👺',
+    '👻',
+    '👽',
+    '👾',
+    '🤖',
+    '😺',
+    '😸',
+    '😹',
+    '😻',
+    '😼',
+    '😽',
+    '🙀',
+    '😿',
+    '😾',
+    '🙈',
+    '🙉',
+    '🙊',
+    '💋',
+    '💌',
+    '💘',
+    '💝',
+    '💖',
+    '💗',
+    '💓',
+    '💞',
+    '💕',
+    '💟',
+    '❣️',
+    '💔',
+    '❤️',
+    '🧡',
+    '💛',
+    '💚',
+    '💙',
+    '💜',
+    '🖤',
+    '💯',
+    '💢',
+    '💥',
+    '💫',
+    '💦',
+    '💨',
+    '🕳️',
+    '💣',
+    '💬',
+    '🗯️',
+    '💭',
+    '💤',
+    '👋',
+    '🤚',
+    '🖐️',
+    '✋',
+    '🖖',
+    '👌',
+    '✌️',
+    '🤞',
+    '🤟',
+    '🤘',
+    '🤙',
+    '👈',
+    '👉',
+    '👆',
+    '🖕',
+    '👇',
+    '☝️',
+    '👍',
+    '👎',
+    '✊',
+    '👊',
+    '🤛',
+    '🤜',
+    '👏',
+    '🙌',
+    '👐',
+    '🤲',
+    '🙏',
+    '✍️',
+    '💅',
+    '🤳',
+    '💪',
+    '🦵',
+    '🦶',
+    '👂',
+    '🦻',
+    '👃',
+    '🧠',
+    '👀',
+    '👁️',
+    '👅',
+    '👄',
+    '💋',
+    '👓',
+    '🕶️',
+    '👔',
+    '👕',
+    '👖',
+    '🧣',
+    '🧤',
+    '🧥',
+    '🧦',
+    '👗',
+    '👘',
+    '👙',
+]
+
+const Emoji = ({ symbol, label, onClick }: any) => (
+    <span
+        className="emoji-item"
+        onClick={(e) => onClick(e)}
+        role="img"
+        aria-label={label ? label : ""}
+        aria-hidden={label ? "false" : "true"}
+    >
+        {symbol}
+    </span>
+);
 
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
@@ -69,12 +264,14 @@ export default class Content extends Component<IProps, IState> {
     state: Readonly<IState> = {
         height: 270,
         data: [],
+        custom: [],
         unread: 0,
         page: 1,
         groupLoading: false,
         groupinUsers: [],
         groudUserPage: 1,
-        loading: false
+        loading: false,
+        emojiKey: 0
     }
 
 
@@ -82,13 +279,15 @@ export default class Content extends Component<IProps, IState> {
         super(props);
         this.state = {
             height: 270,
+            custom: [],
             data: [],
             unread: 0,
             page: 1,
             groupLoading: false,
             loading: false,
             groudUserPage: 1,
-            groupinUsers: []
+            groupinUsers: [],
+            emojiKey: 0
         }
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -97,8 +296,9 @@ export default class Content extends Component<IProps, IState> {
         this.rowRenderer = this.rowRenderer.bind(this);
         this.onScrollGroupInUser = this.onScrollGroupInUser.bind(this);
         this.loadingMessage = this.loadingMessage.bind(this);
-        this.onNotification = this.onNotification.bind(this)
+        this.onNotification = this.onNotification.bind(this);
         this.resizableRef = React.createRef();
+        this.loadingCustom()
 
     }
 
@@ -127,7 +327,7 @@ export default class Content extends Component<IProps, IState> {
 
     getOnLineUserIds() {
         const { group } = this.props;
-        chatService.getOnLineUserIds(group.id)
+        ChatService.getOnLineUserIds(group.id)
             .then(res => {
                 if (res.code === "200") {
                     const { groupinUsers } = this.state;
@@ -142,15 +342,17 @@ export default class Content extends Component<IProps, IState> {
                         }
                     });
 
-                    this.setState({ groupinUsers: updatedGroupinUsers.sort((a, b) => {
-                        if (a.onLine && !b.onLine) {
-                            return -1;
-                        } else if (!a.onLine && b.onLine) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
-                    }) });
+                    this.setState({
+                        groupinUsers: updatedGroupinUsers.sort((a, b) => {
+                            if (a.onLine && !b.onLine) {
+                                return -1;
+                            } else if (!a.onLine && b.onLine) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        })
+                    });
 
                 } else {
                     Toast.error(res.message)
@@ -170,7 +372,7 @@ export default class Content extends Component<IProps, IState> {
                     this.groupinUsers = res;
                     this.setState({
                         groupinUsers: res
-                    },()=>{
+                    }, () => {
                         // 获取群聊所有的用户成功以后获取用户状态
                         this.getOnLineUserIds()
                     })
@@ -339,8 +541,6 @@ export default class Content extends Component<IProps, IState> {
     onScroll(_: any) {
         var element = document.getElementById('message-list')!;
         if (element.scrollTop === 0) {
-            // 这是当前滚动条的高度
-            console.log(element.scrollHeight);
             const height = element.scrollHeight;
 
             const { group } = this.props;
@@ -541,19 +741,139 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    async emojiClick(v: any) {
+        const { group } = this.props
+        await ChatHubService.send('SendMessage', v, group.id, 0);
+    }
+
+    renderDefault() {
+        return (<div style={{
+            height: "100%",
+            overflow: 'auto'
+        }}>
+            {emoji.map(x => {
+                return <Emoji onClick={() => this.emojiClick(x)} symbol={x} label="smile" />
+            })}
+        </div>)
+    }
+
+    loadingCustom() {
+        emojiService.get()
+            .then(res => {
+                if (res.code === '200') {
+                    this.setState({
+                        custom: res.data
+                    })
+                }
+            })
+    }
+
+    uploadEmoji() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/png, image/jpeg, image/gif';
+        input.multiple = false;
+        input.click();
+        input.onchange = (e: any) => {
+            var files = e.target.files;
+            // 判断文件是否图片
+            if (files[0].type.indexOf('image') === -1) {
+                Notification.warning({
+                    title: '提示',
+                    content: '请选择图片',
+                    duration: 1000,
+                });
+                return;
+            }
+            // 将文件放到form
+            var formData = new FormData();
+            formData.append('file', files[0]);
+            // 上传图片
+            fileService.upload(formData)
+                .then((res: any) => {
+                    if (res.code === '200') {
+                        emojiService.create(res.data)
+                            .then(res => {
+                                if (res.code === "200") {
+                                    Toast.success("添加成功")
+                                    this.loadingCustom();
+                                } else {
+                                    Toast.error(res.message)
+                                }
+                            })
+                    }
+                })
+
+        }
+    }
+
+    async sendEmoji(item: any) {
+        console.log(item);
+        
+        const { group } = this.props
+        await ChatHubService.send('SendMessage', item.path, group.id, 1);
+    }
+
+    renderCustom() {
+        const { custom } = this.state;
+        return (<div style={{
+            height: "100%",
+            overflow: 'auto'
+        }}>
+            {custom.map(x => {
+                return <div style={{
+                    float:'left',
+                    margin: '5px',
+                    cursor:'pointer',
+                }} onClick={()=>this.sendEmoji(x)}>
+                    <Image
+                        width={50}
+                        height={50}
+                        src={x.path}
+                        preview={false}
+                    />
+                </div>
+            })}
+            <Button size='large' style={{
+                margin: '10px',
+                position: 'absolute'
+            }} theme='borderless' onClick={() => this.uploadEmoji()} icon={<IconPlus />}></Button>
+        </div>)
+    }
+
     renderEmoji() {
+        const { emojiKey } = this.state;
+
+        let render = null;
+
+        if (emojiKey === 0) {
+            render = this.renderDefault()
+        } else if (emojiKey === 1) {
+            render = this.renderCustom()
+        }
+
         return (<div className='emoji'>
             <div style={{
                 height: "calc(100% - 50px)"
-            }}> test</div>
+            }}>
+                {render}
+            </div>
             <div style={{
                 height: '50px'
             }}>
-                <div style={{
-                    height: '40px',
-                    width: '40px'
-                }}>
-
+                <div onClick={() => this.setState({ emojiKey: 0 })} className={'emoji-menu ' + (emojiKey === 0 ? "emoji-select" : "")}>
+                    <Icon style={{
+                        margin: '10px',
+                    }} svg={
+                        <svg viewBox="0 0 1025 1024" width="20" height="20"><path d="M512.016 1024C229.232 1024 0.016 794.784 0.016 512 0.016 229.216 229.232 0 512.016 0 794.784 0 1024 229.216 1024 512 1024 794.784 794.784 1024 512.016 1024ZM512.016 64C264.976 64 64.016 264.96 64.016 512 64.016 759.024 264.976 960 512.016 960 759.04 960 960 759.024 960 512 960 264.96 759.04 64 512.016 64ZM510.336 833.456C509.056 833.456 507.744 833.488 506.448 833.488 310.992 833.488 229.024 657.12 225.616 649.552 218.336 633.424 225.488 614.496 241.584 607.216 257.712 599.968 276.576 607.088 283.888 623.088 286.64 629.12 352.928 769.488 506.576 769.488 507.584 769.488 508.576 769.456 509.584 769.456 672.896 767.552 738.368 624.768 739.024 623.344 746.176 607.216 765.024 599.872 781.264 607.152 797.392 614.336 804.672 633.248 797.456 649.408 794.176 656.8 714.208 831.056 510.336 833.456ZM671.504 479.84C636.224 479.84 607.664 451.232 607.664 415.984 607.664 380.768 636.224 352.176 671.504 352.176 706.768 352.176 735.344 380.768 735.344 415.984 735.344 451.232 706.768 479.84 671.504 479.84ZM351.504 479.84C316.224 479.84 287.664 451.232 287.664 415.984 287.664 380.768 316.224 352.176 351.504 352.176 386.768 352.176 415.344 380.768 415.344 415.984 415.344 451.232 386.768 479.84 351.504 479.84Z" p-id="2484"></path></svg>
+                    } />
+                </div>
+                <div onClick={() => this.setState({ emojiKey: 1 })} className={'emoji-menu ' + (emojiKey === 1 ? "emoji-select" : "")} >
+                    <Icon style={{
+                        margin: '10px',
+                    }} svg={
+                        <svg viewBox="0 0 1025 1024" width="20" height="20"><path d="M667.786667 117.333333C832.864 117.333333 938.666667 249.706667 938.666667 427.861333c0 138.250667-125.098667 290.506667-371.573334 461.589334a96.768 96.768 0 0 1-110.186666 0C210.432 718.368 85.333333 566.112 85.333333 427.861333 85.333333 249.706667 191.136 117.333333 356.213333 117.333333c59.616 0 100.053333 20.832 155.786667 68.096C567.744 138.176 608.170667 117.333333 667.786667 117.333333z m0 63.146667c-41.44 0-70.261333 15.189333-116.96 55.04-2.165333 1.845333-14.4 12.373333-17.941334 15.381333a32.32 32.32 0 0 1-41.770666 0c-3.541333-3.018667-15.776-13.536-17.941334-15.381333-46.698667-39.850667-75.52-55.04-116.96-55.04C230.186667 180.48 149.333333 281.258667 149.333333 426.698667 149.333333 537.6 262.858667 675.242667 493.632 834.826667a32.352 32.352 0 0 0 36.736 0C761.141333 675.253333 874.666667 537.6 874.666667 426.698667c0-145.44-80.853333-246.218667-206.88-246.218667z" fill="#000000" p-id="3586"></path></svg>
+                    } />
                 </div>
             </div>
         </div>)

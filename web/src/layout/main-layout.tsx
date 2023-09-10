@@ -128,7 +128,8 @@ class App extends Component<any, state> {
     }
 
     selectGroup(name:string,value:any){
-        debugger;
+        console.log(name);
+        
         if(value){
             const {menu} = this.state;
             this.selectMenu(menu[0])
