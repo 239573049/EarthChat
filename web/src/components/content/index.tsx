@@ -1067,7 +1067,7 @@ export default class Content extends Component<IProps, IState> {
                             } />
 
                         </div>
-                        <Mention ref={this.mentionRef} style={{
+                        <Mention users={groupinUsers} ref={this.mentionRef} style={{
                             height: 'calc(100% - 160px)',
                         }} onSubmit={async () => await this.sendMessage()} />
                         <div style={{
