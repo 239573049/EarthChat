@@ -114,13 +114,7 @@ public class ChatHub : Hub
             UserId = userId.Value,
             CreationTime = DateTime.Now,
             GroupId = groupId,
-            Id = Guid.NewGuid(),
-            User = new GetUserDto
-            {
-                Avatar = GetAvatar(),
-                Id = userId.Value,
-                Name = GetName()
-            }
+            Id = Guid.NewGuid()
         };
 
         var createChat = new CreateChatMessageCommand(new CreateChatMessageDto

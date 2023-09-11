@@ -2,7 +2,6 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
-RUN apk add --no-cache tzdata
 ENV TZ=Asia/Shanghai
 WORKDIR /app
 EXPOSE 80

@@ -490,9 +490,8 @@ export default class Content extends Component<IProps, IState> {
     }
 
 
-
-    rendetContent = (item: any,user:any) => {
-        const className = user?.id === user.id ? ' message-item-content-user' : '';
+    rendetContent = (item: any,u:any) => {
+        const className = user?.id === u?.id ? ' message-item-content-user' : '';
 
         if (item.type === "Text" || item.type === 0) {
             return (
@@ -794,7 +793,6 @@ export default class Content extends Component<IProps, IState> {
     }
 
     renderInfo(item: any) {
-        console.log(item);
 
         return (<div>
             <div style={{
@@ -828,13 +826,11 @@ export default class Content extends Component<IProps, IState> {
     }
 
     onScrollGroupInUser(value: any) {
-        console.log(value);
 
         var element = document.getElementById('group-in-user')!;
 
         if (element.scrollTop + element.clientHeight === element.scrollHeight) {
-            console.log('到底底部');
-
+            console.log(value);
         }
     }
 
@@ -905,8 +901,6 @@ export default class Content extends Component<IProps, IState> {
     }
 
     async sendEmoji(item: any) {
-        console.log(item);
-
         const { group } = this.props
         await ChatHubService.send('SendMessage', item.path, group.id, 1);
     }

@@ -24,10 +24,10 @@ public class ChatMessageDto
     /// <summary>
     ///     id
     /// </summary>
-    [IgnoreMember]
+    [Key("userId")]
     public Guid UserId { get; set; }
 
-    [Key("user")]
+    [IgnoreMember]
     public GetUserDto User { get; set; }
 
     /// <summary>
