@@ -177,4 +177,5 @@ public class CommandHandler
             await _friendRequestRepository.UpdateAsync(value);
         }
     }
+
 }

@@ -100,6 +100,11 @@ public class UserCommandHandler
             throw new UserFriendlyException("您的表情包超出最大限额。");
         }
         
+        if(await _emojiRepository.GetCountAsync(x => x.UserId == _userContext.GetUserId<Guid>() && x.Path == command.path) > 0)
+        {
+            throw new UserFriendlyException("已经存在表情包");
+        }
+
         var emoji = new Emoji()
         {
             Path = command.path,

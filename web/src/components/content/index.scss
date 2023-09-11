@@ -164,3 +164,19 @@ body:not([theme-mode='dark']) {
 .emoji-menu:hover {
     background-color: var(--chat-panel-background-color);
 }
+
+.image-menu{
+    background-color: var(--message-item-content-background-color);
+    color: var(--semi-color-text-0);
+}
+
+.image-menu-item{
+    border-radius: 8px;
+    text-align: center;
+    padding: 8px;
+    cursor: pointer;
+}
+
+.image-menu-item:hover{
+    background-color: var(--sekect-chat-item-background-color);
+}

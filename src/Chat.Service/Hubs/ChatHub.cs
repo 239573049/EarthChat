@@ -158,7 +158,7 @@ public class ChatHub : Hub
             UserId = userId.Value
         });
     }
-
+    
     /// <summary>
     /// 获取当前用户id
     /// </summary>

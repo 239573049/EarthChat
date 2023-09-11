@@ -4,7 +4,7 @@ import { ChatGroupDto } from '../../dto';
 import moment from 'moment/moment';
 import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover } from '@douyinfe/semi-ui';
 import './index.scss';
-import Mention from '../Mention';
+import Mention from '../mention';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
@@ -461,6 +461,35 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    addEmoji(item: any) {
+        emojiService.create(item.content)
+            .then(res => {
+                if (res.code === "200") {
+                    Toast.success("添加成功")
+                    this.loadingCustom();
+                } else {
+                    Toast.error(res.message)
+                }
+            })
+    }
+
+    /**
+     * 传入时间是否小于当前时间的俩分钟
+     * @param date 
+     * @returns 
+     */
+    isTimestampLessThanTwoMinutes(timestamp: string) {
+        var currentTime = new Date().getTime();
+        var date = new Date(timestamp);
+        var timestampValue = date.getTime();
+        var timeDifference = currentTime - timestampValue;
+        var timeDifferenceInMinutes = Math.floor(timeDifference / 1000 / 60);
+
+        return timeDifferenceInMinutes < 2;
+    }
+
+
+
     rendetContent = (item: any) => {
         const className = user?.id === item.user.id ? ' message-item-content-user' : '';
 
@@ -472,21 +501,28 @@ export default class Content extends Component<IProps, IState> {
             )
         } else if (item.type === "Image" || item.type === 1) {
             return (
-                <span>
-                    <Image
-                        width={'100%'}
-                        className={className}
-                        style={{
-                            width: 'auto',
-                            height: 'auto',
-                            marginBottom: '20px',
-                            marginTop: '8px',
-                            borderRadius: '8px',
-                            marginLeft: '10px',
-                        }}
-                        height={'100%'}
-                        src={item.content}
-                    />
+                <span >
+                    <Tooltip style={{
+                        backgroundColor: 'var(--message-item-content-background-color)'
+                    }} content={<div className='image-menu'>
+                        <div className='image-menu-item' onClick={() => this.addEmoji(item)}>添加到表情</div>
+                    </div>} position='rightTop' trigger="contextMenu" >
+                        <Image
+                            width={'100%'}
+                            className={className}
+                            style={{
+                                width: 'auto',
+                                height: 'auto',
+                                marginBottom: '20px',
+                                marginTop: '8px',
+                                maxWidth: '65%',
+                                borderRadius: '8px',
+                                marginLeft: '10px',
+                            }}
+                            height={'100%'}
+                            src={item.content}
+                        />
+                    </Tooltip>
                 </span>
             )
         } else if (item.type === "File" || item.type === 2) {
@@ -506,10 +542,67 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    rowRenderer(item: any) {
-        item.creationTime = moment(item.creationTime).format('YYYY-MM-DD HH:mm:ss');
+    formatTime(dateStr: string) {
+        var now = new Date();
+        var date = new Date(dateStr);
+        var diff = now.getTime() - date.getTime();
+
+        // 超过一天，显示完整时间
+        if (diff >= 24 * 60 * 60 * 1000) {
+            return moment(dateStr).format('YYYY-MM-DD HH:mm:ss');
+        }
+
+        var hour = date.getHours();
+        var minute = date.getMinutes()
+        var ampm = hour >= 12 ? '下午' : '上午';
+        hour = hour % 12;
+        hour = hour ? hour : 12;
+
+        return ampm + ' ' + hour + ':'+minute;
+    }
+
+    isSameDateTime(str1: string, str2: string) {
+        // 将字符串转换为日期对象
+        var date1 = new Date(str1);
+        var date2 = new Date(str2);
+
+        // 获取年、月、日、小时和分钟
+        var year1 = date1.getFullYear();
+        var month1 = date1.getMonth();
+        var day1 = date1.getDate();
+        var hour1 = date1.getHours();
+        var minute1 = date1.getMinutes();
+
+        var year2 = date2.getFullYear();
+        var month2 = date2.getMonth();
+        var day2 = date2.getDate();
+        var hour2 = date2.getHours();
+        var minute2 = date2.getMinutes();
+
+        // 判断年、月、日、小时和分钟是否相同
+        if (year1 === year2 && month1 === month2 && day1 === day2 && hour1 === hour2 && minute1 === minute2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    rowRenderer(item: any, index: number) {
+        const { data } = this.state;
+        let date = null;
+
+        if (index === 0) {
+            date = <div>{item.creationTime}</div>
+        } else if (!this.isSameDateTime(data[index - 1].creationTime, item.creationTime)) {
+            date = this.formatTime(item.creationTime)
+        }
+
         return (
             <div key={item.Id} style={{ margin: '15px' }}>
+                {date&&<div style={{
+                    textAlign: 'center'
+                }}>{date}</div>}
                 <Tooltip position='right' content={() => this.renderInfo(item.user)} trigger="click" >
                     <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
                 </Tooltip>
@@ -550,7 +643,7 @@ export default class Content extends Component<IProps, IState> {
             })
 
             const height = element.scrollHeight;
-            
+
             ChatService.getList(group.id, page + 1, 20)
                 .then((res: any) => {
                     if (res.data.result.length === 0) {
@@ -560,13 +653,13 @@ export default class Content extends Component<IProps, IState> {
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
                     }, () => {
-                        setTimeout(()=>{
+                        setTimeout(() => {
                             const newHeight = element.scrollHeight;
                             if (height !== newHeight) {
                                 // 移动当之前定位
                                 element.scrollTop = newHeight - height
                             }
-                        },10);
+                        }, 10);
                     })
                 }).finally(() => {
 
@@ -581,9 +674,9 @@ export default class Content extends Component<IProps, IState> {
         const { data } = this.state;
         return (
             <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
-                {data.map(x => {
+                {data.map((x, i) => {
                     return (<div>
-                        {this.rowRenderer(x)}
+                        {this.rowRenderer(x, i)}
                     </div>)
                 })}
             </div>
@@ -811,9 +904,21 @@ export default class Content extends Component<IProps, IState> {
 
     async sendEmoji(item: any) {
         console.log(item);
-        
+
         const { group } = this.props
         await ChatHubService.send('SendMessage', item.path, group.id, 1);
+    }
+
+    removeEmoji(item: string) {
+        emojiService.delete(item)
+            .then((res) => {
+                if (res.code === '200') {
+                    Toast.success("删除成功")
+                    this.loadingCustom();
+                } else {
+                    Toast.error(res.message)
+                }
+            })
     }
 
     renderCustom() {
@@ -823,18 +928,25 @@ export default class Content extends Component<IProps, IState> {
             overflow: 'auto'
         }}>
             {custom.map(x => {
-                return <div style={{
-                    float:'left',
-                    margin: '5px',
-                    cursor:'pointer',
-                }} onClick={()=>this.sendEmoji(x)}>
-                    <Image
-                        width={50}
-                        height={50}
-                        src={x.path}
-                        preview={false}
-                    />
-                </div>
+                return <Tooltip style={{
+                    backgroundColor: 'var(--message-item-content-background-color)'
+                }} content={<div className='image-menu'>
+                    <div className='image-menu-item' onClick={() => this.removeEmoji(x.id)}>删除表情包</div>
+                </div>} position='rightTop' trigger="contextMenu" >
+                    <div style={{
+                        float: 'left',
+                        margin: '5px',
+                        cursor: 'pointer',
+                    }} onClick={() => this.sendEmoji(x)}>
+                        <Image
+                            width={50}
+                            height={50}
+                            src={x.path}
+                            preview={false}
+                        />
+                    </div>
+                </Tooltip>
+
             })}
             <Button size='large' style={{
                 margin: '10px',
@@ -882,7 +994,7 @@ export default class Content extends Component<IProps, IState> {
     }
 
     render() {
-        const { groupinUsers, loading } = this.state;
+        const { groupinUsers } = this.state;
         const { group } = this.props;
 
         return (
