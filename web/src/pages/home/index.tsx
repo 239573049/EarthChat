@@ -25,6 +25,7 @@ interface AppState {
     createGroupFormApi: any
 }
 
+
 class Home extends Component<{}, AppState> {
 
     constructor(props: any) {
@@ -184,7 +185,7 @@ class Home extends Component<{}, AppState> {
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
 
         const renderContent = () => {
-            if (selectGroup.avatar) {
+            if (selectGroup?.avatar) {
                 return <Content group={selectGroup} />
             } else {
                 return <div>
