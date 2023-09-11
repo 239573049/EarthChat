@@ -10,6 +10,7 @@ services:
     environment:
       POSTGRES_USER: token
       POSTGRES_PASSWORD: dd666666
+      TZ: Asia/Shanghai
       POSTGRES_DB: Chat
     volumes:
       - ./postgres_data:/var/lib/postgresql/data

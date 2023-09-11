@@ -299,6 +299,7 @@ export default class Content extends Component<IProps, IState> {
         this.onNotification = this.onNotification.bind(this);
         this.resizableRef = React.createRef();
         this.loadingCustom()
+        this.loadingGroupUser();
 
     }
 
@@ -306,7 +307,7 @@ export default class Content extends Component<IProps, IState> {
         PubSub.subscribe('changeGroup', this.onMessage)
         PubSub.subscribe('Notification', this.onNotification)
 
-        this.loadingMessage();
+        setTimeout(()=>this.loadingMessage(),100)
     }
 
     // 监听props变化
@@ -490,8 +491,8 @@ export default class Content extends Component<IProps, IState> {
 
 
 
-    rendetContent = (item: any) => {
-        const className = user?.id === item.user.id ? ' message-item-content-user' : '';
+    rendetContent = (item: any,user:any) => {
+        const className = user?.id === user.id ? ' message-item-content-user' : '';
 
         if (item.type === "Text" || item.type === 0) {
             return (
@@ -558,7 +559,7 @@ export default class Content extends Component<IProps, IState> {
         hour = hour % 12;
         hour = hour ? hour : 12;
 
-        return ampm + ' ' + hour + ':'+minute;
+        return ampm + ' ' + hour + ':' + minute;
     }
 
     isSameDateTime(str1: string, str2: string) {
@@ -589,7 +590,7 @@ export default class Content extends Component<IProps, IState> {
 
 
     rowRenderer(item: any, index: number) {
-        const { data } = this.state;
+        const { data, groupinUsers } = this.state;
         let date = null;
 
         if (index === 0) {
@@ -598,18 +599,20 @@ export default class Content extends Component<IProps, IState> {
             date = this.formatTime(item.creationTime)
         }
 
+        let user = groupinUsers.find(x=>x.id === item.userId)
+
         return (
             <div key={item.Id} style={{ margin: '15px' }}>
-                {date&&<div style={{
+                {date && <div style={{
                     textAlign: 'center'
                 }}>{date}</div>}
-                <Tooltip position='right' content={() => this.renderInfo(item.user)} trigger="click" >
-                    <Avatar size='small' style={{ float: 'left' }} src={item.user.avatar} />
+                <Tooltip position='right' content={() => this.renderInfo(user)} trigger="click" >
+                    <Avatar size='small' style={{ float: 'left' }} src={user?.avatar} />
                 </Tooltip>
                 <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                    {item.user.name}
+                    {user?.name}
                 </div>
-                {this.rendetContent(item)}
+                {this.rendetContent(item,user)}
             </div>
         );
     }
@@ -619,7 +622,6 @@ export default class Content extends Component<IProps, IState> {
         const { page } = this.state;
         ChatService.getList(group.id, page, 20)
             .then((res: any) => {
-                this.loadingGroupUser();
                 if (res.code === "200") {
                     this.setState({
                         data: res.data.result,

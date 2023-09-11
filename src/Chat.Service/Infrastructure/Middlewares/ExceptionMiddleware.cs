@@ -7,6 +7,7 @@ public class ExceptionMiddleware : IMiddleware
         try
         {
             await next(context);
+            
         }
         catch (UnauthorizedAccessException)
         {

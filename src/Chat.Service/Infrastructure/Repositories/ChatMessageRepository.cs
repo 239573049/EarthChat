@@ -15,15 +15,12 @@ public class ChatMessageRepository : Repository<ChatDbContext, ChatMessage, Guid
     {
         var query =
             from messages in Context.ChatMessages
-            join contextUser in Context.Users on messages.UserId equals contextUser.Id  into users
-            from user in users.DefaultIfEmpty()
             where messages.ChatGroupId == queryGroupId
             orderby messages.CreationTime descending
             select new ChatMessage(messages.Id, messages.CreationTime)
             {
                 Content = messages.Content,
                 Type = messages.Type,
-                User = user,
                 UserId = messages.UserId ?? Guid.Empty
             };
 
