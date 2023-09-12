@@ -5,23 +5,6 @@ set "currentDir=%~dp0"
 
 node -v > nul 2>&1
 if %errorlevel% equ 0 (
-    echo 检查已经安装node
-
-    echo 开始构建Window前端项目
-    cd /d "%currentDir%/web"
-
-    npm i 
-    npm run build
-
-    echo 前端项目构建完成开始复制构建文件
-
-    
-    cd /d "%currentDir%"
-    
-    set "websourceDir=web\dist"
-    set "webtargetDir=DevOps\nginx\wwwroot"
-
-    xcopy /Y /E /I "%websourceDir%" "%webtargetDir%"
 
     echo 复制完成构建后端项目
 
@@ -38,6 +21,21 @@ if %errorlevel% equ 0 (
     ) else (
         echo dotnet未安装
     )
+
+
+    echo 检查已经安装node
+
+    echo 开始构建Window前端项目
+    cd /d "%currentDir%/web"
+
+    npm i 
+    npm run build
+
+    echo 前端项目构建完成开始复制构建文件
+	
+
+
+    xcopy /Y /E /I "%currentDir%web\dist" "%currentDir%DevOps\service\wwwroot"
 
 
 ) else (

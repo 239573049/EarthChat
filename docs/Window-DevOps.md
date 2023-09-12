@@ -13,11 +13,10 @@
 
 当执行完成以后在根目录下存在一个`DevOps/`目录，
 
-存在`nginx`和`service`俩个目录，
+存在`service目录，
 
-- 第一步进入`nginx`，然后执行nginx.exe nginx默认端口为`8880`，如果需要修改请修改`DevOps/nginx/conf/nginx.conf`中配置的端口即可
 - 第二步进入`DevOps/service`，然后执行`run.bat`，后端默认启动的端口`23348`，如果需要修改默认端口请修改`run.bat`配置的端口
-- 第三步使用浏览器访问`http://localhost:8880/`
+- 第三步使用浏览器访问`http://localhost:23348/`
 
 
 

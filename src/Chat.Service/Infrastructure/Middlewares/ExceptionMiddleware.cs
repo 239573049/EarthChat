@@ -6,8 +6,22 @@ public class ExceptionMiddleware : IMiddleware
     {
         try
         {
+            if (context.Request.Path == "/")
+            {
+                context.Request.Path = "/index.html";
+            }
+
             await next(context);
-            
+
+            if (context.Response.StatusCode == 404)
+            {
+                var webHost = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+                if (File.Exists(Path.Combine(webHost.WebRootPath, "index.html")))
+                {
+                    await using var file = File.OpenRead(Path.Combine(webHost.WebRootPath, "index.html"));
+                    await file.CopyToAsync(context.Response.Body);
+                }
+            }
         }
         catch (UnauthorizedAccessException)
         {

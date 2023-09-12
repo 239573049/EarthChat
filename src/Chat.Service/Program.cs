@@ -87,7 +87,7 @@ var app = builder.Services
                                builder.Configuration["ConnectionStrings:DefaultConnection"];
         sqlType = sqlType?.ToLower();
         // 根据工具变量传递的数据库类型处理。
-        if (sqlType == "postgresql" || sqlType == "pgsql")
+        if (sqlType is "postgresql" or "pgsql")
         {
             // 解决pgsql的时间戳问题
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -152,7 +152,9 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
 
 app.UseStaticFiles();
 app.UseAuthentication();
-app.UseAuthorization().UseCors("CorsPolicy");
+app.UseAuthorization()
+    .UseCors("CorsPolicy");
+
 app.MapHub<ChatHub>("/chatHub");
 
 await app.RunAsync();

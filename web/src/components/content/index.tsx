@@ -4,7 +4,7 @@ import { ChatGroupDto } from '../../dto';
 import moment from 'moment/moment';
 import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover } from '@douyinfe/semi-ui';
 import './index.scss';
-import Mention from '../Mention';
+import Mention from '../mentions/index';
 import ChatHubService from '../../services/chatHubService';
 import fileService from '../../services/fileService';
 import PubSub from 'pubsub-js';
