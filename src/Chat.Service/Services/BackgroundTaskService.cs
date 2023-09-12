@@ -139,29 +139,6 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                     catch (Exception e)
                     {
                         _logger.LogError("智能助手出现异常 {e}", e);
-
-                        // 这里需要通知用户服务出现异常。
-                        var message = new ChatMessageDto
-                        {
-                            Content = "机器人出错了，请联系管理员检查！",
-                            Type = ChatType.Text,
-                            UserId = Guid.Empty,
-                            CreationTime = DateTime.Now,
-                            GroupId = item.Id,
-                            Id = Guid.NewGuid(),
-                            User = new GetUserDto
-                            {
-                                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
-                                Id = Guid.Empty,
-                                Name = "聊天机器人",
-                            }
-                        };
-
-                        await _hubContext.Clients.All.SendAsync("ReceiveMessage", JsonSerializer.Serialize(message,
-                            new JsonSerializerOptions
-                            {
-                                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                            }));
                     }
                 }
             }
