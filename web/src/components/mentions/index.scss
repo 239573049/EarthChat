@@ -1,0 +1,18 @@
+.mention{
+    .semi-tooltip-content{
+        max-height:220px;
+        overflow-y: auto;
+    }
+
+    .mention-item{
+        margin: 5px;
+        padding: 5px;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .mention-item:hover{
+        background-color: var(--select-background-color);
+        color: blue;
+    }
+}

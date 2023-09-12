@@ -1,4 +1,5 @@
 import { ClipboardEvent, KeyboardEvent, Component } from 'react';
+import './index.scss'
 
 interface MentionProps {
   onSubmit: () => void;
@@ -9,6 +10,7 @@ interface MentionState {
   image: string[];
   text: string;
   maxlength: number;
+  visible: boolean;
 }
 
 class Mention extends Component<MentionProps, MentionState> {
@@ -17,9 +19,13 @@ class Mention extends Component<MentionProps, MentionState> {
     image: [],
     text: '',
     maxlength: 1000,
+    visible: false,
   };
 
   handleInput = (e: any) => {
+    if (e.nativeEvent.data === '@') {
+      this.setState({ visible: true })
+    }
     const editorContainer = document.getElementById('editor-container');
     if (editorContainer && e.target) {
       try {
@@ -89,11 +95,13 @@ class Mention extends Component<MentionProps, MentionState> {
   };
 
   onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    // 如果是快捷键则调用发送。
     if (e.keyCode === 13) {
       e.preventDefault();
       this.props.onSubmit();
     }
   };
+
 
   render() {
     return (
