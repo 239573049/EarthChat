@@ -26,6 +26,7 @@ interface IState {
     page: number,
     groupinUsers: any[],
     custom: any[],
+    onLineUserLoading: boolean,
     groudUserPage: number,
     groupLoading: boolean,
     emojiKey: number
@@ -234,6 +235,8 @@ const Emoji = ({ symbol, label, onClick }: any) => (
     </span>
 );
 
+const groupUsers = [] as any[];
+
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
 
@@ -268,6 +271,7 @@ export default class Content extends Component<IProps, IState> {
         unread: 0,
         page: 1,
         groupLoading: false,
+        onLineUserLoading: false,
         groupinUsers: [],
         groudUserPage: 1,
         loading: false,
@@ -282,6 +286,7 @@ export default class Content extends Component<IProps, IState> {
             custom: [],
             data: [],
             unread: 0,
+            onLineUserLoading: false,
             page: 1,
             groupLoading: false,
             loading: false,
@@ -306,8 +311,6 @@ export default class Content extends Component<IProps, IState> {
     componentDidMount() {
         PubSub.subscribe('changeGroup', this.onMessage)
         PubSub.subscribe('Notification', this.onNotification)
-
-        setTimeout(()=>this.loadingMessage(),100)
     }
 
     // 监听props变化
@@ -319,7 +322,7 @@ export default class Content extends Component<IProps, IState> {
                 page: 1,
                 groudUserPage: 1,
             }, () => {
-                this.loadingMessage();
+                this.loadingGroupUser();
             });
         }
 
@@ -328,6 +331,12 @@ export default class Content extends Component<IProps, IState> {
 
     getOnLineUserIds() {
         const { group } = this.props;
+
+        const { onLineUserLoading } = this.state;
+        if (onLineUserLoading) {
+            return
+        }
+        this.setState({ onLineUserLoading: true })
         ChatService.getOnLineUserIds(group.id)
             .then(res => {
                 if (res.code === "200") {
@@ -358,8 +367,8 @@ export default class Content extends Component<IProps, IState> {
                 } else {
                     Toast.error(res.message)
                 }
-
-
+            }).finally(() => {
+                this.setState({ onLineUserLoading: false })
             })
     }
 
@@ -367,15 +376,31 @@ export default class Content extends Component<IProps, IState> {
     loadingGroupUser() {
         const { group } = this.props;
         const { groudUserPage } = this.state;
+        const v = groupUsers.find(x => x.id === group.id);
+        if (v) {
+            this.setState({
+                groupinUsers: v.data
+            }, () => {
+                // 获取群聊所有的用户成功以后获取用户状态
+                this.getOnLineUserIds()
+                this.loadingMessage()
+            })
+            return;
+        }
         ChatService.getGroupInUser(group.id)
             .then((res: any) => {
                 if (res) {
                     this.groupinUsers = res;
+
+                    // 添加到缓存中。
+                    groupUsers.push({ id: group.id, data: res })
+
                     this.setState({
                         groupinUsers: res
                     }, () => {
                         // 获取群聊所有的用户成功以后获取用户状态
                         this.getOnLineUserIds()
+                        this.loadingMessage()
                     })
                 }
             })
@@ -490,7 +515,7 @@ export default class Content extends Component<IProps, IState> {
     }
 
 
-    rendetContent = (item: any,u:any) => {
+    rendetContent = (item: any, u: any) => {
         const className = user?.id === u?.id ? ' message-item-content-user' : '';
 
         if (item.type === "Text" || item.type === 0) {
@@ -598,7 +623,7 @@ export default class Content extends Component<IProps, IState> {
             date = this.formatTime(item.creationTime)
         }
 
-        let user = groupinUsers.find(x=>x.id === item.userId)
+        let user = groupinUsers.find(x => x.id === item.userId)
 
         return (
             <div key={item.Id} style={{ margin: '15px' }}>
@@ -611,7 +636,7 @@ export default class Content extends Component<IProps, IState> {
                 <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
                     {user?.name}
                 </div>
-                {this.rendetContent(item,user)}
+                {this.rendetContent(item, user)}
             </div>
         );
     }
@@ -634,7 +659,8 @@ export default class Content extends Component<IProps, IState> {
 
     onScroll(_: any) {
         var element = document.getElementById('message-list')!;
-        if (element.scrollTop === 0) {
+        const { data } = this.state;
+        if (element.scrollTop === 0 && data.length !== 0) {
 
             const { group } = this.props;
             const { page } = this.state;
@@ -1067,7 +1093,7 @@ export default class Content extends Component<IProps, IState> {
                             } />
 
                         </div>
-                        <Mention users={groupinUsers} ref={this.mentionRef} style={{
+                        <Mention ref={this.mentionRef} style={{
                             height: 'calc(100% - 160px)',
                         }} onSubmit={async () => await this.sendMessage()} />
                         <div style={{

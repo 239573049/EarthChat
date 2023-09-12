@@ -1,10 +1,8 @@
-import { Avatar, Tooltip } from '@douyinfe/semi-ui';
 import { ClipboardEvent, KeyboardEvent, Component } from 'react';
 import './index.scss'
 
 interface MentionProps {
   onSubmit: () => void;
-  users: any[],
   style: any;
 }
 
@@ -104,26 +102,8 @@ class Mention extends Component<MentionProps, MentionState> {
     }
   };
 
-  renderUsers() {
-    return <div>
-      {this.props.users.map(x => {
-        return <div>
-          <div className='mention-item' style={{
-            float: 'left',
-            width:'110px',
-          }}>
-            <Avatar src={x.avatar} size="extra-small" />
-            <span>
-              {x.name}
-            </span>
-          </div>
-        </div>
-      })}
-    </div>
-  }
 
   render() {
-    const { visible } = this.state;
     return (
       <div
         contentEditable
@@ -138,14 +118,6 @@ class Mention extends Component<MentionProps, MentionState> {
           ...this.props.style,
         }}
       >
-        <Tooltip
-          onClickOutSide={() => this.setState({ visible: false })}
-          content={this.renderUsers()}
-          className='mention'
-          trigger="custom"
-          visible={visible}
-        >
-        </Tooltip>
       </div>
     );
   }
