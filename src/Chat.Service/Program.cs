@@ -1,5 +1,6 @@
 using Chat.Service.Infrastructure.Middlewares;
 using Chat.Service.Services;
+using Microsoft.AspNetCore.ResponseCompression;
 
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
@@ -52,6 +53,13 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
     c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
     c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
+});
+
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
 });
 
 builder.Services.AddSingleton<SystemService>();
@@ -113,6 +121,8 @@ var app = builder.Services
     })
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
+
+app.UseResponseCompression();
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionMiddleware>();
