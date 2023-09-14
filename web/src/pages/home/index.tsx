@@ -25,14 +25,15 @@ interface AppState {
     createGroupFormApi: any
 }
 
+var intervalId: any;
 
 class Home extends Component<{}, AppState> {
 
     constructor(props: any) {
         super(props);
 
-        this.state ={
-            
+        this.state = {
+
             middleWidth: 230,
             selectid: 0,
             user: {} as GetUserDto,
@@ -54,26 +55,29 @@ class Home extends Component<{}, AppState> {
         this.selectGroup = this.selectGroup.bind(this)
         this.getFormApi = this.getFormApi.bind(this);
         this.createGroup = this.createGroup.bind(this)
+        this.onMessage = this.onMessage.bind(this)
+        this.stopBlinking = this.stopBlinking.bind(this)
     }
 
-    selectGroup(name:string,value:any){
+    selectGroup(name: string, value: any) {
         console.log(name);
-        
-        const {groups} = this.state;
-        const item = groups.find(x=>x.id == value.id);
-        if(item){
+
+        const { groups } = this.state;
+        const item = groups.find(x => x.id == value.id);
+        if (item) {
             this.selectChat(item)
         }
     }
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         PubSub.unsubscribe('selectGroupInfo')
+        PubSub.unsubscribe('changeGroup')
     }
 
     componentDidMount() {
 
         this.setState({
-            selectGroup:this.state.groups[0]
+            selectGroup: this.state.groups[0]
         })
         UserService.get()
             .then((res: any) => {
@@ -86,8 +90,62 @@ class Home extends Component<{}, AppState> {
             })
 
         this.loadingGroups()
-        PubSub.subscribe('selectGroupInfo',this.selectGroup)
+        PubSub.subscribe('selectGroupInfo', this.selectGroup)
+        PubSub.subscribe('changeGroup', this.onMessage)
     }
+
+
+    stopBlinking() {
+        document.title = 'Chat'
+
+        if(intervalId){
+            clearInterval(intervalId);
+        }
+
+    }
+
+    startBlinking() {
+        intervalId = setInterval(function () {
+            var title = document.title;
+            document.title = (title === "Chat [新的消息]") ? "Chat" : "Chat [新的消息]";
+        }, 1000);
+    }
+
+    
+    
+    onMessage = (_: any, data: any) => {
+        const { groups } = this.state;
+        var v = groups.find(x => x.id === data.groupId)
+        if (!v) {
+            return;
+        }
+
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+
+        v.lastMessage = '[新的消息]'
+
+        this.startBlinking()
+
+        // 将v插入到groups数组的最前面
+        const index = groups.findIndex(x => x.id === data.groupId);
+        if (index !== -1) {
+            groups.splice(index, 1);
+        }
+        groups.unshift(v);
+
+        this.setState({ groups });
+        
+        // 取消闪烁标题
+        document.addEventListener("click", ()=>{
+            this.stopBlinking()
+            
+        });
+    }
+
+
+
 
     handleMouseDown = (e: React.MouseEvent) => {
         const startX = e.clientX;
@@ -105,6 +163,7 @@ class Home extends Component<{}, AppState> {
 
         window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup', onMouseUp);
+
     };
 
     selectMenu(id: number) {
@@ -125,7 +184,7 @@ class Home extends Component<{}, AppState> {
         ChatService.getUserGroup()
             .then((res: ChatGroupDto[]) => {
                 res.forEach(x => {
-                    x.lastMessage = '最新回复';
+                    x.lastMessage = '';
                 })
                 this.setState({
                     groups: res,
@@ -166,13 +225,13 @@ class Home extends Component<{}, AppState> {
 
         var v = {
             avatar,
-            description:value.description,
-            name:value.name
+            description: value.description,
+            name: value.name
         }
 
         chatService.createGroup(v)
-            .then(res=>{
-                if(res.code === "200"){
+            .then(res => {
+                if (res.code === "200") {
                     this.loadingGroups()
                     this.createGroupClose();
                     Toast.success("添加成功");
@@ -264,7 +323,7 @@ class Home extends Component<{}, AppState> {
                                             <span style={{
                                                 display: 'block',
                                                 fontSize: '12px',
-
+                                                color: 'red'
                                             }}>
                                                 {item.lastMessage}
                                             </span>

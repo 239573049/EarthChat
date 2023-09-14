@@ -34,11 +34,6 @@ public class ChatService : BaseService<ChatService>, IChatService
         return new ResultDto();
     }
 
-    public Task AddUserToGroupAsync(Guid groupId, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
     [Authorize]
     public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
     {

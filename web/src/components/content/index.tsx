@@ -12,6 +12,7 @@ import copy from 'copy-to-clipboard';
 import ChatService from '../../services/chatService';
 import emojiService from '../../services/emojiService';
 import { IconPlus } from '@douyinfe/semi-icons';
+import {groupUsers} from '../../store/user-store'
 
 
 interface IProps {
@@ -234,8 +235,6 @@ const Emoji = ({ symbol, label, onClick }: any) => (
         {symbol}
     </span>
 );
-
-const groupUsers = [] as any[];
 
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;

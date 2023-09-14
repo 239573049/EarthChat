@@ -30,14 +30,6 @@ public interface IChatService
     Task<ResultDto> CreateGroupAsync(CreateGroupDto dto,string connections);
     
     /// <summary>
-    /// 将用户添加到群组。
-    /// </summary>
-    /// <param name="groupId"></param>
-    /// <param name="userId"></param>
-    /// <returns></returns>
-    Task AddUserToGroupAsync(Guid groupId, Guid userId);
-
-    /// <summary>
     /// 获取群组中的用户。
     /// </summary>
     /// <param name="groupId"></param>
