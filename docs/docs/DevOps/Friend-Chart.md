@@ -1,6 +1,6 @@
 # 好友关系
 
-![](./img/Friend-chart.png)
+![image](./img/Friend-chart.png)
 
 ## 好友关系
 
