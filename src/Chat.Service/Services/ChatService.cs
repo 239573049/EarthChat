@@ -35,11 +35,11 @@ public class ChatService : BaseService<ChatService>, IChatService
     }
 
     [Authorize]
-    public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<IOrderedEnumerable<GroupUserDto>> GetGroupInUserAsync(Guid groupId)
     {
         var query = new GetGroupInUserQuery(groupId);
         await PublishAsync(query);
-        return query.Result.OrderByDescending(x => x.OnLine);
+        return query.Result.Select(x => new GroupUserDto(x.Id, x.OnLine)).OrderByDescending(x => x.OnLine);
     }
 
     [Authorize]

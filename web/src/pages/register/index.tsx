@@ -9,8 +9,6 @@ import config from '../../config';
 interface State {
     username: string;
     password: string;
-    registerUpload: RefObject<Upload>,
-    avatar: string
 }
 
 const body = document.body;
@@ -22,8 +20,6 @@ class Register extends Component<{}, State> {
         this.state = {
             username: '',
             password: '',
-            avatar: '',
-            registerUpload: React.createRef<Upload>(),
         };
         this.handleSubmit = this.handleSubmit.bind(this);
         body.removeAttribute('theme-mode');
@@ -42,7 +38,7 @@ class Register extends Component<{}, State> {
             .then((res: any) => {
                 if (res.code === '200') {
                     Toast.success('注册成功');
-                    
+
                     // 等待1秒后跳转
                     setTimeout(() => {
                         window.location.href = '/login';
@@ -55,7 +51,6 @@ class Register extends Component<{}, State> {
     };
 
     render() {
-        const { avatar } = this.state;
         return (
             <div className="login-container">
                 <div className="login-form">
@@ -68,37 +63,18 @@ class Register extends Component<{}, State> {
                         onSubmit={this.handleSubmit}
                     >
                         {
-                            ({  }) =>
-
+                            ({ }) =>
                             (
                                 <Row>
-                                    <Form.Upload field='avatar'
-                                        className="avatar-upload"
-                                        action={config.API + "/api/v1/Files/upload"}
-                                        accept={'image/*'}
-                                        ref={this.state.registerUpload}
-                                        fileName='file'
-                                        headers={{
-                                            "Authorization": "Bearer " + localStorage.getItem('token')
-                                        }}
-                                        label=' '
+                                    <Avatar size="large"
                                         style={{
-                                            left: '40%',
-                                            position: 'relative',
+                                            margin: 4,
+                                            top: '18%',
+                                            left: '50%',
+                                            transform: 'translate(-50%, -50%)'
                                         }}
-                                        onSuccess={(file: any) => {
-                                            if (file.code === '200') {
-                                                this.setState({
-                                                    avatar: file.data
-                                                })
-                                            } else {
-                                                Toast.error(file.message);
-                                            }
-                                        }}
-                                        showUploadList={false}
-                                        onError={() => Toast.error('上传失败')}>
-                                        <Avatar src={avatar} style={{ margin: 4 }} hoverMask={<IconCamera />} />
-                                    </Form.Upload>
+                                        alt='User' src='/favicon.png'>
+                                    </Avatar>
                                     <Form.Input style={{
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -106,10 +82,9 @@ class Register extends Component<{}, State> {
                                         height: '40px',
                                         width: '100%',
                                         fontSize: '20px',
-
                                     }} rules={[
                                         { required: true, message: '昵称不能为空' }
-                                    ]} label=' ' placeholder={'请输入昵称'} field='name' />
+                                    ]} label='昵称' placeholder={'请输入昵称'} field='name' />
                                     <Form.Input style={{
                                         backgroundColor: '#F5F5F5',
                                         color: '#000000',
@@ -118,7 +93,7 @@ class Register extends Component<{}, State> {
                                         width: '100%',
                                         fontSize: '20px',
 
-                                    }} label=' ' rules={[
+                                    }} label='账号' rules={[
                                         { required: true, message: '账号不能为空' },
                                         // @ts-ignore
                                         { validator: (rule, value) => value.length >= 5, message: '账号长度不能小于5位' },
@@ -130,12 +105,11 @@ class Register extends Component<{}, State> {
                                         height: '40px',
                                         width: '100%',
                                         fontSize: '20px',
-
                                     }} rules={[
                                         { required: true, message: '密码不能为空' },
                                         // @ts-ignore
                                         { validator: (rule, value) => value.length >= 5, message: '密码长度不能小于5位' },
-                                    ]} type='password' placeholder={'请输入密码'} label=' ' field='password' />
+                                    ]} type='password' placeholder={'请输入密码'} label='密码' field='password' />
                                     <Button block htmlType='submit' style={{
                                         backgroundColor: '#008DED',
                                     }} type="tertiary">注册</Button>

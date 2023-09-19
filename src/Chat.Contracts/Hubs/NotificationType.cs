@@ -20,5 +20,10 @@ public enum NotificationType
     /// <summary>
     /// 群聊上线新用户
     /// </summary>
-    GroupUserNew
+    GroupUserNew,
+    
+    /// <summary>
+    /// 群聊新增用户
+    /// </summary>
+    GroupAppendUser
 }

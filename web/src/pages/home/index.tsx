@@ -29,27 +29,25 @@ var intervalId: any;
 
 class Home extends Component<{}, AppState> {
 
+    state: Readonly<AppState>={
+        middleWidth: 230,
+        selectid: 0,
+        user: {} as GetUserDto,
+        groups: [],
+        selectGroup: {} as ChatGroupDto,
+        createGroupVisible: false,
+        createGroupUpload: React.createRef<Upload>(),
+        createGroupAvatar: '',
+        createGroupFormApi: undefined
+    }
+
     constructor(props: any) {
         super(props);
-
-        this.state = {
-
-            middleWidth: 230,
-            selectid: 0,
-            user: {} as GetUserDto,
-            groups: [],
-            selectGroup: {} as ChatGroupDto,
-            createGroupVisible: false,
-            createGroupUpload: React.createRef<Upload>(),
-            createGroupAvatar: '',
-            createGroupFormApi: undefined
-        }
 
         if (!localStorage.getItem('token')) {
             ChatHubService.stop();
             window.location.href = '/login'
         }
-
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.selectGroup = this.selectGroup.bind(this)
@@ -72,13 +70,16 @@ class Home extends Component<{}, AppState> {
     componentWillUnmount() {
         PubSub.unsubscribe('selectGroupInfo')
         PubSub.unsubscribe('changeGroup')
+        console.log('componentWillUnmount');
     }
 
     componentDidMount() {
-
+        console.log('componentDidMount');
+        
         this.setState({
             selectGroup: this.state.groups[0]
         })
+
         UserService.get()
             .then((res: any) => {
                 if (res.code === '200') {
@@ -183,6 +184,7 @@ class Home extends Component<{}, AppState> {
     loadingGroups() {
         ChatService.getUserGroup()
             .then((res: ChatGroupDto[]) => {
+
                 res.forEach(x => {
                     x.lastMessage = '';
                 })

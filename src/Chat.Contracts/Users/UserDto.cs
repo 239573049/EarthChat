@@ -18,8 +18,6 @@ public class UserDto
     /// 昵称
     /// </summary>
     public string Name { get; set; }
-
-    public Dictionary<string, string> Extends { get; set; }
     
     /// <summary>
     /// 是否在线

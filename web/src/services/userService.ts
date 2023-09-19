@@ -27,6 +27,13 @@ class UserService {
     update(value:any){
         return Request.put(`${baseURL}`,value)
     }
+
+    /**
+     * 通过用户id获取用户基本信息。
+     */
+    list(ids:any){
+        return Request.post(`${baseURL}/List`,ids)
+    }
 }
 
 export default new UserService()

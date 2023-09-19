@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Chat.Contracts.Hubs;
+using Chat.Service.Application.Hubs.Commands;
 using Chat.Service.Application.Users.Commands;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
@@ -14,13 +16,14 @@ public class UserCommandHandler
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
     private readonly IUserContext _userContext;
+    private readonly IEventBus _eventBus;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
     private readonly IChatGroupRepository _chatGroupRepository;
     private readonly IEmojiRepository _emojiRepository;
 
     public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
         IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository,
-        IUserContext userContext, IEmojiRepository emojiRepository)
+        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
@@ -29,6 +32,7 @@ public class UserCommandHandler
         _chatGroupRepository = chatGroupRepository;
         _userContext = userContext;
         _emojiRepository = emojiRepository;
+        _eventBus = eventBus;
     }
 
     [EventHandler(1)]
@@ -59,6 +63,16 @@ public class UserCommandHandler
             UserId = command.Result.Id,
             ChatGroupId = x.Id
         }));
+
+
+        var systemCommand = new SystemCommand(new Notification()
+        {
+            createdTime = DateTime.Now,
+            type = NotificationType.GroupAppendUser,
+            content = "新增用户",
+        }, defaultGroup.Select(x => x.Id).ToArray(), true);
+
+        await _eventBus.PublishAsync(systemCommand);
     }
 
     [EventHandler]
@@ -99,8 +113,9 @@ public class UserCommandHandler
         {
             throw new UserFriendlyException("您的表情包超出最大限额。");
         }
-        
-        if(await _emojiRepository.GetCountAsync(x => x.UserId == _userContext.GetUserId<Guid>() && x.Path == command.path) > 0)
+
+        if (await _emojiRepository.GetCountAsync(x =>
+                x.UserId == _userContext.GetUserId<Guid>() && x.Path == command.path) > 0)
         {
             throw new UserFriendlyException("已经存在表情包");
         }

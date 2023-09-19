@@ -34,7 +34,7 @@ public interface IChatService
     /// </summary>
     /// <param name="groupId"></param>
     /// <returns></returns>
-    Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId);
+    Task<IOrderedEnumerable<GroupUserDto>> GetGroupInUserAsync(Guid groupId);
 
     /// <summary>
     /// 只获取群组在线用户id

@@ -180,3 +180,10 @@ body:not([theme-mode='dark']) {
 .image-menu-item:hover{
     background-color: var(--sekect-chat-item-background-color);
 }
+
+
+.semi-tooltip-content{
+    background-color: var(--select-group-item-background-color);
+    color: var(--semi-color-text-0);
+    border-radius: 8px;
+}

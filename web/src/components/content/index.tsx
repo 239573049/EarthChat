@@ -1,5 +1,5 @@
 import React, { Component, RefObject } from 'react';
-import { ChatGroupDto } from '../../dto';
+import { ChatGroupDto, GetUserDto } from '../../dto';
 
 import moment from 'moment/moment';
 import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover } from '@douyinfe/semi-ui';
@@ -12,7 +12,8 @@ import copy from 'copy-to-clipboard';
 import ChatService from '../../services/chatService';
 import emojiService from '../../services/emojiService';
 import { IconPlus } from '@douyinfe/semi-icons';
-import {groupUsers} from '../../store/user-store'
+import { GetUserInfos } from '../../store/user-store'
+import { emoji } from '../../store/emoji';
 
 
 interface IProps {
@@ -26,11 +27,13 @@ interface IState {
     loading: boolean,
     page: number,
     groupinUsers: any[],
+    users: GetUserDto[],
     custom: any[],
     onLineUserLoading: boolean,
     groudUserPage: number,
     groupLoading: boolean,
-    emojiKey: number
+    emojiKey: number,
+    updateState: boolean,
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -42,187 +45,6 @@ const invitationIcon = () => {
 const menuFunctionIcon = () => {
     return <svg className='icon-function' viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="7571" width="20" height="20"><path d="M820.8 512c0 44.8 36 80.8 80.8 80.8s80.8-36 80.8-80.8-36-80.8-80.8-80.8-80.8 36-80.8 80.8zM431.2 512c0 44.8 36 80.8 80.8 80.8S592.8 556.8 592.8 512 556.8 431.2 512 431.2 431.2 467.2 431.2 512zM40.8 512c0 44.8 36 80.8 80.8 80.8S203.2 556.8 203.2 512s-36-80.8-80.8-80.8S41.6 467.2 40.8 512z" fill="" p-id="7572"></path></svg>
 }
-
-const emoji = [
-    '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '🙂', '🙃', '😉', '😊', '😇', '🥰', '😍', '🤩', '😘', '😗', '😚',
-    '😙', '😋',
-    '😛', '😜',
-    '🤪', '😝',
-    '🤑',
-    '🤗',
-    '🤭',
-    '🤫',
-    '🤔',
-    '🤐',
-    '🤨',
-    '😐',
-    '😑',
-    '😶',
-    '😏',
-    '😒',
-    '🙄',
-    '😬',
-    '🤥',
-    '😌',
-    '😔',
-    '😪',
-    '🤤',
-    '😴',
-    '😷',
-    '🤒',
-    '🤕',
-    '🤢',
-    '🤮',
-    '🤧',
-    '🥵',
-    '🥶',
-    '🥴',
-    '😵',
-    '🤯',
-    '🤠',
-    '🥳',
-    '😎',
-    '🤓',
-    '🧐',
-    '😕',
-    '😟',
-    '🙁',
-    '☹️',
-    '😮',
-    '😯',
-    '😲',
-    '😳',
-    '🥺',
-    '😦',
-    '😧',
-    '😨',
-    '😰',
-    '😥',
-    '😢',
-    '😭',
-    '😱',
-    '😖',
-    '😣',
-    '😞',
-    '😓',
-    '😩',
-    '😫',
-    '🥱',
-    '😤',
-    '😡',
-    '😠',
-    '🤬',
-    '😈',
-    '👿',
-    '💀',
-    '☠️',
-    '💩',
-    '🤡',
-    '👹',
-    '👺',
-    '👻',
-    '👽',
-    '👾',
-    '🤖',
-    '😺',
-    '😸',
-    '😹',
-    '😻',
-    '😼',
-    '😽',
-    '🙀',
-    '😿',
-    '😾',
-    '🙈',
-    '🙉',
-    '🙊',
-    '💋',
-    '💌',
-    '💘',
-    '💝',
-    '💖',
-    '💗',
-    '💓',
-    '💞',
-    '💕',
-    '💟',
-    '❣️',
-    '💔',
-    '❤️',
-    '🧡',
-    '💛',
-    '💚',
-    '💙',
-    '💜',
-    '🖤',
-    '💯',
-    '💢',
-    '💥',
-    '💫',
-    '💦',
-    '💨',
-    '🕳️',
-    '💣',
-    '💬',
-    '🗯️',
-    '💭',
-    '💤',
-    '👋',
-    '🤚',
-    '🖐️',
-    '✋',
-    '🖖',
-    '👌',
-    '✌️',
-    '🤞',
-    '🤟',
-    '🤘',
-    '🤙',
-    '👈',
-    '👉',
-    '👆',
-    '🖕',
-    '👇',
-    '☝️',
-    '👍',
-    '👎',
-    '✊',
-    '👊',
-    '🤛',
-    '🤜',
-    '👏',
-    '🙌',
-    '👐',
-    '🤲',
-    '🙏',
-    '✍️',
-    '💅',
-    '🤳',
-    '💪',
-    '🦵',
-    '🦶',
-    '👂',
-    '🦻',
-    '👃',
-    '🧠',
-    '👀',
-    '👁️',
-    '👅',
-    '👄',
-    '💋',
-    '👓',
-    '🕶️',
-    '👔',
-    '👕',
-    '👖',
-    '🧣',
-    '🧤',
-    '🧥',
-    '🧦',
-    '👗',
-    '👘',
-    '👙',
-]
 
 const Emoji = ({ symbol, label, onClick }: any) => (
     <span
@@ -265,34 +87,23 @@ export default class Content extends Component<IProps, IState> {
 
     state: Readonly<IState> = {
         height: 270,
-        data: [],
         custom: [],
+        data: [],
         unread: 0,
+        onLineUserLoading: false,
         page: 1,
         groupLoading: false,
-        onLineUserLoading: false,
-        groupinUsers: [],
-        groudUserPage: 1,
         loading: false,
-        emojiKey: 0
+        groudUserPage: 1,
+        groupinUsers: [],
+        emojiKey: 0,
+        updateState: false,
+        users: []
     }
 
 
     constructor(props: IProps) {
         super(props);
-        this.state = {
-            height: 270,
-            custom: [],
-            data: [],
-            unread: 0,
-            onLineUserLoading: false,
-            page: 1,
-            groupLoading: false,
-            loading: false,
-            groudUserPage: 1,
-            groupinUsers: [],
-            emojiKey: 0
-        }
 
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.download = this.download.bind(this);
@@ -310,6 +121,7 @@ export default class Content extends Component<IProps, IState> {
     componentDidMount() {
         PubSub.subscribe('changeGroup', this.onMessage)
         PubSub.subscribe('Notification', this.onNotification)
+        this.loadingGroupUser();
     }
 
     // 监听props变化
@@ -331,17 +143,13 @@ export default class Content extends Component<IProps, IState> {
     getOnLineUserIds() {
         const { group } = this.props;
 
-        const { onLineUserLoading } = this.state;
-        if (onLineUserLoading) {
-            return
-        }
-        this.setState({ onLineUserLoading: true })
         ChatService.getOnLineUserIds(group.id)
             .then(res => {
                 if (res.code === "200") {
+                    debugger
                     const { groupinUsers } = this.state;
                     const updatedGroupinUsers = groupinUsers.map(user => {
-                        if (res.data.includes(user.id)) {
+                        if (res.data.includes(user.userId)) {
                             return {
                                 ...user,
                                 onLine: true
@@ -352,6 +160,7 @@ export default class Content extends Component<IProps, IState> {
                     });
 
                     this.setState({
+                        // 在更新Ui的时候先排序，根据在线状态排序。
                         groupinUsers: updatedGroupinUsers.sort((a, b) => {
                             if (a.onLine && !b.onLine) {
                                 return -1;
@@ -366,36 +175,25 @@ export default class Content extends Component<IProps, IState> {
                 } else {
                     Toast.error(res.message)
                 }
-            }).finally(() => {
-                this.setState({ onLineUserLoading: false })
             })
     }
 
 
     loadingGroupUser() {
         const { group } = this.props;
-        const { groudUserPage } = this.state;
-        const v = groupUsers.find(x => x.id === group.id);
-        if (v) {
-            this.setState({
-                groupinUsers: v.data
-            }, () => {
-                // 获取群聊所有的用户成功以后获取用户状态
-                this.getOnLineUserIds()
-                this.loadingMessage()
-            })
-            return;
-        }
+
         ChatService.getGroupInUser(group.id)
-            .then((res: any) => {
+            .then(async (res: any[]) => {
                 if (res) {
                     this.groupinUsers = res;
 
-                    // 添加到缓存中。
-                    groupUsers.push({ id: group.id, data: res })
+                    const userids = res.map(x => x.userId)
 
+                    // 这里是为了保证用户的基本信息完整
+                    const userInfo = await GetUserInfos(userids)
                     this.setState({
-                        groupinUsers: res
+                        groupinUsers: res,
+                        users: userInfo
                     }, () => {
                         // 获取群聊所有的用户成功以后获取用户状态
                         this.getOnLineUserIds()
@@ -408,6 +206,10 @@ export default class Content extends Component<IProps, IState> {
     componentWillUnmount() {
         PubSub.unsubscribe('changeGroup');
         PubSub.unsubscribe('Notification');
+
+        this.setState({
+            updateState: false
+        })
     }
 
     onNotification(_: any, data: any) {
@@ -422,6 +224,8 @@ export default class Content extends Component<IProps, IState> {
             Notification.info({
                 content: data.content
             })
+        } else if (data.type === "GroupAppendUser") {
+            this.loadingGroupUser();
         }
     }
 
@@ -613,7 +417,7 @@ export default class Content extends Component<IProps, IState> {
 
 
     rowRenderer(item: any, index: number) {
-        const { data, groupinUsers } = this.state;
+        const { data, users } = this.state;
         let date = null;
 
         if (index === 0) {
@@ -622,7 +426,7 @@ export default class Content extends Component<IProps, IState> {
             date = this.formatTime(item.creationTime)
         }
 
-        let user = groupinUsers.find(x => x.id === item.userId)
+        let user = users.find(x => x.id === item.userId)
 
         return (
             <div key={item.Id} style={{ margin: '15px' }}>
@@ -701,7 +505,7 @@ export default class Content extends Component<IProps, IState> {
         return (
             <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
                 {data.map((x, i) => {
-                    return (<div>
+                    return (<div key={"ListComponent_" + i}>
                         {this.rowRenderer(x, i)}
                     </div>)
                 })}
@@ -817,14 +621,14 @@ export default class Content extends Component<IProps, IState> {
         Toast.success('邀请地址已经复制');
     }
 
-    renderInfo(item: any) {
+    renderInfo(user: GetUserDto | undefined) {
 
-        return (<div>
+        return (<>
             <div style={{
                 width: "320px",
-                height: '120px',
+                height: '110px',
             }}>
-                <Avatar size="large" src={item.avatar} style={{ margin: 4, float: 'left' }} alt='User'>
+                <Avatar size="large" src={user?.avatar} style={{ margin: 4, float: 'left' }} alt='User'>
                 </Avatar>
                 <div style={{
                     float: 'left',
@@ -837,17 +641,24 @@ export default class Content extends Component<IProps, IState> {
                         marginBottom: '10px',
                         width: "120px"
                     }}>
-                        昵称：{item.name}
+                        昵称：{user?.name}
                     </div>
-                    <div>
-                        账号：{item.account}
+                    <div style={{
+                        marginBottom: '10px',
+                        width: "120px"
+                    }}>
+                        账号：{user?.account}
                     </div>
-                </div>
-                <div>
-
                 </div>
             </div>
-        </div>)
+            <div style={{
+                padding:'20px',
+            }}>
+                <Button block style={{
+                    marginBottom:'5px'
+                }}>联系</Button>
+                <Button block>添加好友</Button>
+            </div></>)
     }
 
     onScrollGroupInUser(value: any) {
@@ -869,8 +680,8 @@ export default class Content extends Component<IProps, IState> {
             height: "100%",
             overflow: 'auto'
         }}>
-            {emoji.map(x => {
-                return <Emoji onClick={() => this.emojiClick(x)} symbol={x} label="smile" />
+            {emoji.map((x, index) => {
+                return <Emoji key={'emoji_' + index} onClick={() => this.emojiClick(x)} symbol={x} label="smile" />
             })}
         </div>)
     }
@@ -1015,7 +826,7 @@ export default class Content extends Component<IProps, IState> {
     }
 
     render() {
-        const { groupinUsers } = this.state;
+        const { groupinUsers, users } = this.state;
         const { group } = this.props;
 
         return (
@@ -1128,18 +939,19 @@ export default class Content extends Component<IProps, IState> {
                         id='group-in-user'
                         onScroll={this.onScrollGroupInUser}
                         className='user-group'>
-                        {groupinUsers.map(item => {
+                        {groupinUsers.map((item, index) => {
+                            const user = users.find(x => x.id == item.userId)
                             return (
-                                <div className='grou-user-item'>
+                                <div key={"groupInUser_" + index} className='grou-user-item'>
                                     <div className='grou-user-item-content'>
                                         <div style={{
                                             float: 'left'
                                         }}>
-                                            <Tooltip position='leftTop' content={() => this.renderInfo(item)} trigger="click" >
-                                                {item.onLine ? <Badge dot type='success' >
-                                                    <Avatar size='extra-small' src={item.avatar} />
+                                            <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
+                                                {item?.onLine ? <Badge dot >
+                                                    <Avatar size='extra-small' src={user?.avatar} />
                                                 </Badge> :
-                                                    <Avatar size='extra-small' src={item.avatar} />}
+                                                    <Avatar size='extra-small' src={user?.avatar} />}
                                             </Tooltip>
                                         </div>
                                         <div style={{
@@ -1152,14 +964,14 @@ export default class Content extends Component<IProps, IState> {
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis'
                                         }}>
-                                            {item.name}
+                                            {user?.name}
                                         </div>
-                                        {item.id === "00000000-0000-0000-0000-000000000000" ?
+                                        {!user?.id ?
                                             <Tag style={{
                                                 boxSizing: 'content-box',
                                                 float: 'right',
                                             }} color="blue">机器人</Tag> : (
-                                                item.id === group.creator ?
+                                                user?.id === group.creator ?
                                                     <Tag style={{
                                                         boxSizing: 'content-box',
                                                         float: 'right',

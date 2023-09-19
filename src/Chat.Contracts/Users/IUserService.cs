@@ -18,4 +18,11 @@ public interface IUserService
     /// <param name="dto"></param>
     /// <returns></returns>
     Task<ResultDto> UpdateAsync(UpdateUserDto dto);
+
+    /// <summary>
+    /// 通过ids回去用户信息。
+    /// </summary>
+    /// <param name="userIds"></param>
+    /// <returns></returns>
+    Task<IReadOnlyList<UserDto>> ListAsync(List<Guid> userIds);
 }
