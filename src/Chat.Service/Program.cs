@@ -35,8 +35,6 @@ builder.Services.Configure<GiteeOptions>(gitee);
 
 builder.Services.AddScoped<ExceptionMiddleware>();
 
-builder.Services.AddMemoryCache();
-
 builder.Services.Configure<IpRateLimitOptions>
     (builder.Configuration.GetSection("IpRateLimit"));
 

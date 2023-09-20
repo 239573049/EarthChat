@@ -41,7 +41,7 @@ sidebar_position: 1
 - [Docker compose部署](./DevOps/Install.md)
 - [Window 单机部署](./DevOps/Window-DevOps.md)
 - [数据迁移](./DevOps/Migration.md)
-- [好友关系设计](./DevOps/Friend-Chart.md)
+- [好友关系设计](./Service/Friend-Chart.md)
 
 ## 技术交流
 

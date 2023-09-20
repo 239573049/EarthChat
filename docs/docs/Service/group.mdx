@@ -1,0 +1,110 @@
+# 群聊实现
+
+## 群聊表设计
+
+```csharp
+public class ChatGroup: AuditAggregateRoot<Guid, Guid>
+{
+    public string Name { get; set; }
+    
+    public string Avatar { get; set; }
+    
+    public string Description { get; set; }
+
+    public bool Default { get; set; }
+
+    protected override DateTime GetCurrentTime()
+    {
+        return DateTime.Now;
+    }
+    
+    protected ChatGroup()
+    {
+    }
+
+    public ChatGroup(Guid id) : base(id)
+    {
+    }
+}
+```
+
+```csharp
+public class ChatGroupInUser : Entity<Guid>
+{
+    public Guid UserId { get; set; }
+    
+    public Guid ChatGroupId { get; set; }
+    
+    public virtual ChatGroup ChatGroup { get; set; }
+
+    public virtual User User { get; set; } 
+    
+}
+```
+
+```csharp
+public class ChatMessage : AuditAggregateRoot<Guid, Guid>
+{
+    protected ChatMessage()
+    {
+    }
+    
+    public ChatMessage(Guid id,DateTime creationTime) : base(id)
+    {
+        CreationTime = creationTime;
+    }
+
+    /// <summary>
+    ///     内容
+    /// </summary>
+    public string Content { get; set; }
+
+    /// <summary>
+    ///     类型
+    /// </summary>
+    public ChatType Type { get; set; }
+
+    /// <summary>
+    ///     Id
+    /// </summary>
+    public Guid? UserId { get; set; }
+
+    public Guid ChatGroupId { get; set; }
+    
+    public virtual User User { get; set; }
+
+    protected override DateTime GetCurrentTime()
+    {
+        return DateTime.Now;
+    }
+}
+```
+
+## 表结构设计讲解
+
+这是我们的群聊的表对应的实体设计，`ChatGroup`一般用于存放群聊的基本信息，`AuditAggregateRoot`是审计集合根，一般都有会`创建人`,`创建时间`等字段的设计。
+在`ChatGroup`中只做群聊的基本信息存储,`ChatGroupInUser`则是用于存放用户和群聊的关系表，可以理解成用户与群聊的桥梁，通过`ChatGroupInUser`这个关系表可以很清晰
+的得到用户关联的群聊，并且在`EntityFrameworkCore`中我们配置了`options.HasKey(x => new { x.UserId, x.ChatGroupId });`主键，保证了用户的每一个群聊都只能存在一个关系。
+
+```csharp
+ builder.Entity<ChatGroupInUser>(options =>
+        {
+            options.HasKey(x => x.Id);
+            options.HasIndex(x => x.Id);
+
+            options.HasKey(x => new { x.UserId, x.ChatGroupId });
+
+            options.HasOne(o => o.User)
+                .WithMany()
+                .HasForeignKey(o => o.UserId)
+                .HasConstraintName("UserId");
+
+            options.HasOne(o => o.ChatGroup)
+                .WithMany()
+                .HasForeignKey(o => o.ChatGroupId)
+                .HasConstraintName("ChatGroupId");
+        });
+```
+
+`ChatMessage`用于存放群聊|好友的聊天记录，由于提供的是`Web UI`,在浏览器中不方便存放数据，使用我们在服务器端进行的数据存储，通过`ChatGroupId`字段关联指定的表的`Id`，它可以是群聊的`Id`也可以是好友的`Id`
+

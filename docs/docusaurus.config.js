@@ -6,16 +6,42 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  title: 'Earth Chat',
+  favicon: 'img/docusaurus.png',
 
   // Set the production url of your site here
   url: 'https://your-docusaurus-test-site.com',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
-
+  ssrTemplate: `<!DOCTYPE html>
+  <html <%~ it.htmlAttributes %>>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="generator" content="Docusaurus v<%= it.version %>">
+      <% it.metaAttributes.forEach((metaAttribute) => { %>
+        <%~ metaAttribute %>
+      <% }); %>
+      <%~ it.headTags %>
+      <% it.stylesheets.forEach((stylesheet) => { %>
+        <link rel="stylesheet" href="<%= it.baseUrl %><%= stylesheet %>" />
+      <% }); %>
+      <% it.scripts.forEach((script) => { %>
+        <link rel="preload" href="<%= it.baseUrl %><%= script %>" as="script">
+      <% }); %>
+    </head>
+    <body <%~ it.bodyAttributes %>>
+      <%~ it.preBodyTags %>
+      <div id="__docusaurus">
+        <%~ it.appHtml %>
+      </div>
+      <% it.scripts.forEach((script) => { %>
+        <script src="<%= it.baseUrl %><%= script %>"></script>
+      <% }); %>
+      <%~ it.postBodyTags %>  
+      
+    </body>
+  </html>`,
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'facebook', // Usually your GitHub org/user name.
@@ -64,20 +90,25 @@ const config = {
       // Replace with your project's social card
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'My Site',
+        title: 'Earth Chat',
         logo: {
           alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          src: 'img/docusaurus.png',
         },
         items: [
           {
             type: 'docSidebar',
             sidebarId: 'tutorialSidebar',
             position: 'left',
-            label: 'Tutorial',
+            label: '文档',
           },
           {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://gitee.com/hejiale010426/chat',
+            label: 'Gitee',
+            position: 'right',
+          },
+          {
+            href: 'https://github.com/239573049/chat',
             label: 'GitHub',
             position: 'right',
           },
@@ -87,10 +118,10 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: '导航',
             items: [
               {
-                label: 'Tutorial',
+                label: '文档',
                 to: '/docs/intro',
               },
             ],
@@ -98,35 +129,28 @@ const config = {
           {
             title: 'Community',
             items: [
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
-              },
             ],
           },
           {
-            title: 'More',
+            title: '仓库',
             items: [
               {
                 label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                href: 'https://github.com/239573049/chat',
+              },
+              {
+                label: 'Gitee',
+                href: 'https://gitee.com/hejiale010426/chat',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `版权 © ${new Date().getFullYear()} EarthChat 所有`,
       },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
+        additionalLanguages: ['powershell','csharp','javascript','json'],
       },
     }),
 };

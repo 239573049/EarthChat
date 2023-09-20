@@ -1,0 +1,21 @@
+# 跨越策略
+
+
+添加跨域策略，以下代码的策略是允许所有来源，属于最宽松策略。
+
+```csharp
+builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("CorsPolicy", corsBuilder =>
+        {
+            corsBuilder.SetIsOriginAllowed(_ => true).AllowAnyMethod().AllowAnyHeader()
+                .AllowCredentials();
+        });
+    })
+```
+
+使用跨越策略`CorsPolicy`与上面添加的策略一致。
+
+```csharp
+app.UseCore("CorsPolicy");
+```

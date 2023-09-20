@@ -1,4 +1,4 @@
-# 好友关系
+# 好友关系原理图
 
 ![image](./img/Friend-chart.png)
 
