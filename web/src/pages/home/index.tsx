@@ -173,9 +173,6 @@ class Home extends Component<{}, AppState> {
         });
     }
 
-
-
-
     handleMouseDown = (e: React.MouseEvent) => {
         const startX = e.clientX;
         const startWidth = this.state.middleWidth;

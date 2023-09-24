@@ -183,7 +183,10 @@ body:not([theme-mode='dark']) {
 
 
 .semi-tooltip-content{
-    background-color: var(--select-group-item-background-color);
     color: var(--semi-color-text-0);
+    background-color: var(--setting-tong-theme-background-color);
     border-radius: 8px;
+}
+.semi-tooltip-wrapper{
+    background-color: var(--setting-tong-theme-background-color);
 }
