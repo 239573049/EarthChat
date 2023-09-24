@@ -195,7 +195,7 @@ export default class Content extends Component<IProps, IState> {
                         users: userInfo
                     }, () => {
                         console.log('loadingGroupUser');
-                        
+
                         // 获取群聊所有的用户成功以后获取用户状态
                         this.getOnLineUserIds()
                         this.loadingMessage()
@@ -215,9 +215,9 @@ export default class Content extends Component<IProps, IState> {
 
     onNotification(_: any, data: any) {
         if (data.type === "GroupUserNew") {
-            
+
             // 如果是当前用户的推送则忽略
-            if(data.data=== user.id){
+            if (data.data === user.id) {
                 return;
             }
             // 当存在新用户登录则刷新状态。
@@ -976,7 +976,7 @@ export default class Content extends Component<IProps, IState> {
                                         }}>
                                             {user?.name}
                                         </div>
-                                        {!user?.id ?
+                                        {(user?.id === '00000000-0000-0000-0000-000000000000' || !user?.id) ?
                                             <Tag style={{
                                                 boxSizing: 'content-box',
                                                 float: 'right',
