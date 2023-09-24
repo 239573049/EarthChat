@@ -126,11 +126,10 @@ class Home extends Component<{}, AppState> {
             return;
         }
 
-        debugger;
         var users = await GetUserInfos([data.userId]);
 
         if (data.type === "Text") {
-            v.lastMessage = users[0].name + '：' + data.content.substring(0, 12)
+            v.lastMessage = users[0].name + '：' + data.content.substring(0, 20)
         } else if (data.type === "Image") {
             v.lastMessage = users[0].name + '：图片'
         } else if (data.type === "File") {
@@ -167,7 +166,7 @@ class Home extends Component<{}, AppState> {
             this.stopBlinking()
         });
 
-        
+
         document.addEventListener("mousemove", () => {
             this.stopBlinking()
         });
@@ -269,6 +268,7 @@ class Home extends Component<{}, AppState> {
     render() {
         const { middleWidth, createGroupAvatar, selectGroup, groups, createGroupVisible } = this.state;
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
+        console.log('middleWidth', middleWidth);
 
         const renderContent = () => {
             if (selectGroup?.avatar) {
@@ -340,18 +340,21 @@ class Home extends Component<{}, AppState> {
                                             userSelect: 'none',
                                             float: 'left',
                                         }}>
-                                            <span style={{
+                                            <div style={{
                                                 fontSize: '18px',
                                                 fontWeight: 'bold',
                                             }}>
                                                 {item.name}
-                                            </span>
-                                            <span style={{
-                                                display: 'block',
-                                                fontSize: '12px'
+                                            </div>
+                                            <div style={{
+                                                fontSize: '12px',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                width: `${middleWidth / 2}px`,
+                                                textOverflow: 'ellipsis'
                                             }}>
                                                 {item.lastMessage}
-                                            </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
