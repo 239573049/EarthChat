@@ -25,4 +25,18 @@ public interface IUserService
     /// <param name="userIds"></param>
     /// <returns></returns>
     Task<IReadOnlyList<UserDto>> ListAsync(List<Guid> userIds);
+
+    /// <summary>
+    /// 获取好友状态
+    /// </summary>
+    /// <param name="friendId"></param>
+    /// <returns></returns>
+    Task<ResultDto<bool>> FriendStateAsync(Guid friendId);
+
+    /// <summary>
+    /// 好友申请
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    Task FriendRegistrationAsync(FriendRegistrationInput input);
 }

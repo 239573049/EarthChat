@@ -1,4 +1,9 @@
 ﻿using AutoMapper;
+using Chat.Contracts.Chats;
+using Chat.Contracts.Hubs;
+using Chat.Service.Application.Hubs.Commands;
+using Chat.Service.Application.Users.Commands;
+using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
 
 namespace Chat.Service.Application.Users;
@@ -6,19 +11,25 @@ namespace Chat.Service.Application.Users;
 public class UserQueryHandler
 {
     private readonly IMapper _mapper;
+    private readonly IEventBus _eventBus;
     private readonly RedisClient _redisClient;
     private readonly IUserContext _userContext;
     private readonly IEmojiRepository _emojiRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IFriendRepository _friendRepository;
+    private readonly IFriendRequestRepository _friendRequestRepository;
 
     public UserQueryHandler(IUserRepository userRepository, IMapper mapper, RedisClient redisClient,
-        IEmojiRepository emojiRepository, IUserContext userContext)
+        IEmojiRepository emojiRepository, IUserContext userContext, IFriendRepository friendRepository, IEventBus eventBus, IFriendRequestRepository friendRequestRepository)
     {
         _userRepository = userRepository;
         _mapper = mapper;
         _redisClient = redisClient;
         _emojiRepository = emojiRepository;
         _userContext = userContext;
+        _friendRepository = friendRepository;
+        _eventBus = eventBus;
+        _friendRequestRepository = friendRequestRepository;
     }
 
     [EventHandler]
@@ -83,4 +94,13 @@ public class UserQueryHandler
 
         query.Result = _mapper.Map<List<UserDto>>(result);
     }
+
+    [EventHandler]
+    public async Task FriendStateAsync(FriendStateQuery query)
+    {
+        var result = await _friendRepository.GetCountAsync(x => x.SelfId == _userContext.GetUserId<Guid>() && x.FriendId == query.friendId);
+
+        query.Result = result > 0;
+    }
+
 }

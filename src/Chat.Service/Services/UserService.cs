@@ -21,6 +21,7 @@ public class UserService : BaseService<UserService>, IUserService
         return query.Result.CreateResult();
     }
 
+    [Authorize]
     public async Task<ResultDto> CreateAsync(CreateUserDto dto)
     {
         dto.Avatar = "/favicon.png";
@@ -39,6 +40,7 @@ public class UserService : BaseService<UserService>, IUserService
         return new ResultDto();
     }
 
+    [Authorize]
     public async Task<IReadOnlyList<UserDto>> ListAsync([FromBody]List<Guid> userIds)
     {
         var query = new GetUserListQuery(userIds);
@@ -56,5 +58,23 @@ public class UserService : BaseService<UserService>, IUserService
         }
         
         return query.Result;
+    }
+
+    [Authorize]
+    public async Task<ResultDto<bool>> FriendStateAsync(Guid friendId)
+    {
+        var query = new FriendStateQuery(friendId);
+
+        await _eventBus.PublishAsync(query);
+
+        return new ResultDto<bool>(query.Result);
+    }
+
+    [Authorize]
+    public async Task FriendRegistrationAsync(FriendRegistrationInput input)
+    {
+        var command = new FriendRegistrationCommand(input);
+
+        await _eventBus.PublishAsync(command);
     }
 }
