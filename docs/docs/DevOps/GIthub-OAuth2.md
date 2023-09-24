@@ -33,7 +33,7 @@
 ![Alt text](./img/github-oauth2-0004.png),
 请注意配置的`redirectUri`需要和Github配置的应用回调地址一致。
 
-:::caution
+:::caution 注意
 
 请注意，国内服务器不一定能访问 `GithubApi`
 

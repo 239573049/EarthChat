@@ -20,6 +20,43 @@ SignalR 提供了以下特点：
 
 在近几年，SignalR 核心 (SignalR Core) 成为了主流，它是为 .NET Core 重新设计和实现的 SignalR 版本，提供了更好的性能和跨平台支持。
 
+## SignalR MessagePack
+
+### 什么是 MessagePack？
+
+[MessagePack](https://msgpack.org/index.html) 
+是一种快速而紧凑的二进制序列化格式。 当担忧性能和带宽问题时，这很有用，因为它创建的消息比 [JSON](https://www.json.org/) 创建的小。 查看网络跟踪和日志时，二进制消息不可读取，除非这些字节是通过 MessagePack 分析器传递的。 SignalR 为 MessagePack 格式提供内置支持，并提供 API 供客户端和服务器使用。
+
+### 在服务器上配置 MessagePack
+
+若要在服务器上启用 MessagePack 中心协议，请在应用中安装 `Microsoft.AspNetCore.SignalR.Protocols.MessagePack` 包。 在 `Startup.ConfigureServices` 方法中，将 `AddMessagePackProtocol` 添加到 `AddSignalR` 调用以在服务器上启用 MessagePack 支持。
+
+```csharp
+services.AddSignalR()
+    .AddMessagePackProtocol();
+```
+
+:::info 小知识
+
+JSON 默认启用。 添加 MessagePack 可同时支持 JSON 和 MessagePack 客户端。
+
+:::
+
+当启用了`MessagePack`，客户端会发送协议消息和版本
+
+```json
+{"protocol":"messagepack","version":1}
+```
+后续会使用二进制传输，
+
+![Alt text](./img/signalr-0001.png)
+
+:::tip 小知识
+
+MessagePack在序列化中对比json序列化性能更好，并且体积更小，所以用于作为消息传输再合适不过了，但它不适合作为可读性的格式，所以在某些不需要可读性，需要性能的场景更合适。
+
+:::
+
 ## 如何使用SignalR进行横向扩展
 
 ### 首先讲一下什么是横向扩展
