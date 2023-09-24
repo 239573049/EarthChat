@@ -65,7 +65,7 @@ public class UserService : BaseService<UserService>, IUserService
     {
         var query = new FriendStateQuery(friendId);
 
-        await _eventBus.PublishAsync(query);
+        await PublishAsync(query);
 
         return new ResultDto<bool>(query.Result);
     }
@@ -75,6 +75,6 @@ public class UserService : BaseService<UserService>, IUserService
     {
         var command = new FriendRegistrationCommand(input);
 
-        await _eventBus.PublishAsync(command);
+        await PublishAsync(command);
     }
 }
