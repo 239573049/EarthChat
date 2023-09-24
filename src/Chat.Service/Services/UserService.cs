@@ -21,7 +21,6 @@ public class UserService : BaseService<UserService>, IUserService
         return query.Result.CreateResult();
     }
 
-    [Authorize]
     public async Task<ResultDto> CreateAsync(CreateUserDto dto)
     {
         dto.Avatar = "/favicon.png";

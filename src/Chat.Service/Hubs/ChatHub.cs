@@ -123,9 +123,6 @@ public class ChatHub : Hub
             UserId = userId.Value
         });
 
-        // 转发到客户端
-        _ = Clients.Groups(groupId.ToString("N")).SendAsync("ReceiveMessage", groupId, message);
-
         if (await _redisClient.ExistsAsync(key))
         {
             await _redisClient.IncrByAsync(key, 1);
@@ -138,7 +135,9 @@ public class ChatHub : Hub
 
         // 发送消息新增事件
         await _eventBus.PublishAsync(createChat);
-        await _eventBus.CommitAsync();
+
+        // 转发到客户端
+        _ = Clients.Groups(groupId.ToString("N")).SendAsync("ReceiveMessage", groupId, message);
 
         // 发送智能助手订阅事件
         await _backgroundTaskService.WriteAsync(new AssistantDto()

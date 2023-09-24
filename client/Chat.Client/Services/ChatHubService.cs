@@ -21,7 +21,7 @@ public class ChatHubService
     public async Task StartAsync()
     {
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:5218/chatHub", options =>
+            .WithUrl("http://124.222.89.53/chathub", options =>
             {
                 options.AccessTokenProvider = async () =>
                 {
@@ -29,7 +29,7 @@ public class ChatHubService
                     return await Task.FromResult(storageService.GetToken());
                 };
             })
-            // .AddMessagePackProtocol()
+            .AddMessagePackProtocol()
             .Build();
 
         await _hubConnection.StartAsync();

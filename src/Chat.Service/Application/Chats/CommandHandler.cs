@@ -56,7 +56,7 @@ public class CommandHandler
         };
 
         await _chatMessageRepository.AddAsync(chatMessage);
-        
+        await _unitOfWork.SaveChangesAsync();
     }
 
     [EventHandler]
