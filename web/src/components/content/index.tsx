@@ -194,6 +194,8 @@ export default class Content extends Component<IProps, IState> {
                         groupinUsers: res,
                         users: userInfo
                     }, () => {
+                        console.log('loadingGroupUser');
+                        
                         // 获取群聊所有的用户成功以后获取用户状态
                         this.getOnLineUserIds()
                         this.loadingMessage()
@@ -213,6 +215,11 @@ export default class Content extends Component<IProps, IState> {
 
     onNotification(_: any, data: any) {
         if (data.type === "GroupUserNew") {
+            
+            // 如果是当前用户的推送则忽略
+            if(data.data=== user.id){
+                return;
+            }
             // 当存在新用户登录则刷新状态。
             this.getOnLineUserIds()
         } else if (data.type === "FriendRequest") {
@@ -370,8 +377,6 @@ export default class Content extends Component<IProps, IState> {
     }
 
     formatTime(dateStr: string) {
-        console.log(dateStr);
-
         var now = new Date();
         var date = new Date(dateStr);
         var diff = now.getTime() - date.getTime();

@@ -147,14 +147,14 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
             // 执行sql
             await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
         }
+        // 判断是否需要创建数据库
+        context!.Database.EnsureCreated();
     }
     catch (Exception e)
     {
         Console.WriteLine(e);
     }
 
-    // 判断是否需要创建数据库
-    context!.Database.EnsureCreated();
 }
 
 #endregion
@@ -167,4 +167,5 @@ app.UseAuthorization()
 app.MapHub<ChatHub>("/chatHub");
 
 await app.RunAsync();
+
 Log.CloseAndFlush();

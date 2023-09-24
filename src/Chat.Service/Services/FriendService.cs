@@ -1,14 +1,25 @@
-﻿namespace Chat.Service.Services;
+﻿using Chat.Service.Application.Users.Commands;
+using Microsoft.AspNetCore.Authorization;
+
+namespace Chat.Service.Services;
 
 public class FriendService : BaseService<FriendService>, IFriendService
 {
-    public Task<bool> FriendState(Guid id)
+    [Authorize]
+    public async Task<ResultDto<bool>> FriendStateAsync(Guid friendId)
     {
-        throw new NotImplementedException();
+        var query = new FriendStateQuery(friendId);
+
+        await PublishAsync(query);
+
+        return new ResultDto<bool>(query.Result);
     }
 
-    public Task FriendRegistration(FriendRegistrationInput input)
+    [Authorize]
+    public async Task FriendRegistrationAsync(FriendRegistrationInput input)
     {
-        throw new NotImplementedException();
+        var command = new FriendRegistrationCommand(input);
+
+        await PublishAsync(command);
     }
 }

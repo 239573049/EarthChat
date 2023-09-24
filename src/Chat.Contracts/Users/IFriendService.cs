@@ -1,15 +1,20 @@
-﻿namespace Chat.Contracts.Users;
+﻿using Chat.Contracts.Core;
+
+namespace Chat.Contracts.Users;
 
 public interface IFriendService
 {
-    Task<bool> FriendState(Guid id);
+    /// <summary>
+    /// 获取好友状态
+    /// </summary>
+    /// <param name="friendId"></param>
+    /// <returns></returns>
+    Task<ResultDto<bool>> FriendStateAsync(Guid friendId);
 
     /// <summary>
-    /// 添加好友
+    /// 好友申请
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    Task FriendRegistration(FriendRegistrationInput input);
-
-
+    Task FriendRegistrationAsync(FriendRegistrationInput input);
 }
