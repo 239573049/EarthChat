@@ -27,7 +27,7 @@ public class ChatDbContext : MasaDbContext
     public DbSet<Friend> Friends { get; set; }
 
     public DbSet<Emoji> Emojis { get; set; }
-    
+
     protected override void OnModelCreatingExecuting(ModelBuilder modelBuilder)
     {
         base.OnModelCreatingExecuting(modelBuilder);
@@ -56,12 +56,10 @@ public class ChatDbContext : MasaDbContext
             options.TryConfigureConcurrencyStamp();
             options.HasIndex(x => x.Id);
 
-            options.Property(x => x.Content).HasMaxLength(2000);
+            options.Property(x => x.Content).HasMaxLength(5000);
 
-            options.HasOne(o => o.User)
-                .WithMany()
-                .HasForeignKey(o => o.UserId)
-                .HasConstraintName("UserId");
+            options.HasIndex(x => x.ChatGroupId);
+            options.HasIndex(x => x.UserId);
         });
 
         builder.Entity<ChatGroup>(options =>
@@ -132,7 +130,7 @@ public class ChatDbContext : MasaDbContext
 
             options.HasIndex(x => x.UserId);
         });
-        
+
         #region Init Data
 
         var user = new User(Guid.NewGuid())
