@@ -50,7 +50,7 @@ echo $(uname -s)-$(uname -m)
 
 然后会输出一下
 
-![Alt text](./img/docker-compose-0001.png)
+![Alt text](../img/docker-compose-0001.png)
 
 将下面的地址的`{name}`改成上面的`Linux-X86_64`,然后通过其他方式下载。
 
@@ -62,7 +62,7 @@ https://github.com/docker/compose/releases/download/v2.22.0/docker-compose-Linux
 
 下载完成以后上传到服务器,上传以后的文件
 
-![Alt text](./img/docker-compose-0002.png)
+![Alt text](../img/docker-compose-0002.png)
 
 将文件移动到`/usr/local/bin/`目录下并且命名`docker-compose`
 

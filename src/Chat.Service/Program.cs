@@ -1,3 +1,4 @@
+using Chat.Service.Infrastructure.Helper;
 using Chat.Service.Infrastructure.Middlewares;
 using Chat.Service.Services;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -54,14 +55,12 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
     c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
 });
 
+// 使用静态文件压缩。
 builder.Services.AddResponseCompression(options =>
 {
-    options.EnableForHttps = true;
     options.Providers.Add<BrotliCompressionProvider>();
     options.Providers.Add<GzipCompressionProvider>();
 });
-
-builder.Services.AddSingleton<SystemService>();
 
 var app = builder.Services
     .AddEndpointsApiExplorer()
@@ -121,6 +120,8 @@ var app = builder.Services
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
 
+app.Services.UseEncrypt();
+
 app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -146,6 +147,7 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
             // 执行sql
             await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
         }
+
         // 判断是否需要创建数据库
         context!.Database.EnsureCreated();
     }
@@ -153,7 +155,6 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
     {
         Console.WriteLine(e);
     }
-
 }
 
 #endregion

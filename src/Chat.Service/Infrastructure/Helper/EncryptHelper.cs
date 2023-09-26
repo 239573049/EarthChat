@@ -1,30 +1,38 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Chat.Service.Services;
+namespace Chat.Service.Infrastructure.Helper;
 
-public class SystemService
+public static class EncryptHelper
 {
-    private readonly IConfiguration _configuration;
+    private static string key;
 
-    public SystemService(IConfiguration configuration)
+    public static IServiceProvider UseEncrypt(this IServiceProvider services)
     {
-        _configuration = configuration;
+        var configuration = services.GetRequiredService<IConfiguration>();
+        key = configuration["Key"]?.Trim();
+
+        if (key.IsNullOrWhiteSpace())
+        {
+            throw new ArgumentNullException("您的 Encrypt的 Key 并未配置！");
+        }
+
+        return services;
     }
-    
+
     /// <summary>
     /// 加密
     /// </summary>
     /// <param name="pToEncrypt"></param>
     /// <returns></returns>
-    public string Encrypt(string pToEncrypt)
+    public static string Encrypt(string pToEncrypt)
     {
         var des = new DESCryptoServiceProvider();
         byte[] inputByteArray = Encoding.Default.GetBytes(pToEncrypt);
-        des.Key = Encoding.ASCII.GetBytes(_configuration["Key"]);
-        des.IV = Encoding.ASCII.GetBytes(_configuration["Key"]);
-        MemoryStream ms = new MemoryStream();
-        CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
+        des.Key = Encoding.ASCII.GetBytes(key);
+        des.IV = Encoding.ASCII.GetBytes(key);
+        using MemoryStream ms = new MemoryStream();
+        using CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(), CryptoStreamMode.Write);
         cs.Write(inputByteArray, 0, inputByteArray.Length);
         cs.FlushFinalBlock();
         StringBuilder ret = new StringBuilder();
@@ -35,13 +43,13 @@ public class SystemService
 
         return ret.ToString();
     }
-    
+
     /// <summary>
     /// 解密
     /// </summary>
     /// <param name="pToDecrypt"></param>
     /// <returns></returns>
-    public string Decrypt(string pToDecrypt)
+    public static string Decrypt(string pToDecrypt)
     {
         var des = new DESCryptoServiceProvider();
         byte[] inputByteArray = new byte[pToDecrypt.Length / 2];
@@ -50,10 +58,11 @@ public class SystemService
             int i = (Convert.ToInt32(pToDecrypt.Substring(x * 2, 2), 16));
             inputByteArray[x] = (byte)i;
         }
-        des.Key = Encoding.ASCII.GetBytes(_configuration["Key"]);
-        des.IV = Encoding.ASCII.GetBytes(_configuration["Key"]);
-        MemoryStream ms = new MemoryStream();
-        CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
+
+        des.Key = Encoding.ASCII.GetBytes(key);
+        des.IV = Encoding.ASCII.GetBytes(key);
+        using MemoryStream ms = new MemoryStream();
+        using CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
         cs.Write(inputByteArray, 0, inputByteArray.Length);
         cs.FlushFinalBlock();
         return Encoding.Default.GetString(ms.ToArray());

@@ -1,6 +1,7 @@
 ﻿using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.System.Aggregates;
 using Chat.Service.Domain.Users.Aggregates;
+using Chat.Service.Infrastructure.Helper;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
 
@@ -49,6 +50,10 @@ public class ChatDbContext : MasaDbContext
             options.Property(x => x.Avatar).HasMaxLength(200).IsRequired();
 
             options.Property(x => x.Name).HasMaxLength(20).IsRequired();
+
+            // efcore转换器，在保存到数据库会将当前属性的值进行转换。
+            options.Property(x => x.Password)
+                .HasConversion(x => EncryptHelper.Encrypt(x), x => EncryptHelper.Decrypt(x));
         });
 
         builder.Entity<ChatMessage>(options =>

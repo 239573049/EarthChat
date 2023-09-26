@@ -47,6 +47,7 @@ JSON 默认启用。 添加 MessagePack 可同时支持 JSON 和 MessagePack 客
 ```json
 {"protocol":"messagepack","version":1}
 ```
+
 后续会使用二进制传输，
 
 ![Alt text](./img/signalr-0001.png)
@@ -89,12 +90,12 @@ SignalR 大量使用连接相关资源可能会影响在同一服务器上托管
 
 如果服务器的连接用完，则你会看到随机套接字错误和连接重置错误。 例如：
 
-
 复制
 
 ```shell
 An attempt was made to access a socket in a way forbidden by its access permissions...
 ```
+
 若要防止 SignalR 资源使用在其他 Web 应用中导致错误，请在与其他 Web 应用不同的服务器上运行 SignalR。
 
 若要防止 SignalR 资源使用在 SignalR 应用中导致错误，请横向扩展以限制服务器必须处理的连接数。
