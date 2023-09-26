@@ -47,7 +47,9 @@ public class ChatHub : Hub
             createdTime = DateTime.Now,
             type = NotificationType.GroupUserNew,
             content = "新人用户上线",
+            data = userId
         }, groupsQuery.Result.Select(x => x.Id).ToArray(), true);
+
         await _eventBus.PublishAsync(systemCommand);
     }
 

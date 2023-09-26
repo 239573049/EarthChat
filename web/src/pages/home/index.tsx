@@ -11,6 +11,7 @@ import ChatHubService from '../../services/chatHubService';
 import FileService from '../../services/fileService';
 import Modal from '../../components/modal';
 import config from '../../config';
+import { GetUserInfos } from '../../store/user-store'
 import chatService from '../../services/chatService';
 
 interface AppState {
@@ -22,14 +23,17 @@ interface AppState {
     createGroupVisible: boolean,
     createGroupUpload: RefObject<Upload>,
     createGroupAvatar: string,
-    createGroupFormApi: any
+    createGroupFormApi: any,
+    users: any[]
 }
 
 var intervalId: any;
 
+const user = JSON.parse(localStorage.getItem('user') || '{}');
+
 class Home extends Component<{}, AppState> {
 
-    state: Readonly<AppState>={
+    state: Readonly<AppState> = {
         middleWidth: 230,
         selectid: 0,
         user: {} as GetUserDto,
@@ -38,7 +42,8 @@ class Home extends Component<{}, AppState> {
         createGroupVisible: false,
         createGroupUpload: React.createRef<Upload>(),
         createGroupAvatar: '',
-        createGroupFormApi: undefined
+        createGroupFormApi: undefined,
+        users: []
     }
 
     constructor(props: any) {
@@ -73,11 +78,11 @@ class Home extends Component<{}, AppState> {
         console.log('componentWillUnmount');
     }
 
-    componentDidMount() {
-        console.log('componentDidMount');
-        
+    async componentDidMount() {
+
+
         this.setState({
-            selectGroup: this.state.groups[0]
+            selectGroup: this.state.groups[0],
         })
 
         UserService.get()
@@ -99,7 +104,7 @@ class Home extends Component<{}, AppState> {
     stopBlinking() {
         document.title = 'Chat'
 
-        if(intervalId){
+        if (intervalId) {
             clearInterval(intervalId);
         }
 
@@ -112,22 +117,28 @@ class Home extends Component<{}, AppState> {
         }, 1000);
     }
 
-    
-    
-    onMessage = (_: any, data: any) => {
+
+
+    onMessage = async (_: any, data: any) => {
         const { groups } = this.state;
         var v = groups.find(x => x.id === data.groupId)
         if (!v) {
             return;
         }
 
-        if (intervalId) {
-            clearInterval(intervalId);
+        var users = await GetUserInfos([data.userId]);
+
+        if (data.type === "Text") {
+            v.lastMessage = users[0].name + '：' + data.content.substring(0, 20)
+        } else if (data.type === "Image") {
+            v.lastMessage = users[0].name + '：图片'
+        } else if (data.type === "File") {
+            v.lastMessage = users[0].name + '：文件'
+        } else if (data.type === "Video") {
+            v.lastMessage = users[0].name + '：视频'
+        } else if (data.type === "Audio") {
+            v.lastMessage = users[0].name + '：语音'
         }
-
-        v.lastMessage = '[新的消息]'
-
-        this.startBlinking()
 
         // 将v插入到groups数组的最前面
         const index = groups.findIndex(x => x.id === data.groupId);
@@ -137,16 +148,29 @@ class Home extends Component<{}, AppState> {
         groups.unshift(v);
 
         this.setState({ groups });
-        
+
+        // 如果是自己发送的消息不需要更新状态
+        if (data.userId === user.id) {
+            return;
+        }
+
+        if (intervalId) {
+            clearInterval(intervalId);
+        }
+
+        this.startBlinking()
+
+
         // 取消闪烁标题
-        document.addEventListener("click", ()=>{
+        document.addEventListener("click", () => {
             this.stopBlinking()
-            
+        });
+
+
+        document.addEventListener("mousemove", () => {
+            this.stopBlinking()
         });
     }
-
-
-
 
     handleMouseDown = (e: React.MouseEvent) => {
         const startX = e.clientX;
@@ -244,6 +268,7 @@ class Home extends Component<{}, AppState> {
     render() {
         const { middleWidth, createGroupAvatar, selectGroup, groups, createGroupVisible } = this.state;
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
+        console.log('middleWidth', middleWidth);
 
         const renderContent = () => {
             if (selectGroup?.avatar) {
@@ -268,7 +293,6 @@ class Home extends Component<{}, AppState> {
 
         return (
             <>
-
                 <div className="middle" style={{ width: `${middleWidth}px` }}>
                     <div style={{
                         marginTop: '30px',
@@ -316,19 +340,21 @@ class Home extends Component<{}, AppState> {
                                             userSelect: 'none',
                                             float: 'left',
                                         }}>
-                                            <span style={{
-                                                fontSize: '16px',
+                                            <div style={{
+                                                fontSize: '18px',
                                                 fontWeight: 'bold',
                                             }}>
                                                 {item.name}
-                                            </span>
-                                            <span style={{
-                                                display: 'block',
+                                            </div>
+                                            <div style={{
                                                 fontSize: '12px',
-                                                color: 'red'
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                width: `${middleWidth / 2}px`,
+                                                textOverflow: 'ellipsis'
                                             }}>
                                                 {item.lastMessage}
-                                            </span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

@@ -9,7 +9,7 @@ public static class Caller
 {
     private static HttpClient HttpClient { get; }
 
-    private const string BaseUrl = "http://localhost:5218/api/v1/";
+    private const string BaseUrl = "http://124.222.89.53/api/v1/";
 
     static Caller()
     {

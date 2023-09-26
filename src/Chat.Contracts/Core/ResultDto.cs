@@ -1,6 +1,6 @@
 ﻿namespace Chat.Contracts.Core;
 
-public class ResultDto<T> where T : class
+public class ResultDto<T>
 {
     public ResultDto()
     {

@@ -39,6 +39,7 @@ public class UserService : BaseService<UserService>, IUserService
         return new ResultDto();
     }
 
+    [Authorize]
     public async Task<IReadOnlyList<UserDto>> ListAsync([FromBody]List<Guid> userIds)
     {
         var query = new GetUserListQuery(userIds);
@@ -57,4 +58,5 @@ public class UserService : BaseService<UserService>, IUserService
         
         return query.Result;
     }
+
 }

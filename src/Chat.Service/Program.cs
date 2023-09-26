@@ -7,11 +7,11 @@ var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION
 
 var builder = WebApplication.CreateBuilder(args);
 
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
-    .CreateLogger();
-
-builder.Host.UseSerilog(); // 将Serilog配置到Host中
+// Log.Logger = new LoggerConfiguration()
+//     .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
+//     .CreateLogger();
+//
+// builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
@@ -35,14 +35,13 @@ builder.Services.Configure<GiteeOptions>(gitee);
 
 builder.Services.AddScoped<ExceptionMiddleware>();
 
-builder.Services.AddMemoryCache();
-
 builder.Services.Configure<IpRateLimitOptions>
     (builder.Configuration.GetSection("IpRateLimit"));
 
 builder.Services.AddSingleton<IRateLimitConfiguration,
     RateLimitConfiguration>();
 
+builder.Services.AddMemoryCache();
 builder.Services.AddInMemoryRateLimiting();
 
 builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
@@ -124,7 +123,6 @@ var app = builder.Services
 
 app.UseResponseCompression();
 
-app.UseSerilogRequestLogging();
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseIpRateLimiting();
@@ -148,14 +146,14 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
             // 执行sql
             await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
         }
+        // 判断是否需要创建数据库
+        context!.Database.EnsureCreated();
     }
     catch (Exception e)
     {
         Console.WriteLine(e);
     }
 
-    // 判断是否需要创建数据库
-    context!.Database.EnsureCreated();
 }
 
 #endregion
@@ -168,4 +166,5 @@ app.UseAuthorization()
 app.MapHub<ChatHub>("/chatHub");
 
 await app.RunAsync();
+
 Log.CloseAndFlush();

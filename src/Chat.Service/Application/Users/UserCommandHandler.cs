@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Chat.Contracts.Chats;
 using Chat.Contracts.Hubs;
 using Chat.Service.Application.Hubs.Commands;
 using Chat.Service.Application.Users.Commands;
@@ -6,6 +7,7 @@ using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
+using Chat.Service.Infrastructure.Repositories;
 using Masa.BuildingBlocks.Data.UoW;
 
 namespace Chat.Service.Application.Users;
@@ -19,11 +21,12 @@ public class UserCommandHandler
     private readonly IEventBus _eventBus;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
     private readonly IChatGroupRepository _chatGroupRepository;
+    private readonly IFriendRequestRepository _friendRequestRepository;
     private readonly IEmojiRepository _emojiRepository;
 
     public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
         IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository,
-        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus)
+        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus, IFriendRequestRepository friendRequestRepository)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
@@ -33,6 +36,7 @@ public class UserCommandHandler
         _userContext = userContext;
         _emojiRepository = emojiRepository;
         _eventBus = eventBus;
+        _friendRequestRepository = friendRequestRepository;
     }
 
     [EventHandler(1)]
@@ -135,5 +139,47 @@ public class UserCommandHandler
     public async Task DeleteEmojiAsync(DeleteEmojiCommand command)
     {
         await _emojiRepository.RemoveAsync(command.Id);
+    }
+
+    [EventHandler]
+    public async Task FriendRegistrationAsync(FriendRegistrationCommand command)
+    {
+        var query = new FriendStateQuery(command.Input.BeAppliedForId);
+        await _eventBus.PublishAsync(query);
+
+        if (query.Result)
+        {
+            throw new UserFriendlyException("已经存在好友关系");
+        }
+
+        var value = await _friendRequestRepository
+            .FindAsync(x =>
+                x.RequestId == _userContext.GetUserId<Guid>() && x.BeAppliedForId == command.Input.BeAppliedForId);
+
+        if (value?.State == FriendState.ApplyFor)
+        {
+            throw new UserFriendlyException("请勿重复发起申请");
+        }
+
+        var request = new FriendRequest()
+        {
+            RequestId = _userContext.GetUserId<Guid>(),
+            ApplicationDate = DateTime.Now,
+            BeAppliedForId = command.Input.BeAppliedForId,
+            Description = command.Input.Description,
+            State = FriendState.ApplyFor
+        };
+
+        await _friendRequestRepository.AddAsync(request);
+
+        var systemCommand = new SystemCommand(new Notification()
+        {
+            content = "有新的好友申请",
+            createdTime = DateTime.Now,
+            type = NotificationType.FriendRequest
+        }, new[] { command.Input.BeAppliedForId }, false);
+
+        // 发送好友系统通知
+        await _eventBus.PublishAsync(systemCommand);
     }
 }

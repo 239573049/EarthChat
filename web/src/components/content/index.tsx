@@ -146,7 +146,6 @@ export default class Content extends Component<IProps, IState> {
         ChatService.getOnLineUserIds(group.id)
             .then(res => {
                 if (res.code === "200") {
-                    debugger
                     const { groupinUsers } = this.state;
                     const updatedGroupinUsers = groupinUsers.map(user => {
                         if (res.data.includes(user.userId)) {
@@ -195,6 +194,8 @@ export default class Content extends Component<IProps, IState> {
                         groupinUsers: res,
                         users: userInfo
                     }, () => {
+                        console.log('loadingGroupUser');
+
                         // 获取群聊所有的用户成功以后获取用户状态
                         this.getOnLineUserIds()
                         this.loadingMessage()
@@ -214,6 +215,11 @@ export default class Content extends Component<IProps, IState> {
 
     onNotification(_: any, data: any) {
         if (data.type === "GroupUserNew") {
+
+            // 如果是当前用户的推送则忽略
+            if (data.data === user.id) {
+                return;
+            }
             // 当存在新用户登录则刷新状态。
             this.getOnLineUserIds()
         } else if (data.type === "FriendRequest") {
@@ -417,31 +423,33 @@ export default class Content extends Component<IProps, IState> {
 
 
     rowRenderer(item: any, index: number) {
-        const { data, users } = this.state;
-        let date = null;
+        try {
+            const { data, users } = this.state;
+            let date = null;
+            if (index === 0 || !this.isSameDateTime(data[index - 1].creationTime, item.creationTime)) {
+                date = this.formatTime(item.creationTime)
+            }
 
-        if (index === 0) {
-            date = <div>{item.creationTime}</div>
-        } else if (!this.isSameDateTime(data[index - 1].creationTime, item.creationTime)) {
-            date = this.formatTime(item.creationTime)
-        }
+            let user = users.find(x => x.id === item.userId)
 
-        let user = users.find(x => x.id === item.userId)
-
-        return (
-            <div key={item.Id} style={{ margin: '15px' }}>
-                {date && <div style={{
-                    textAlign: 'center'
-                }}>{date}</div>}
-                <Tooltip position='right' content={() => this.renderInfo(user)} trigger="click" >
-                    <Avatar size='small' style={{ float: 'left' }} src={user?.avatar} />
-                </Tooltip>
-                <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                    {user?.name}
+            return (
+                <div key={item.Id} style={{ margin: '15px' }}>
+                    {date && <div style={{
+                        textAlign: 'center'
+                    }}>{date}</div>}
+                    <Tooltip position='right' content={() => this.renderInfo(user)} trigger="click" >
+                        <Avatar size='small' style={{ float: 'left' }} src={user?.avatar} />
+                    </Tooltip>
+                    <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
+                        {user?.name}
+                    </div>
+                    {this.rendetContent(item, user)}
                 </div>
-                {this.rendetContent(item, user)}
-            </div>
-        );
+            );
+        } catch (error) {
+            console.log(error);
+
+        }
     }
 
     loadingMessage() {
@@ -621,14 +629,16 @@ export default class Content extends Component<IProps, IState> {
         Toast.success('邀请地址已经复制');
     }
 
-    renderInfo(user: GetUserDto | undefined) {
+    renderInfo(dto: GetUserDto | undefined) {
+
+        const iscurren = dto?.id === user.id;
 
         return (<>
             <div style={{
                 width: "320px",
                 height: '110px',
             }}>
-                <Avatar size="large" src={user?.avatar} style={{ margin: 4, float: 'left' }} alt='User'>
+                <Avatar size="large" src={dto?.avatar} style={{ margin: 4, float: 'left' }} alt='User'>
                 </Avatar>
                 <div style={{
                     float: 'left',
@@ -641,23 +651,23 @@ export default class Content extends Component<IProps, IState> {
                         marginBottom: '10px',
                         width: "120px"
                     }}>
-                        昵称：{user?.name}
+                        昵称：{dto?.name}
                     </div>
                     <div style={{
                         marginBottom: '10px',
                         width: "120px"
                     }}>
-                        账号：{user?.account}
+                        账号：{dto?.account}
                     </div>
                 </div>
             </div>
             <div style={{
-                padding:'20px',
+                padding: '20px',
             }}>
-                <Button block style={{
-                    marginBottom:'5px'
+                {!iscurren ? <><Button block style={{
+                    marginBottom: '5px'
                 }}>联系</Button>
-                <Button block>添加好友</Button>
+                    <Button block>添加好友</Button></> : <></>}
             </div></>)
     }
 
@@ -966,7 +976,7 @@ export default class Content extends Component<IProps, IState> {
                                         }}>
                                             {user?.name}
                                         </div>
-                                        {!user?.id ?
+                                        {(user?.id === '00000000-0000-0000-0000-000000000000' || !user?.id) ?
                                             <Tag style={{
                                                 boxSizing: 'content-box',
                                                 float: 'right',

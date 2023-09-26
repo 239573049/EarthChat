@@ -1,0 +1,50 @@
+# WebApi限流
+
+## 使用限流
+
+添加限流配置，从配置文件中读取了`IpRateLimit`配置信息绑定到`IpRateLimitOptions`Options，
+`builder.Services.AddInMemoryRateLimiting();`则是使用本地内存缓存限流信息。
+
+`app.UseIpRateLimiting();`添加限流中间件，如果不添加则会不生效。
+
+```csharp
+
+builder.Services.Configure<IpRateLimitOptions>
+    (builder.Configuration.GetSection("IpRateLimit"));
+
+builder.Services.AddSingleton<IRateLimitConfiguration,
+    RateLimitConfiguration>();
+
+builder.Services.AddInMemoryRateLimiting();
+
+var app = builder.Build();
+
+app.UseIpRateLimiting();
+
+```
+
+## 限流相关配置内容
+
+`appsettings.json`中的`IpRateLimit`配置
+
+```json
+{
+    "EnableEndpointRateLimiting": true,
+    "StackBlockedRequests": false,
+    "RealIpHeader": "X-Forwarded-For",
+    "ClientIdHeader": "X-ClientId",
+    "HttpStatusCode": 429, // 响应状态码
+    "QuotaExceededResponse": {
+      "Content-Type": "application/json",
+      "Content": "请求太频繁了稍后再试" // 
+    },
+    "GeneralRules": [
+      {
+        "Endpoint": "*",  // 指定路由
+        "Period": "1m",   // 1m(一分钟)
+        "Limit": 60       // 次数
+      }
+    ],
+    "ClientWhiteList": []
+  }
+```

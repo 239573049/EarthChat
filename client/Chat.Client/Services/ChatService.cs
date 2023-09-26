@@ -43,9 +43,9 @@ public class ChatService : IChatService
         throw new NotImplementedException();
     }
 
-    public Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<IOrderedEnumerable<GroupUserDto>> GetGroupInUserAsync(Guid groupId)
     {
-        throw new NotImplementedException();
+        return await Caller.GetHttpClient().GetFromJsonAsync<IOrderedEnumerable<GroupUserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }
 
     public Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId)

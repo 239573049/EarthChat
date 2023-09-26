@@ -25,4 +25,5 @@ public interface IUserService
     /// <param name="userIds"></param>
     /// <returns></returns>
     Task<IReadOnlyList<UserDto>> ListAsync(List<Guid> userIds);
+
 }

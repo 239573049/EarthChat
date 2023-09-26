@@ -25,7 +25,7 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
     public ChatType Type { get; set; }
 
     /// <summary>
-    ///     Id
+    ///  Id
     /// </summary>
     public Guid? UserId { get; set; }
 
