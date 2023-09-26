@@ -1,6 +1,6 @@
 <p align="center">
     <a href="" target="_blank">
-      <img src="./docs/img/Logo.png" width="280" />
+      <img src="./docs/static/img/docusaurus.png" width="280" />
     </a>
 </p>
 
@@ -12,6 +12,7 @@
 <div align="center">
     <a href="#公众号"><img src="https://img.shields.io/badge/公众号-Token的技术分享-blue.svg?style=plasticr"></a>
     <a href="#技术交流"><img src="https://img.shields.io/badge/交流群-加入开发-green.svg?style=plasticr"></a>
+    <a href="https://116.196.96.91/docs/intro/"><img src="https://img.shields.io/badge/项目文档-green.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat"><img src="https://img.shields.io/badge/github-项目地址-yellow.svg?style=plasticr"></a>
     <a href="https://gitee.com/hejiale010426/chat"><img src="https://img.shields.io/badge/码云-项目地址-orange.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat/blob/master/LICENSE" target="_blank">
@@ -53,14 +54,6 @@
 | SQLTYPE                 | 数据库类型 `sqlite`|[`pgsql`|`postgresql`] |
 | CONNECTION_STRING       | 数据库连接字符串                           |
 
-
-
-## 项目使用
-
- - [Docker compose部署](./docs/Install.md)
- - [Window 单机部署](./docs/Window-DevOps.md)
- - [数据迁移](./docs/Migration.md)
- - [好友关系设计](./docs/Friend-Chart.md)
 
 ## 技术交流
 
