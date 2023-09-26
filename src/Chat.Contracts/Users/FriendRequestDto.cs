@@ -1,10 +1,11 @@
 ﻿using Chat.Contracts.Chats;
-using Masa.BuildingBlocks.Ddd.Domain.Entities.Full;
 
-namespace Chat.Service.Domain.Users.Aggregates;
+namespace Chat.Contracts.Users;
 
-public class FriendRequest : FullAggregateRoot<Guid,Guid>
+public class FriendRequestDto
 {
+    public Guid Id { get; set; }
+    
     /// <summary>
     /// 申请描述
     /// </summary>
@@ -29,5 +30,4 @@ public class FriendRequest : FullAggregateRoot<Guid,Guid>
     /// 申请时间
     /// </summary>
     public DateTime ApplicationDate { get; set; }
-
 }

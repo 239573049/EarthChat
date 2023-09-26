@@ -1,8 +1,7 @@
 import React, { Component, RefObject } from 'react';
-import { ChatGroupDto, GetUserDto } from '../../dto';
-
+import { ChatGroupDto, FriendRegistrationInput, GetUserDto } from '../../dto';
 import moment from 'moment/moment';
-import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover } from '@douyinfe/semi-ui';
+import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover, Modal, Input, TextArea, Form } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../mentions/index';
 import ChatHubService from '../../services/chatHubService';
@@ -14,7 +13,7 @@ import emojiService from '../../services/emojiService';
 import { IconPlus } from '@douyinfe/semi-icons';
 import { GetUserInfos } from '../../store/user-store'
 import { emoji } from '../../store/emoji';
-
+import FriendService from '../../services/friendService'
 
 interface IProps {
     group: ChatGroupDto;
@@ -34,6 +33,11 @@ interface IState {
     groupLoading: boolean,
     emojiKey: number,
     updateState: boolean,
+    addFriend: {
+        visible: boolean,
+        id: string;
+        user: GetUserDto
+    }
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -98,7 +102,12 @@ export default class Content extends Component<IProps, IState> {
         groupinUsers: [],
         emojiKey: 0,
         updateState: false,
-        users: []
+        users: [],
+        addFriend: {
+            visible: false,
+            id: '',
+            user: {} as GetUserDto
+        }
     }
 
 
@@ -629,9 +638,31 @@ export default class Content extends Component<IProps, IState> {
         Toast.success('邀请地址已经复制');
     }
 
+    async clickFriends(id: string) {
+
+        var isfriend = await FriendService.FriendState(id);
+
+        if (isfriend.data) {
+            Notification.error({
+                content: "已经是好友关系"
+            })
+            return;
+        }
+
+        var user = (await GetUserInfos([id]))[0]
+
+        this.setState({
+            addFriend: {
+                visible: true,
+                id: id,
+                user
+            }
+        })
+    }
+
     renderInfo(dto: GetUserDto | undefined) {
 
-        const iscurren = dto?.id === user.id;
+        const iscurren = dto?.id === user.id || dto?.id === "00000000-0000-0000-0000-000000000000";
 
         return (<>
             <div style={{
@@ -667,7 +698,7 @@ export default class Content extends Component<IProps, IState> {
                 {!iscurren ? <><Button block style={{
                     marginBottom: '5px'
                 }}>联系</Button>
-                    <Button block>添加好友</Button></> : <></>}
+                    <Button onClick={async () => await this.clickFriends(dto!.id)} block>添加好友</Button></> : <></>}
             </div></>)
     }
 
@@ -835,8 +866,40 @@ export default class Content extends Component<IProps, IState> {
         </div>)
     }
 
+    addFriends(v: FriendRegistrationInput) {
+        const { addFriend } = this.state;
+        v.beAppliedForId = addFriend.id;
+        FriendService.FriendRegistration(v)
+            .then(res => {
+                if (res.code === '200') {
+                    Notification.success({
+                        content: "添加成功"
+                    });
+
+                    this.setState({
+                        addFriend: {
+                            visible: false,
+                            id: '',
+                            user: {} as GetUserDto
+                        }
+                    })
+                } else {
+                    Notification.error({
+                        content: res.message
+                    });
+                    this.setState({
+                        addFriend: {
+                            visible: false,
+                            id: '',
+                            user: {} as GetUserDto
+                        }
+                    })
+                }
+            })
+    }
+
     render() {
-        const { groupinUsers, users } = this.state;
+        const { groupinUsers, users, addFriend } = this.state;
         const { group } = this.props;
 
         return (
@@ -997,6 +1060,46 @@ export default class Content extends Component<IProps, IState> {
                         })}
                     </div>
                 </div>
+                <Modal
+                    title="添加好友"
+                    visible={addFriend.visible}
+                    onOk={() => this.setState({
+                        addFriend: {
+                            visible: false,
+                            id: '',
+                            user: {} as GetUserDto
+                        }
+                    })}
+                    onCancel={() => this.setState({
+                        addFriend: {
+                            visible: false,
+                            id: '',
+                            user: {} as GetUserDto
+                        }
+                    })}
+                    closeOnEsc={true}
+                >
+                    <Form onSubmit={(v) => this.addFriends(v)}>
+                        <Avatar style={{
+                            marginLeft: '45%',
+                        }} src={addFriend.user.avatar} />
+                        <div style={{
+                            textAlign: 'center',
+
+                        }}>
+                            {addFriend.user.name}
+                        </div>
+                        <div>
+                            <Form.TextArea field='description' label='描述' placeholder='描述' style={{
+                                margin: '8px'
+                            }} />
+                            <Button style={{
+                                margin: '8px'
+                            }} htmlType='submit' type='secondary' block>添加好友</Button>
+                        </div>
+                    </Form>
+
+                </Modal>
             </>
         );
     }

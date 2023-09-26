@@ -24,3 +24,8 @@ export interface CreateGroupDto {
     avatar: string;
     description: string;
 }
+
+export interface FriendRegistrationInput {
+    description: string;
+    beAppliedForId: string;
+}

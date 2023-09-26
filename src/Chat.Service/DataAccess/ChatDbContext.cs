@@ -53,7 +53,7 @@ public class ChatDbContext : MasaDbContext
 
             // efcore转换器，在保存到数据库会将当前属性的值进行转换。
             options.Property(x => x.Password)
-                .HasConversion(x => EncryptHelper.Encrypt(x), x => EncryptHelper.Decrypt(x));
+                .HasConversion(x => EncryptHelper.Decrypt(x), x => EncryptHelper.Encrypt(x));
         });
 
         builder.Entity<ChatMessage>(options =>

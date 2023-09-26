@@ -16,5 +16,13 @@ public interface IFriendService
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
-    Task FriendRegistrationAsync(FriendRegistrationInput input);
+    Task<ResultDto> FriendRegistrationAsync(FriendRegistrationInput input);
+
+    /// <summary>
+    /// 获取好友申请数据
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
+    Task<ResultDto<List<FriendRequestDto>>> GetListAsync(int page,int pageSize);
 }

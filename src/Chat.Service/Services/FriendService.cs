@@ -16,10 +16,17 @@ public class FriendService : BaseService<FriendService>, IFriendService
     }
 
     [Authorize]
-    public async Task FriendRegistrationAsync(FriendRegistrationInput input)
+    public async Task<ResultDto> FriendRegistrationAsync(FriendRegistrationInput input)
     {
         var command = new FriendRegistrationCommand(input);
 
         await PublishAsync(command);
+
+        return new ResultDto();
+    }
+
+    public Task<ResultDto<List<FriendRequestDto>>> GetListAsync(int page, int pageSize)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -11,4 +11,29 @@ public class FriendRequestRepository : Repository<ChatDbContext, FriendRequest>,
     public FriendRequestRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
     {
     }
+
+    public Task<List<FriendRequest>> GetListAsync(Guid userId, int page, int pageSize)
+    {
+        var query = CreateQuery(userId);
+
+        return query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public Task<int> GetCountAsync(Guid userId)
+    {
+        var query = CreateQuery(userId);
+
+        return query.CountAsync();
+    }
+
+    private IQueryable<FriendRequest> CreateQuery(Guid userId)
+    {
+        var query = Context.FriendRequests.Where(x => x.RequestId == userId)
+            .OrderBy(x => x.CreationTime);
+
+        return query;
+    }
 }

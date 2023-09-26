@@ -16,5 +16,8 @@ public class UserProfile : Profile
 
         CreateMap<User, GetUserDto>();
         CreateMap<ChatGroupInUser, ChatGroupInUserDto>();
+
+        CreateMap<FriendRequestDto, FriendRequest>()
+            .ReverseMap();
     }
 }

@@ -61,8 +61,8 @@ public static class EncryptHelper
 
         des.Key = Encoding.ASCII.GetBytes(key);
         des.IV = Encoding.ASCII.GetBytes(key);
-        using MemoryStream ms = new MemoryStream();
-        using CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
+         MemoryStream ms = new MemoryStream();
+         CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
         cs.Write(inputByteArray, 0, inputByteArray.Length);
         cs.FlushFinalBlock();
         return Encoding.Default.GetString(ms.ToArray());

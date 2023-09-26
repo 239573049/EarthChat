@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using Chat.Contracts.Chats;
-using Chat.Contracts.Hubs;
-using Chat.Service.Application.Hubs.Commands;
-using Chat.Service.Application.Users.Commands;
-using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
+using Chat.Service.Infrastructure.Helper;
 
 namespace Chat.Service.Application.Users;
 
@@ -20,7 +16,8 @@ public class UserQueryHandler
     private readonly IFriendRequestRepository _friendRequestRepository;
 
     public UserQueryHandler(IUserRepository userRepository, IMapper mapper, RedisClient redisClient,
-        IEmojiRepository emojiRepository, IUserContext userContext, IFriendRepository friendRepository, IEventBus eventBus, IFriendRequestRepository friendRequestRepository)
+        IEmojiRepository emojiRepository, IUserContext userContext, IFriendRepository friendRepository,
+        IEventBus eventBus, IFriendRequestRepository friendRequestRepository)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -39,7 +36,7 @@ public class UserQueryHandler
 
         if (user is null) throw new Exception("用户不存在");
 
-        if (user.Password != query.Password) throw new Exception("密码错误");
+        if (user.Password != EncryptHelper.Encrypt(query.Password)) throw new Exception("密码错误");
 
         query.Result = _mapper.Map<UserDto>(user);
     }
@@ -98,9 +95,24 @@ public class UserQueryHandler
     [EventHandler]
     public async Task FriendStateAsync(FriendStateQuery query)
     {
-        var result = await _friendRepository.GetCountAsync(x => x.SelfId == _userContext.GetUserId<Guid>() && x.FriendId == query.friendId);
+        var result = await _friendRepository.GetCountAsync(x =>
+            x.SelfId == _userContext.GetUserId<Guid>() && x.FriendId == query.friendId);
 
         query.Result = result > 0;
     }
 
+    [EventHandler]
+    public async Task GetFriendRequestListAsync(GetFriendRequestListQuery query)
+    {
+        var result =
+            await _friendRequestRepository.GetListAsync(_userContext.GetUserId<Guid>(), query.Page, query.PageSize);
+
+        var count = await _friendRequestRepository.GetCountAsync(_userContext.GetUserId<Guid>());
+
+        query.Result = new PaginatedListBase<FriendRequestDto>()
+        {
+            Result = _mapper.Map<List<FriendRequestDto>>(result),
+            Total = count
+        };
+    }
 }
