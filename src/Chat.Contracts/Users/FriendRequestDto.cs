@@ -30,4 +30,6 @@ public class FriendRequestDto
     /// 申请时间
     /// </summary>
     public DateTime ApplicationDate { get; set; }
+
+    public UserDto BeAppliedFor { get; set; }
 }

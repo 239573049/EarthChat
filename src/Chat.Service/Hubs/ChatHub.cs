@@ -60,7 +60,7 @@ public class ChatHub : Hub
         if (userId.HasValue)
         {
             await _redisClient.DelAsync(Constant.OnLineKey + userId.Value.ToString("N"));
-            await _redisClient.LRemAsync("Connections:" + userId, 0, Context.ConnectionId);
+            await _redisClient.LRemAsync(Constant.Connections + userId, 0, Context.ConnectionId);
 
             var groupsQuery = new GetUserGroupQuery(userId.Value);
             await _eventBus.PublishAsync(groupsQuery);
@@ -148,7 +148,7 @@ public class ChatHub : Hub
             UserId = userId.Value
         });
     }
-    
+
     /// <summary>
     /// 获取当前用户id
     /// </summary>

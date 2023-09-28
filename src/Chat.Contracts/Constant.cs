@@ -11,7 +11,8 @@ public class Constant
     public const string GetUserGroup  = "GetUserGroup";
 
     public const string OnLineKey = "OnLineKey:";
-    
+
+    public const string Connections = "Connections:";
     public class Role
     {
         public const string Default = "Chat:Role";

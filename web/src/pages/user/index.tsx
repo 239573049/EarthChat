@@ -1,9 +1,12 @@
-import { Avatar, Divider, Icon } from '@douyinfe/semi-ui';
+import { Avatar, Button, Divider, Icon, Notification } from '@douyinfe/semi-ui';
 import React, { Component } from 'react';
 import './index.scss'
 import chatService from '../../services/chatService';
+import moment from 'moment/moment';
 import { ChatGroupDto } from '../../dto';
 import PubSub from 'pubsub-js';
+import friendService from '../../services/friendService';
+import { GetUserInfos } from '../../store/user-store';
 
 
 interface IState {
@@ -11,6 +14,9 @@ interface IState {
     selectid: number;
     selectValue: any,
     slidingBlock: number;
+    renderValue: any,
+    page: number,
+    pageSize: number,
     data: any[]
 }
 
@@ -25,9 +31,11 @@ class User extends Component<any, IState> {
         middleWidth: 230,
         selectid: 0,
         slidingBlock: 0,
-
         data: [],
-        selectValue: undefined
+        selectValue: undefined,
+        renderValue: undefined,
+        page: 1,
+        pageSize: 10
     }
 
     handleMouseDown = (e: React.MouseEvent) => {
@@ -58,7 +66,6 @@ class User extends Component<any, IState> {
     selectGroup() {
         chatService.getUserGroup()
             .then((res: ChatGroupDto[]) => {
-
                 res.forEach(x => {
                     x.type = 'group';
                 })
@@ -67,6 +74,7 @@ class User extends Component<any, IState> {
                     slidingBlock: 50,
                     data: res
                 })
+
             })
 
     }
@@ -74,33 +82,34 @@ class User extends Component<any, IState> {
     onClick(item: any) {
         this.setState({
             selectValue: item
+        }, async () => {
+            await this.renderValue()
         })
     }
 
     Group(item: any) {
-        console.log(this.props);
 
         PubSub.publish('selectGroup', item);
 
     }
 
-    renderValue() {
+    async renderValue() {
         const { selectValue } = this.state;
-
+        let renderValue;
         if (!selectValue) {
             return;
         }
 
         if (selectValue.type === 'group') {
-            return (<div style={{
+            renderValue = <div style={{
                 height: "115px",
                 margin: 'auto',
                 width: '500px',
                 paddingTop: "50px"
             }}>
                 <div style={{
-                    marginBottom:'20px',
-                    height:'75px'
+                    marginBottom: '20px',
+                    height: '75px'
                 }}>
                     <Avatar style={{
                         float: 'left'
@@ -136,12 +145,138 @@ class User extends Component<any, IState> {
                 </div>
                 <Divider></Divider>
 
-            </div>)
+            </div>;
+        } else if (selectValue.type === "user") {
+            renderValue = <div style={{
+                height: "115px",
+                margin: 'auto',
+                width: '500px',
+                paddingTop: "50px"
+            }}>
+                <div style={{
+                    marginBottom: '20px',
+                    height: '75px'
+                }}>
+
+                </div>
+                <Divider></Divider>
+            </div>
+        } else if (selectValue.type === "user-manager") {
+            await this.renderUserManager()
+
+            return
+        }
+
+        this.setState({
+            renderValue
+        })
+    }
+
+    friendHandle(id: string, state: number) {
+        friendService.FriendHandle(id, state)
+            .then(res => {
+                if (res.code === "200") {
+                    Notification.success({
+                        content: "成功"
+                    })
+
+                    this.renderUserManager()
+
+                } else {
+                    Notification.error({
+                        content: res.message
+                    })
+                }
+            })
+    }
+
+    async renderUserManager() {
+        const { page, pageSize } = this.state;
+        const result = await friendService.List(page, pageSize);
+
+        if (result.code === "200") {
+            const requestIds = result.data.result.map((item: any) => item.beAppliedForId);
+
+            const users = await GetUserInfos(requestIds);
+
+            const items = result.data.result.map((x: any) => {
+                const user = users.filter(y => y.id === x.beAppliedForId)[0];
+                return <div className='user-manager-item' style={{
+                    height: "75px",
+                    width: '600px',
+                    backgroundColor: 'var(--setting-tong-theme-background-color)'
+                }}>
+                    <div style={{
+                        padding: '13px'
+                    }}>
+                        <Avatar style={{
+                            float: 'left',
+                        }} src={user.avatar}></Avatar>
+                        <div style={{
+                            marginLeft: '5px',
+                            float: 'left',
+                            fontSize: '14px'
+                        }}>
+                            <span className='name'>
+                                {user.name}
+                            </span>
+                            <span>请求加为好友</span>
+                            <span style={{
+                                marginLeft: '5px'
+                            }}>{moment(x.applicationDate).format('YYYY-MM-DD HH:mm:ss')}</span>
+                            <div className='description'>
+                                留言：{x.description}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{
+                        float: 'right',
+                        marginRight: '10px',
+                    }}>
+                        {x.state === 0 ? <><Button style={{
+                            margin: '5px'
+                        }} theme='borderless' type='secondary' onClick={() => this.friendHandle(x.id, 1)}>同意</Button>
+                            <Button style={{
+                                margin: '5px'
+                            }} theme='borderless' type='danger' onClick={() => this.friendHandle(x.id, 2)}>拒绝</Button>
+                        </> : <div>{x.state === 1 ? "已同意" : "已拒绝"}</div>}
+                    </div>
+                </div>
+            })
+
+            let renderValue = <div style={{
+                height: "115px",
+                margin: 'auto',
+                width: '500px',
+                paddingTop: "50px"
+            }}>
+                {items}
+            </div>
+
+            this.setState({
+                renderValue
+            })
         }
     }
 
+    loadUserManager(){
+        
+    }
+
+    selectUserManager() {
+        this.setState({
+            selectValue: {
+                type: 'user-manager'
+            }
+        }, async () => {
+            await this.renderValue()
+        })
+    }
+
     render() {
-        const { middleWidth, slidingBlock, selectValue, data } = this.state;
+        const { middleWidth, slidingBlock, selectValue, data, renderValue } = this.state;
+
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
         return (
             <>
@@ -154,7 +289,7 @@ class User extends Component<any, IState> {
                         textAlign: 'center',
                     }}>
                         <h2>好友管理</h2>
-                        <div className='inform'>
+                        <div onClick={() => this.selectUserManager()} className='inform'>
                             <div className='name'>
                                 好友通知
                             </div>
@@ -166,7 +301,6 @@ class User extends Component<any, IState> {
                         </div>
                         <Divider></Divider>
                         <div style={{
-                            // 边框
                             border: '1px',
                             margin: '10px',
                             borderRadius: "8px",
@@ -217,11 +351,12 @@ class User extends Component<any, IState> {
                                 </div>
                             </div>)
                         })}
+
                     </div>
                 </div>
                 <div className="resizer" onMouseDown={this.handleMouseDown}></div>
                 <div className="right" style={{ width: rightWidth }}>
-                    {selectValue && this.renderValue()}
+                    {selectValue && renderValue}
                 </div>
             </>
         );

@@ -1,4 +1,5 @@
-﻿using Chat.Contracts.Core;
+﻿using Chat.Contracts.Chats;
+using Chat.Contracts.Core;
 using Masa.Utils.Models;
 
 namespace Chat.Contracts.Users;
@@ -26,4 +27,12 @@ public interface IFriendService
     /// <param name="pageSize"></param>
     /// <returns></returns>
     Task<ResultDto<PaginatedListBase<FriendRequestDto>>> GetListAsync(int page,int pageSize);
+
+    /// <summary>
+    /// 好友申请处理
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="state"></param>
+    /// <returns></returns>
+    Task<ResultDto> FriendHandleAsync(Guid id, FriendState state);
 }

@@ -45,7 +45,7 @@ public class ChatDbContext : MasaDbContext
 
             options.Property(x => x.Account).HasMaxLength(20).IsRequired();
 
-            options.Property(x => x.Password).HasMaxLength(20).IsRequired();
+            options.Property(x => x.Password).HasMaxLength(80).IsRequired();
 
             options.Property(x => x.Avatar).HasMaxLength(200).IsRequired();
 
@@ -53,7 +53,7 @@ public class ChatDbContext : MasaDbContext
 
             // efcore转换器，在保存到数据库会将当前属性的值进行转换。
             options.Property(x => x.Password)
-                .HasConversion(x => EncryptHelper.Decrypt(x), x => EncryptHelper.Encrypt(x));
+                .HasConversion(x => EncryptHelper.Encrypt(x), x => EncryptHelper.Decrypt(x));
         });
 
         builder.Entity<ChatMessage>(options =>

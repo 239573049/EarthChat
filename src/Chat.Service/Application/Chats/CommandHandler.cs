@@ -19,10 +19,10 @@ public class CommandHandler
     private readonly IUserContext _userContext;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IFriendRepository _friendRepository;
+    private readonly IEventBus _eventBus;
     private readonly IHubContext<ChatHub> _hubContext;
     private readonly ILogger<CommandHandler> _logger;
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IEventBus _eventBus;
     private readonly IFriendRequestRepository _friendRequestRepository;
 
     public CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,

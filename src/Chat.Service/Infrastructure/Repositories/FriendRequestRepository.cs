@@ -28,7 +28,7 @@ public class FriendRequestRepository : BaseRepository<ChatDbContext, FriendReque
 
     private IQueryable<FriendRequest> CreateQuery(Guid userId)
     {
-        var query = Context.FriendRequests.Where(x => x.RequestId == userId)
+        var query = Context.FriendRequests.Where(x => x.BeAppliedForId == userId)
             .OrderBy(x => x.CreationTime);
 
         return query;

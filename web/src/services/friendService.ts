@@ -7,12 +7,29 @@ const baseURL = "v1/Friends"
 
 class FriendService {
 
-    FriendState(id:string){
-        return Request.post(`${baseURL}/FriendState?friendId=`+id)
+    FriendState(id: string) {
+        return Request.post(`${baseURL}/FriendState?friendId=` + id)
     }
 
-    FriendRegistration(input:FriendRegistrationInput){
-        return Request.post(`${baseURL}/FriendRegistration`,input)
+    FriendRegistration(input: FriendRegistrationInput) {
+        return Request.post(`${baseURL}/FriendRegistration`, input)
+    }
+
+    List(page: number, pageSize: number) {
+        return Request.get(`${baseURL}/List`, {
+            params: {
+                page,
+                pageSize
+            }
+        })
+    }
+
+    FriendHandle(id: string, state: number) {
+        return Request.postConfig(`${baseURL}/FriendHandle/${id}`, {
+            params: {
+                state
+            }
+        })
     }
 }
 

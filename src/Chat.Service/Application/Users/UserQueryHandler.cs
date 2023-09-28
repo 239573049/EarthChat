@@ -36,7 +36,7 @@ public class UserQueryHandler
 
         if (user is null) throw new Exception("用户不存在");
 
-        if (user.Password != EncryptHelper.Encrypt(query.Password)) throw new Exception("密码错误");
+        if (user.Password != query.Password) throw new Exception("密码错误");
 
         query.Result = _mapper.Map<UserDto>(user);
     }

@@ -5,21 +5,8 @@ namespace Chat.Service.Infrastructure.Helper;
 
 public static class EncryptHelper
 {
-    private static string key;
-
-    public static IServiceProvider UseEncrypt(this IServiceProvider services)
-    {
-        var configuration = services.GetRequiredService<IConfiguration>();
-        key = configuration["Key"]?.Trim();
-
-        if (key.IsNullOrWhiteSpace())
-        {
-            throw new ArgumentNullException("您的 Encrypt的 Key 并未配置！");
-        }
-
-        return services;
-    }
-
+    private static string key = "s!9%h_h,";
+    
     /// <summary>
     /// 加密
     /// </summary>
@@ -61,8 +48,8 @@ public static class EncryptHelper
 
         des.Key = Encoding.ASCII.GetBytes(key);
         des.IV = Encoding.ASCII.GetBytes(key);
-         MemoryStream ms = new MemoryStream();
-         CryptoStream cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
+        using var ms = new MemoryStream();
+        using var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
         cs.Write(inputByteArray, 0, inputByteArray.Length);
         cs.FlushFinalBlock();
         return Encoding.Default.GetString(ms.ToArray());

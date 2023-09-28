@@ -93,3 +93,18 @@
 .manager:hover{
   background-color: var(--sekect-chat-item-background-color);
 }
+
+.user-manager-item{
+  border-radius: 8px;
+  .name{
+    color: #0066cc;
+    cursor: pointer;
+    margin: 5px;
+  }
+
+  .description{
+    font-size: 12px;
+    margin-left: 5px;
+    margin-top: 5px;
+  }
+}

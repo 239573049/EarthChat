@@ -1,4 +1,5 @@
-﻿using Chat.Service.Application.Users.Commands;
+﻿using Chat.Contracts.Chats;
+using Chat.Service.Application.Users.Commands;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Chat.Service.Services;
@@ -34,5 +35,14 @@ public class FriendService : BaseService<FriendService>, IFriendService
         {
             Data = query.Result
         };
+    }
+
+    [Authorize]
+    public async Task<ResultDto> FriendHandleAsync(Guid id, FriendState state)
+    {
+        var command = new FriendHandleCommand(id, state);
+        await PublishAsync(command);
+
+        return new ResultDto();
     }
 }

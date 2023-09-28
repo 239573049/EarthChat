@@ -91,7 +91,7 @@ var app = builder.Services
     {
         var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ??
                                builder.Configuration["ConnectionStrings:DefaultConnection"];
-        sqlType = sqlType?.ToLower();
+        sqlType = sqlType?.ToLower() ?? "postgresql";
         // 根据工具变量传递的数据库类型处理。
         if (sqlType is "postgresql" or "pgsql")
         {
@@ -119,8 +119,6 @@ var app = builder.Services
     })
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
-
-app.Services.UseEncrypt();
 
 app.UseResponseCompression();
 

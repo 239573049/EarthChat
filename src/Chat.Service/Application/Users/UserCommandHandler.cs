@@ -7,26 +7,28 @@ using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
-using Chat.Service.Infrastructure.Repositories;
-using Masa.BuildingBlocks.Data.UoW;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Service.Application.Users;
 
 public class UserCommandHandler
 {
     private readonly IMapper _mapper;
+    private readonly IEventBus _eventBus;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _userRepository;
+    private readonly RedisClient RedisClient;
     private readonly IUserContext _userContext;
-    private readonly IEventBus _eventBus;
-    private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
+    private readonly IEmojiRepository _emojiRepository;
+    private readonly IFriendRepository _friendRepository;
+    private readonly IHubContext<ChatHub> _chatHubContext;
     private readonly IChatGroupRepository _chatGroupRepository;
     private readonly IFriendRequestRepository _friendRequestRepository;
-    private readonly IEmojiRepository _emojiRepository;
+    private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
 
     public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
         IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository,
-        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus, IFriendRequestRepository friendRequestRepository)
+        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus, IFriendRequestRepository friendRequestRepository, IFriendRepository friendRepository, IHubContext<ChatHub> chatHubContext, RedisClient redisClient)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
@@ -37,6 +39,9 @@ public class UserCommandHandler
         _emojiRepository = emojiRepository;
         _eventBus = eventBus;
         _friendRequestRepository = friendRequestRepository;
+        _friendRepository = friendRepository;
+        _chatHubContext = chatHubContext;
+        RedisClient = redisClient;
     }
 
     [EventHandler(1)]
@@ -181,5 +186,68 @@ public class UserCommandHandler
 
         // 发送好友系统通知
         await _eventBus.PublishAsync(systemCommand);
+    }
+
+    [EventHandler]
+    public async Task FriendHandle(FriendHandleCommand command)
+    {
+        var value = await _friendRequestRepository.FindAsync(x => x.Id == command.Id && x.State == FriendState.ApplyFor);
+
+        if (value == null)
+        {
+            throw new UserFriendlyException("处理错误！");
+        }
+
+        value.State = command.State;
+
+        if (value.State == FriendState.Consent)
+        {
+            var groupId = Guid.NewGuid();
+            // 当好友为同意的时候将创建好友关联表
+            var friend = new Friend()
+            {
+                FriendId = value.RequestId,
+                SelfId = value.BeAppliedForId,
+                GroupId = groupId,
+                Remark = string.Empty
+            };
+
+            var requestFriend = new Friend()
+            {
+                FriendId = value.BeAppliedForId,
+                SelfId = value.RequestId,
+                GroupId = groupId,
+                Remark = string.Empty
+            };
+
+            await _friendRepository.AddRangeAsync(new[] { friend, requestFriend });
+
+            #region add Connection
+
+            // 得到申请人所有链接id
+            var connectionIds =
+                await RedisClient.LRangeAsync<string>(Constant.Connections + value.RequestId, 0, -1);
+
+            // 将所有链接id添加到新的好友关联表
+            foreach (var connectionId in connectionIds)
+            {
+                await _chatHubContext.Groups.AddToGroupAsync(connectionId, groupId.ToString("N"));
+            }
+
+            // 将被申请人链接id获取
+            connectionIds =
+                await RedisClient.LRangeAsync<string>(Constant.Connections + value.BeAppliedForId, 0, -1);
+
+            // 将所有链接id添加到新的好友关联表
+            foreach (var connectionId in connectionIds)
+            {
+                await _chatHubContext.Groups.AddToGroupAsync(connectionId, groupId.ToString("N"));
+            }
+            
+            #endregion
+            
+        }
+
+        await _friendRequestRepository.UpdateAsync(value);
     }
 }
