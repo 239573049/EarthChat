@@ -2,7 +2,7 @@
 
 namespace Chat.Service.Domain.Users.Repositories;
 
-public interface IEmojiRepository : IRepository<Emoji,Guid>
+public interface IEmojiRepository : IBaseRepository<Emoji,Guid>
 {
     
 }

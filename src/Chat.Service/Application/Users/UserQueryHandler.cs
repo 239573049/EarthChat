@@ -95,10 +95,8 @@ public class UserQueryHandler
     [EventHandler]
     public async Task FriendStateAsync(FriendStateQuery query)
     {
-        var result = await _friendRepository.GetCountAsync(x =>
+        query.Result = await _friendRepository.ExistAsync(x =>
             x.SelfId == _userContext.GetUserId<Guid>() && x.FriendId == query.friendId);
-
-        query.Result = result > 0;
     }
 
     [EventHandler]
@@ -115,4 +113,5 @@ public class UserQueryHandler
             Total = count
         };
     }
+
 }

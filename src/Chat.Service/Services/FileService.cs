@@ -17,7 +17,7 @@ public class FileService : BaseService<FileService>, IFileService
         }
 
         var command = new UploadCommand(file.OpenReadStream(), file.FileName);
-        await _eventBus.PublishAsync(command);
+        await PublishAsync(command);
         return command.Result.CreateResult();
     }
 
@@ -33,7 +33,7 @@ public class FileService : BaseService<FileService>, IFileService
         using var stream = new MemoryStream(bytes);
 
         var command = new UploadCommand(stream, dto.FileName);
-        await _eventBus.PublishAsync(command);
+        await PublishAsync(command);
         return command.Result.CreateResult();
     }
 
@@ -41,6 +41,6 @@ public class FileService : BaseService<FileService>, IFileService
     public async Task DeleteAsync(string uri)
     {
         var command = new DeleteFileSystemCommand(uri);
-        await _eventBus.PublishAsync(command);
+        await PublishAsync(command);
     }
 }

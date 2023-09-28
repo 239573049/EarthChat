@@ -28,3 +28,4 @@ global using Masa.BuildingBlocks.Data.UoW;
 global using Masa.BuildingBlocks.Ddd.Domain.Repositories;
 global using Microsoft.Extensions.Options;
 global using Serilog;
+global using Chat.Service.Domain.Repositories;

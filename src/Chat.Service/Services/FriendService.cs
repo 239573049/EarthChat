@@ -25,8 +25,14 @@ public class FriendService : BaseService<FriendService>, IFriendService
         return new ResultDto();
     }
 
-    public Task<ResultDto<List<FriendRequestDto>>> GetListAsync(int page, int pageSize)
+    [Authorize]
+    public async Task<ResultDto<PaginatedListBase<FriendRequestDto>>> GetListAsync(int page, int pageSize)
     {
-        throw new NotImplementedException();
+        var query = new GetFriendRequestListQuery(page, pageSize);
+        await PublishAsync(query);
+        return new ResultDto<PaginatedListBase<FriendRequestDto>>()
+        {
+            Data = query.Result
+        };
     }
 }

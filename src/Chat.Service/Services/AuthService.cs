@@ -9,7 +9,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
     public async Task<ResultDto<string>> CreateAsync(string account, string password)
     {
         var query = new AuthQuery(account, password);
-        await _eventBus.PublishAsync(query);
+        await PublishAsync(query);
 
         var jwt = GetService<IOptions<JwtOptions>>()?.Value;
 
@@ -38,7 +38,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
         if (githubUser is null) throw new Exception("Github授权失败");
 
         var query = new AuthTypeQuery("Github", githubUser.id.ToString());
-        await _eventBus.PublishAsync(query);
+        await PublishAsync(query);
 
         if (query.Result is null)
         {
@@ -51,7 +51,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
                 GithubId = githubUser.id.ToString()
             });
 
-            await _eventBus.PublishAsync(command);
+            await PublishAsync(command);
             query.Result = command.Result;
         }
 
@@ -72,14 +72,14 @@ public class AuthService : BaseService<AuthService>, IAuthService
             var url =
                 $"https://gitee.com/oauth/token?grant_type=authorization_code&redirect_uri={gitee.redirectUri}&response_type=code&code={accessToken}&client_id={gitee.ClientId}&client_secret={gitee.ClientSecrets}";
 
-            _logger.LogWarning("Gitee授权 {url}", url);
+            Logger.LogWarning("Gitee授权 {url}", url);
             var response =
                 await http.PostAsync(url,
                     null);
 
             var json = await response.Content.ReadAsStringAsync();
 
-            _logger.LogWarning("Gitee授权 {json}", json);
+            Logger.LogWarning("Gitee授权 {json}", json);
             var result = JsonSerializer.Deserialize<GitTokenDto>(json, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -92,7 +92,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
             if (githubUser is null) throw new Exception("Gitee授权失败");
 
             var query = new AuthTypeQuery("Gitee", githubUser.id.ToString());
-            await _eventBus.PublishAsync(query);
+            await PublishAsync(query);
 
             if (query.Result is null)
             {
@@ -105,7 +105,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
                     GiteeId = githubUser.id.ToString()
                 });
 
-                await _eventBus.PublishAsync(command);
+                await PublishAsync(command);
                 query.Result = command.Result;
             }
             
@@ -118,7 +118,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
         }
         catch (Exception e)
         {
-            _logger.LogError("Gitee授权失败 {e}", e);
+            Logger.LogError("Gitee授权失败 {e}", e);
             return "".CreateResult("500", e.Message);
         }
     }

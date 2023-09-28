@@ -2,7 +2,7 @@
 
 namespace Chat.Service.Domain.Chats.Repositories;
 
-public interface IChatGroupRepository : IRepository<ChatGroup,Guid>
+public interface IChatGroupRepository : IBaseRepository<ChatGroup,Guid>
 {
     
 }

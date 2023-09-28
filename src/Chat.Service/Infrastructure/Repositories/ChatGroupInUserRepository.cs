@@ -5,7 +5,7 @@ using Masa.Contrib.Ddd.Domain.Repository.EFCore;
 
 namespace Chat.Service.Infrastructure.Repositories;
 
-public class ChatGroupInUserRepository : Repository<ChatDbContext, ChatGroupInUser, Guid>, IChatGroupInUserRepository
+public class ChatGroupInUserRepository : BaseRepository<ChatDbContext, ChatGroupInUser, Guid>, IChatGroupInUserRepository
 {
     public ChatGroupInUserRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
     {

@@ -4,7 +4,7 @@ using Masa.Contrib.Ddd.Domain.Repository.EFCore;
 
 namespace Chat.Service.Infrastructure.Repositories;
 
-public class FileSystemRepository : Repository<ChatDbContext, FileSystem, Guid>, IFileSystemRepository
+public class FileSystemRepository : BaseRepository<ChatDbContext, FileSystem, Guid>, IFileSystemRepository
 {
     public FileSystemRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
     {

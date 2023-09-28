@@ -10,7 +10,7 @@ public class UserService : BaseService<UserService>, IUserService
     {
         var user = GetRequiredService<IUserContext>();
         var query = new GetUserQuery(user.GetUserId<Guid>());
-        await _eventBus.PublishAsync(query);
+        await PublishAsync(query);
 
         // 未获取到用户消息则直接401
         if (query.Result == null)

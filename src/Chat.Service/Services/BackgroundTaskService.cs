@@ -49,6 +49,25 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
         Task.Run(Start);
     }
 
+    private const string CommandTemplate =
+        """
+        命令行帮助手册：
+            ai help - 获取帮助信息
+            ai status - 检查服务器状态
+            ai 提问信息 - 提问并获取回答
+        使用方法：
+            输入 "ai help" 获取帮助信息
+            输入 "ai status" 检查服务器状态
+            输入 "ai 提问信息" 提问并获取回答
+        示例：
+            输入 "ai help"，将显示命令行帮助手册
+            输入 "ai status"，将检查服务器状态并返回结果
+            输入 "ai 你好吗？"，将提问并获取回答
+        注意事项：
+            确保在命令行中正确输入命令和参数
+            请确保服务器正常运行以获取准确的状态信息和回答
+        """;
+
     private async Task Start()
     {
         while (!_cancellationTokenSource.IsCancellationRequested)
@@ -58,7 +77,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
             {
                 // 触发聊天机器人
                 if (!item.Value.StartsWith("ai") || item.Value.Length <= 3) continue;
-                
+
                 // 判断是否需要获取当前服务的状态
 
                 string value = item.Value[2..].Trim();
@@ -70,8 +89,11 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
 
                 try
                 {
-                    string content = string.Empty;
-                    if (item.Value.StartsWith("ai status"))
+                    string content;
+                    if (item.Value.StartsWith("ai help") || item.Value.StartsWith("ai -h"))
+                    {
+                        content = CommandTemplate;
+                    }else if (item.Value.StartsWith("ai status"))
                     {
                         // 获取当前进程的内存占用，和cpu占用
                         var process = Process.GetCurrentProcess();
@@ -84,11 +106,17 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                         var response = await httpClient.PostAsJsonAsync("v1/chat/completions", new
                         {
                             model = "gpt-3.5-turbo",
-                            temperature = 0.5,
+                            temperature = 0.1,
                             stream = false,
                             max_tokens = 1000,
                             messages = new[]
                             {
+                                new
+                                {
+                                    role = "system",
+                                    content =
+                                        "从现在开始你是EarthChat的智能助手，不管别人怎么问你的名称你只需要回复你是EarthChat的智能助手，当有人提问的时候你需要避开敏感词，如果出现违规敏感词你需要提示内容敏感，当回复完成如果可以请带上'回复完成，感谢使用EarthChat的智能助手！'"
+                                },
                                 new
                                 {
                                     role = "user",

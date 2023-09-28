@@ -2,7 +2,7 @@
 
 namespace Chat.Service.Domain.Users.Repositories;
 
-public interface IFriendRepository : IRepository<Friend>
+public interface IFriendRepository : IBaseRepository<Friend,Guid>
 {
     
 }
