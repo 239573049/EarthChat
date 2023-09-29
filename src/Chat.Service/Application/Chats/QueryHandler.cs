@@ -3,29 +3,33 @@ using Chat.Contracts.Chats;
 using Chat.Service.Application.Chats.Queries;
 using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
+using Chat.Service.Domain.Users.Repositories;
 
 namespace Chat.Service.Application.Chats;
 
 public class QueryHandler
 {
     private readonly IMapper _mapper;
+    private readonly IFriendRepository _friendRepository;
     private readonly IChatMessageRepository _chatMessageRepository;
     private readonly IChatGroupRepository _chatGroupRepository;
     private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
 
     public QueryHandler(IChatMessageRepository chatMessageRepository, IMapper mapper,
-        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository)
+        IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository,
+        IFriendRepository friendRepository)
     {
         _chatMessageRepository = chatMessageRepository;
         _mapper = mapper;
         _chatGroupInUserRepository = chatGroupInUserRepository;
         _chatGroupRepository = chatGroupRepository;
+        _friendRepository = friendRepository;
     }
 
     [EventHandler]
     public async Task GetListAsync(GeChatMessageListQuery query)
     {
-        var list = await _chatMessageRepository.GetListAsync(query.groupId,query.page, query.pageSize);
+        var list = await _chatMessageRepository.GetListAsync(query.groupId, query.page, query.pageSize);
 
         foreach (var message in list.Where(message => message.UserId == Guid.Empty))
         {
@@ -46,9 +50,35 @@ public class QueryHandler
     [EventHandler]
     public async Task GetUserGroupAsync(GetUserGroupQuery query)
     {
-        var ids = await _chatGroupInUserRepository.GetUserChatGroupAsync(query.userId);
+        var groups = await _chatGroupInUserRepository.GetUserChatGroupAsync(query.userId);
+        var friends = await _friendRepository.GetUserInFriendAsync(query.userId);
 
-        query.Result = _mapper.Map<List<ChatGroupDto>>(ids);
+        var chatGroups = new List<ChatGroupDto>(groups.Count + friends.Count);
+        chatGroups.AddRange(groups.Select(chatGroup => new ChatGroupDto()
+        {
+            Avatar = chatGroup.Avatar,
+            Id = chatGroup.Id,
+            CreationTime = chatGroup.CreationTime,
+            Creator = chatGroup.Creator,
+            Default = chatGroup.Default,
+            Description = chatGroup.Description,
+            Name = chatGroup.Name,
+            Group = true
+        }));
+
+        chatGroups.AddRange(friends.Select(friend => new ChatGroupDto()
+        {
+            Avatar = friend.Avatar,
+            Id = friend.Id,
+            CreationTime = friend.CreationTime,
+            Creator = friend.Creator,
+            Default = friend.Default,
+            Description = friend.Description,
+            Name = friend.Name,
+            Group = false
+        }));
+
+        query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
     }
 
     [EventHandler]

@@ -1,8 +1,6 @@
 ﻿using Chat.Service.Domain.Chats.Aggregates;
-using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
-using Masa.Contrib.Ddd.Domain.Repository.EFCore;
 
 namespace Chat.Service.Infrastructure.Repositories;
 
@@ -11,5 +9,20 @@ public class FriendRepository : BaseRepository<ChatDbContext, Friend, Guid>, IFr
     public FriendRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
     {
     }
-    
+
+    public async Task<List<ChatGroup>> GetUserInFriendAsync(Guid userId)
+    {
+        var query =
+            (from friend in Context.Friends
+                join user in Context.Users on friend.FriendId equals user.Id
+                where friend.SelfId == userId
+                select new ChatGroup(friend.GroupId)
+                {
+                    Avatar = user.Avatar,
+                    Default = false,
+                    Name = user.Name
+                });
+
+        return await query.ToListAsync();
+    }
 }
