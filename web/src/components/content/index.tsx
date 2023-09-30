@@ -190,27 +190,42 @@ export default class Content extends Component<IProps, IState> {
     loadingGroupUser() {
         const { group } = this.props;
 
-        ChatService.getGroupInUser(group.id)
-            .then(async (res: any[]) => {
-                if (res) {
-                    this.groupinUsers = res;
-
-                    const userids = res.map(x => x.userId)
-
-                    // 这里是为了保证用户的基本信息完整
-                    const userInfo = await GetUserInfos(userids)
+        if(group.group){
+            ChatService.getGroupInUser(group.id)
+                .then(async (res: any[]) => {
+                    if (res) {
+                        this.groupinUsers = res;
+    
+                        const userids = res.map(x => x.userId)
+    
+                        // 这里是为了保证用户的基本信息完整
+                        const userInfo = await GetUserInfos(userids)
+                        this.setState({
+                            groupinUsers: res,
+                            users: userInfo
+                        }, () => {
+                            // 获取群聊所有的用户成功以后获取用户状态
+                            this.getOnLineUserIds()
+                            this.loadingMessage()
+                        })
+                    }
+                })
+        }else{
+            GetUserInfos([group.creator,user.id])
+                .then(userInfo=>{
+                    var userIds = [] as any[];
+                    userIds.push({
+                        userId:group.creator,
+                        onLine:false,
+                    });
                     this.setState({
-                        groupinUsers: res,
+                        groupinUsers: userIds,
                         users: userInfo
                     }, () => {
-                        console.log('loadingGroupUser');
-
-                        // 获取群聊所有的用户成功以后获取用户状态
-                        this.getOnLineUserIds()
                         this.loadingMessage()
                     })
-                }
-            })
+                })
+        }
     }
 
     componentWillUnmount() {

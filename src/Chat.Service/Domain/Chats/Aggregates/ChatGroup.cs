@@ -22,4 +22,9 @@ public class ChatGroup: AuditAggregateRoot<Guid, Guid>
     public ChatGroup(Guid id) : base(id)
     {
     }
+
+    public ChatGroup(Guid id,Guid creator) : base(id)
+    {
+        Creator = creator;
+    }
 }

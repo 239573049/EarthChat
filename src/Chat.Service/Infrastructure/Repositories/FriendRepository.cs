@@ -16,7 +16,7 @@ public class FriendRepository : BaseRepository<ChatDbContext, Friend, Guid>, IFr
             (from friend in Context.Friends
                 join user in Context.Users on friend.FriendId equals user.Id
                 where friend.SelfId == userId
-                select new ChatGroup(friend.GroupId)
+                select new ChatGroup(friend.GroupId,user.Id)
                 {
                     Avatar = user.Avatar,
                     Default = false,
