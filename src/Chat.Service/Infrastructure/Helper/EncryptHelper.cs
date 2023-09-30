@@ -6,7 +6,7 @@ namespace Chat.Service.Infrastructure.Helper;
 public static class EncryptHelper
 {
     private static string key = "s!9%h_h,";
-    
+
     /// <summary>
     /// 加密
     /// </summary>
@@ -14,6 +14,11 @@ public static class EncryptHelper
     /// <returns></returns>
     public static string Encrypt(string pToEncrypt)
     {
+        if (pToEncrypt.IsNullOrWhiteSpace())
+        {
+            return string.Empty;
+        }
+
         var des = new DESCryptoServiceProvider();
         byte[] inputByteArray = Encoding.Default.GetBytes(pToEncrypt);
         des.Key = Encoding.ASCII.GetBytes(key);
@@ -38,6 +43,11 @@ public static class EncryptHelper
     /// <returns></returns>
     public static string Decrypt(string pToDecrypt)
     {
+        if (pToDecrypt.IsNullOrWhiteSpace())
+        {
+            return string.Empty;
+        }
+
         var des = new DESCryptoServiceProvider();
         byte[] inputByteArray = new byte[pToDecrypt.Length / 2];
         for (int x = 0; x < pToDecrypt.Length / 2; x++)
