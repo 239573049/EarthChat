@@ -98,7 +98,7 @@
                                                 <Image Source="../Assets/avatar.png" Height="25" Width="25" />
                                             </Border>
                                             <TextBlock FontSize="13" Margin="5,0,0,0" VerticalAlignment="Center"
-                                                       Text="{Binding User.Name}">
+                                                       Text="{Binding Name}">
                                             </TextBlock>
                                         </WrapPanel>
                                         <Border.Styles>

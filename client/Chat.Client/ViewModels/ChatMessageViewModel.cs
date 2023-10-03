@@ -28,9 +28,9 @@ public class ChatMessageViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _editorViewModel, value);
     }
 
-    private ObservableCollection<ChatGroupInUserDto> _groupInUserModels = new();
+    private ObservableCollection<UserDto> _groupInUserModels = new();
 
-    public ObservableCollection<ChatGroupInUserDto> GroupInUserModels
+    public ObservableCollection<UserDto> GroupInUserModels
     {
         get => _groupInUserModels;
         set => this.RaiseAndSetIfChanged(ref _groupInUserModels, value);

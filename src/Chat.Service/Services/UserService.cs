@@ -40,7 +40,7 @@ public class UserService : BaseService<UserService>, IUserService
     }
 
     [Authorize]
-    public async Task<IReadOnlyList<UserDto>> ListAsync([FromBody]List<Guid> userIds)
+    public async Task<List<UserDto>> ListAsync([FromBody] List<Guid> userIds)
     {
         var query = new GetUserListQuery(userIds);
         await PublishAsync(query);

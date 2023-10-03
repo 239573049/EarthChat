@@ -28,13 +28,13 @@ public interface IChatService
     /// <param name="connections"></param>
     /// <returns></returns>
     Task<ResultDto> CreateGroupAsync(CreateGroupDto dto,string connections);
-    
+
     /// <summary>
     /// 获取群组中的用户。
     /// </summary>
     /// <param name="groupId"></param>
     /// <returns></returns>
-    Task<IOrderedEnumerable<GroupUserDto>> GetGroupInUserAsync(Guid groupId);
+    Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId);
 
     /// <summary>
     /// 只获取群组在线用户id

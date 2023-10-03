@@ -4,16 +4,13 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Chat.Contracts.Core;
 using Chat.Contracts.Users;
+using LiteDB;
 using Masa.Utils.Models;
 
 namespace Chat.Client.Services;
 
 public class ChatService : IChatService
 {
-    public Task<ResultDto<GetUserDto[]>?> GetOnlineUsersAsync()
-    {
-        return Caller.GetHttpClient().GetFromJsonAsync<ResultDto<GetUserDto[]>>("Chats/OnlineUsers");
-    }
 
     public Task<ResultDto<PaginatedListBase<ChatMessageDto>>> GetListAsync(Guid groupId, int page, int pageSize)
     {
@@ -27,36 +24,20 @@ public class ChatService : IChatService
         return Caller.GetHttpClient().GetFromJsonAsync<IReadOnlyList<ChatGroupDto>>("Chats/UserGroup");
     }
 
-    Task<ResultDto> IChatService.CreateGroupAsync(CreateGroupDto dto, string connections)
+    public Task<ResultDto> CreateGroupAsync(CreateGroupDto dto, string connections)
     {
         throw new NotImplementedException();
     }
 
-    /// <inheritdoc />
-    public async Task CreateGroupAsync(CreateGroupDto dto)
+    public async Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId)
     {
-        await Caller.GetHttpClient().PostAsJsonAsync("Chats/Group", dto);
-    }
-
-    public Task AddUserToGroupAsync(Guid groupId, Guid userId)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<IOrderedEnumerable<GroupUserDto>> GetGroupInUserAsync(Guid groupId)
-    {
-        return await Caller.GetHttpClient().GetFromJsonAsync<IOrderedEnumerable<GroupUserDto>>("Chats/GroupInUser?groupId=" + groupId);
+        return await Caller.GetHttpClient()
+            .GetFromJsonAsync<List<GroupUserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }
 
     public Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId)
     {
         throw new NotImplementedException();
-    }
-
-    /// <inheritdoc />
-    public async Task<IOrderedEnumerable<UserDto>> GetGroupInUserAsync(Guid groupId, int page, int pageSize)
-    {
-        return await Caller.GetAsync<IOrderedEnumerable<UserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }
 
     public Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id)

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Chat.Service.Services;
 
-public class EmojiService : BaseService<EmojiService>
+public class EmojiService : BaseService<EmojiService>,IEmojiService
 {
     [Authorize]
     public async Task<ResultDto> CreateAsync(string path)

@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Chat.Client.Services;
 using Chat.Client.ViewModels;
+using Chat.Contracts.Users;
 using DynamicData;
 
 namespace Chat.Client.Components;
@@ -14,7 +16,7 @@ public partial class ChatMessage : UserControl
 {
     private bool _startList;
 
-    private static Dictionary<Guid, List<ChatGroupInUserDto>> _groupInUserModels = new(5);
+    private static Dictionary<Guid, List<UserDto>> _groupInUserModels = new(5);
 
     public static FilePickerFileType ImageAll { get; } = new("All Images")
     {
@@ -124,8 +126,8 @@ public partial class ChatMessage : UserControl
             var chatService = await MainAppHelper.GetService<IChatService>().GetGroupInUserAsync(messageList.Id);
             if (!_groupInUserModels.ContainsKey(messageList.Id))
             {
-                // _groupInUserModels.TryAdd(messageList.Id.ToString("N"), chatService);
-                // list = chatService;
+                var userService = MainAppHelper.GetRequiredService<IUserService>();
+                list = await userService.ListAsync(chatService.Select(x=>x.UserId).ToList());
             }
         }
 
