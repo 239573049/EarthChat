@@ -21,6 +21,9 @@
     <a href="https://github.com/239573049/chat" target="_blank">
         <img alt="License" src="https://img.shields.io/github/stars/239573049/chat">
     </a>
+    <a href='https://gitee.com/hejiale010426/chat/stargazers'>
+        <img src='https://gitee.com/hejiale010426/chat/badge/star.svg?theme=dark' alt='star'></img>
+    </a>
 </div>
 
 ## 项目介绍
