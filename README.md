@@ -11,7 +11,6 @@
 
 <div align="center">
     <a href="#微信交流群"><img src="https://img.shields.io/badge/微信交流群-blue.svg?style=plasticr"></a>
-    <a href="#技术交流"><img src="https://img.shields.io/badge/交流群-加入开发-green.svg?style=plasticr"></a>
     <a href="https://116.196.96.91/docs/intro/"><img src="https://img.shields.io/badge/项目文档-green.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat"><img src="https://img.shields.io/badge/github-项目地址-yellow.svg?style=plasticr"></a>
     <a href="https://gitee.com/hejiale010426/chat"><img src="https://img.shields.io/badge/码云-项目地址-orange.svg?style=plasticr"></a>
@@ -64,12 +63,8 @@
 | CONNECTION_STRING       | 数据库连接字符串                           |
 
 
-## 技术交流
+## 交流群
 
-qq群：737776595
-
-## 微信交流群
-
-![微信交流群](docs/static/img/ed1d8637a5ea540308d85523bd2a9f4.jpg)
+![交流群](docs/static/img/ed1d8637a5ea540308d85523bd2a9f4.jpg)
 
 
