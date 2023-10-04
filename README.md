@@ -47,6 +47,12 @@
  - Vite
  - Avalonia
 
+## 贡献
+
+<a href="https://github.com/239573049/EarthChat/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=239573049/EarthChat" />
+</a>
+
 ## 后端环境变量配置
 
 当环境变量为空则读取配置文件的值
