@@ -8,30 +8,6 @@ public partial class UserManage : UserControl
     public UserManage()
     {
         InitializeComponent();
-        DataContextChanged += (sender, args) =>
-        {
-            ViewModel.Users.Add(new Users()
-            {
-                Avatar = "",
-                Description = "",
-                Id = Guid.NewGuid(),
-                Name = "测试",
-            });
-            ViewModel.Users.Add(new Users()
-            {
-                Avatar = "",
-                Description = "",
-                Id = Guid.NewGuid(),
-                Name = "测试",
-            });
-            ViewModel.Users.Add(new Users()
-            {
-                Avatar = "",
-                Description = "",
-                Id = Guid.NewGuid(),
-                Name = "测试",
-            });
-        };
     }
 
     private UserManageViewModel ViewModel => (UserManageViewModel)DataContext;

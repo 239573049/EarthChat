@@ -14,6 +14,7 @@ import { IconPlus } from '@douyinfe/semi-icons';
 import { GetUserInfos } from '../../store/user-store'
 import { emoji } from '../../store/emoji';
 import FriendService from '../../services/friendService'
+import VideoPlayer from '../video';
 
 interface IProps {
     group: ChatGroupDto;
@@ -190,14 +191,14 @@ export default class Content extends Component<IProps, IState> {
     loadingGroupUser() {
         const { group } = this.props;
 
-        if(group.group){
+        if (group.group) {
             ChatService.getGroupInUser(group.id)
                 .then(async (res: any[]) => {
                     if (res) {
                         this.groupinUsers = res;
-    
+
                         const userids = res.map(x => x.userId)
-    
+
                         // 这里是为了保证用户的基本信息完整
                         const userInfo = await GetUserInfos(userids)
                         this.setState({
@@ -210,13 +211,13 @@ export default class Content extends Component<IProps, IState> {
                         })
                     }
                 })
-        }else{
-            GetUserInfos([group.creator,user.id])
-                .then(userInfo=>{
+        } else {
+            GetUserInfos([group.creator, user.id])
+                .then(userInfo => {
                     var userIds = [] as any[];
                     userIds.push({
-                        userId:group.creator,
-                        onLine:false,
+                        userId: group.creator,
+                        onLine: false,
                     });
                     this.setState({
                         groupinUsers: userIds,
@@ -396,6 +397,10 @@ export default class Content extends Component<IProps, IState> {
                         float: 'right'
                     }}>下载</Button>
                 </Card>
+            )
+        } else if (item.type === "Video" || item.type === 3) {
+            return (
+                <VideoPlayer url={item.content}/>
             )
         }
     }
@@ -632,6 +637,12 @@ export default class Content extends Component<IProps, IState> {
         input.click();
         input.onchange = (e: any) => {
             var files = e.target.files;
+            let type = 2;
+
+            const file = files[0] as File
+            if (this.isVideo(file.name)) {
+                type = 3;
+            }
             // 将文件放到form
             var formData = new FormData();
             formData.append('file', files[0]);
@@ -639,11 +650,16 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.props.group.id, 2);
+                        ChatHubService.send('SendMessage', res.data, this.props.group.id, type);
                     }
                 })
 
         }
+    }
+
+    isVideo(name: string) {
+        var videoExtensions = /\.(mp4|mov|avi|mkv|flv)$/i;
+        return videoExtensions.test(name);
     }
 
     invitation() {
