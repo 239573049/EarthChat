@@ -194,8 +194,6 @@ export default class Content extends Component<IProps, IState> {
             ChatService.getGroupInUser(group.id)
                 .then(async (res: any[]) => {
                     if (res) {
-                        this.groupinUsers = res;
-
                         const userids = res.map(x => x.userId)
 
                         // 这里是为了保证用户的基本信息完整
@@ -361,6 +359,7 @@ export default class Content extends Component<IProps, IState> {
     }
 
     revert(item: any) {
+        console.log(item);
 
     }
 
