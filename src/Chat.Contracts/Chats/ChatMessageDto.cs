@@ -31,6 +31,18 @@ public class ChatMessageDto
     public GetUserDto User { get; set; }
 
     /// <summary>
+    /// 回复上条内容的Id
+    /// </summary>
+    [Key("revertId")]
+    public Guid? RevertId { get; set; }
+
+    /// <summary>
+    /// 是否撤回
+    /// </summary>
+    [Key("countermand")]
+    public bool Countermand { get; set; }
+
+    /// <summary>
     /// 发送指定链接id
     /// </summary>
     [Key("groupId")]

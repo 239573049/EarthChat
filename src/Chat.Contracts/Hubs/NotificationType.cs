@@ -25,5 +25,10 @@ public enum NotificationType
     /// <summary>
     /// 群聊新增用户
     /// </summary>
-    GroupAppendUser
+    GroupAppendUser,
+    
+    /// <summary>
+    /// 撤回消息
+    /// </summary>
+    Countermand
 }

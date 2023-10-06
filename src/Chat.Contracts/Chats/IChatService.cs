@@ -49,4 +49,11 @@ public interface IChatService
     /// <param name="id"></param>
     /// <returns></returns>
     Task<ResultDto<ChatGroupDto>> GetGroupAsync(Guid id);
+
+    /// <summary>
+    /// 撤回消息
+    /// </summary>
+    /// <param name="id">消息Id</param>
+    /// <returns></returns>
+    Task<ResultDto> CountermandMessage(Guid id);
 }

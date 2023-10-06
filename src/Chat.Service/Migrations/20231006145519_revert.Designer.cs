@@ -3,6 +3,7 @@ using System;
 using Chat.Service.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Chat.Service.Migrations
 {
     [DbContext(typeof(ChatDbContext))]
-    partial class ChatDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231006145519_revert")]
+    partial class revert
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,13 +69,13 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4a78d446-155d-4f4f-8eb8-535347148047"),
+                            Id = new Guid("eb0549f8-074e-42b0-b727-63316666138b"),
                             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-                            CreationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1598),
+                            CreationTime = new DateTime(2023, 10, 6, 22, 55, 18, 917, DateTimeKind.Local).AddTicks(3760),
                             Creator = new Guid("00000000-0000-0000-0000-000000000000"),
                             Default = true,
                             Description = "世界频道，所有人默认加入的频道",
-                            ModificationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1598),
+                            ModificationTime = new DateTime(2023, 10, 6, 22, 55, 18, 917, DateTimeKind.Local).AddTicks(3761),
                             Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "世界频道"
                         });
@@ -101,8 +103,8 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("392e0e36-e072-4a6c-a096-64467f8a89d5"),
-                            ChatGroupId = new Guid("4a78d446-155d-4f4f-8eb8-535347148047"),
+                            UserId = new Guid("cf7531f0-ac7d-427d-8393-426cf442b1f2"),
+                            ChatGroupId = new Guid("eb0549f8-074e-42b0-b727-63316666138b"),
                             Id = new Guid("00000000-0000-0000-0000-000000000000")
                         });
                 });
@@ -120,9 +122,6 @@ namespace Chat.Service.Migrations
                         .IsRequired()
                         .HasMaxLength(5000)
                         .HasColumnType("character varying(5000)");
-
-                    b.Property<bool>("Countermand")
-                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone");
@@ -365,12 +364,12 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("392e0e36-e072-4a6c-a096-64467f8a89d5"),
+                            Id = new Guid("cf7531f0-ac7d-427d-8393-426cf442b1f2"),
                             Account = "admin",
                             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-                            CreationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1477),
+                            CreationTime = new DateTime(2023, 10, 6, 22, 55, 18, 917, DateTimeKind.Local).AddTicks(3597),
                             Creator = new Guid("00000000-0000-0000-0000-000000000000"),
-                            ModificationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1489),
+                            ModificationTime = new DateTime(2023, 10, 6, 22, 55, 18, 917, DateTimeKind.Local).AddTicks(3612),
                             Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "管理员",
                             Password = "3786F993CB0AF43E"

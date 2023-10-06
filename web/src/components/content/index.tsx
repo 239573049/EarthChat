@@ -15,6 +15,7 @@ import { GetUserInfos } from '../../store/user-store'
 import { emoji } from '../../store/emoji';
 import FriendService from '../../services/friendService'
 import VideoPlayer from '../video';
+import chatService from '../../services/chatService';
 
 interface IProps {
     group: ChatGroupDto;
@@ -67,8 +68,6 @@ export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
 
     private mentionRef = React.createRef<Mention>();
-
-    private groupinUsers: any[] = [];
 
     menuFunction = () => {
         return <Tooltip
@@ -238,25 +237,38 @@ export default class Content extends Component<IProps, IState> {
         })
     }
 
-    onNotification(_: any, data: any) {
-        if (data.type === "GroupUserNew") {
+    onNotification(_: any, messageData: any) {
+        if (messageData.type === "GroupUserNew") {
 
             // 如果是当前用户的推送则忽略
-            if (data.data === user.id) {
+            if (messageData.data === user.id) {
                 return;
             }
             // 当存在新用户登录则刷新状态。
             this.getOnLineUserIds()
-        } else if (data.type === "FriendRequest") {
+        } else if (messageData.type === "FriendRequest") {
             Notification.info({
-                content: data.content
+                content: messageData.content
             })
-        } else if (data.type === "System") {
+        } else if (messageData.type === "System") {
             Notification.info({
-                content: data.content
+                content: messageData.content
             })
-        } else if (data.type === "GroupAppendUser") {
+        } else if (messageData.type === "GroupAppendUser") {
             this.loadingGroupUser();
+        } else if (messageData.type === "Countermand") {
+            debugger;
+            const { data } = this.state;
+
+            data.forEach(x => {
+                if (x.id === messageData.data) {
+                    x.countermand = true;
+                }
+            })
+
+            this.setState({
+                data: [...data]
+            })
         }
     }
 
@@ -348,23 +360,47 @@ export default class Content extends Component<IProps, IState> {
         return timeDifferenceInMinutes < 2;
     }
 
+    revert(item: any) {
+
+    }
+
+    countermand(item: any) {
+        chatService.countermandMessage(item.id)
+            .then(res => {
+                if (res.code !== "200") {
+                    Toast.error(res.message);
+                }
+            })
+    }
 
     rendetContent = (item: any, u: any) => {
-        const className = user?.id === u?.id ? ' message-item-content-user' : '';
+        const className = user?.id === u?.id ? 'message-item-content-user' : '';
+
+
+        // 判断是否为当前用户或智能助手
+        const iscurren = item?.userId === user.id;
 
         if (item.type === "Text" || item.type === 0) {
             return (
-                <div className={'message-item-content' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap' }}>
-                    {item.content}
-                </div>
+                <Tooltip style={{
+                    backgroundColor: 'var(--message-item-content-background-color)'
+                }} content={<div className='image-menu'>
+                    <div className='image-menu-item' onClick={() => this.revert(item)}>回复</div>
+                    {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
+                </div>} position='rightTop' trigger="contextMenu" >
+                    <div className={'message-item-content ' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap' }}>
+                        {item.content}
+                    </div>
+                </Tooltip>
             )
         } else if (item.type === "Image" || item.type === 1) {
             return (
-                <span >
+                <div >
                     <Tooltip style={{
                         backgroundColor: 'var(--message-item-content-background-color)'
                     }} content={<div className='image-menu'>
                         <div className='image-menu-item' onClick={() => this.addEmoji(item)}>添加到表情</div>
+                        {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
                     </div>} position='rightTop' trigger="contextMenu" >
                         <Image
                             width={'100%'}
@@ -374,7 +410,7 @@ export default class Content extends Component<IProps, IState> {
                                 height: 'auto',
                                 marginBottom: '20px',
                                 marginTop: '8px',
-                                maxWidth: '65%',
+                                maxWidth: '45%',
                                 borderRadius: '8px',
                                 marginLeft: '10px',
                             }}
@@ -382,7 +418,7 @@ export default class Content extends Component<IProps, IState> {
                             src={item.content}
                         />
                     </Tooltip>
-                </span>
+                </div>
             )
         } else if (item.type === "File" || item.type === 2) {
             return (
@@ -400,7 +436,7 @@ export default class Content extends Component<IProps, IState> {
             )
         } else if (item.type === "Video" || item.type === 3) {
             return (
-                <VideoPlayer url={item.content}/>
+                <VideoPlayer url={item.content} />
             )
         }
     }
@@ -442,14 +478,13 @@ export default class Content extends Component<IProps, IState> {
         var hour2 = date2.getHours();
         var minute2 = date2.getMinutes();
 
-        // 判断年、月、日、小时和分钟是否相同
-        if (year1 === year2 && month1 === month2 && day1 === day2 && hour1 === hour2 && minute1 === minute2) {
+        // 判断年、月、日、小时是否相同
+        if (year1 === year2 && month1 === month2 && day1 === day2 && hour1 === hour2) {
             return true;
         } else {
             return false;
         }
     }
-
 
     rowRenderer(item: any, index: number) {
         try {
@@ -460,6 +495,17 @@ export default class Content extends Component<IProps, IState> {
             }
 
             let user = users.find(x => x.id === item.userId)
+
+
+            if (item.countermand) {
+                return (<div style={{
+                    textAlign: 'center',
+                    marginTop:'8px',
+                    marginBottom:'8px'
+                }}>
+                    {user?.name + "撤回一条消息。"}
+                </div>)
+            }
 
             return (
                 <div key={item.Id} style={{ margin: '15px' }}>
@@ -481,6 +527,9 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    /**
+     * 加载记录
+     */
     loadingMessage() {
         const { group } = this.props;
         const { page } = this.state;
@@ -537,39 +586,16 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    ListComponent = (height: any) => {
-        const { data } = this.state;
-        return (
-            <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
-                {data.map((x, i) => {
-                    return (<div key={"ListComponent_" + i}>
-                        {this.rowRenderer(x, i)}
-                    </div>)
-                })}
-            </div>
-        );
-    };
-
+    /**
+     * 下载文件
+     * @param url 
+     */
     download(url: string) {
         var a = document.createElement('a');
         a.href = url;
         a.target = '_blank'
         a.download = url.split('/')[url.split('/').length - 1];
         a.click();
-    }
-
-    onSearch(value?: string) {
-        const { groupinUsers } = this.state;
-
-        if (value) {
-            this.setState({
-                groupinUsers: groupinUsers.filter(item => item.name.includes(value))
-            })
-        } else {
-            this.setState({
-                groupinUsers: this.groupinUsers
-            })
-        }
     }
 
     /**
@@ -597,7 +623,6 @@ export default class Content extends Component<IProps, IState> {
 
         scroll();
     }
-
 
     selectPicture() {
         var input = document.createElement('input');
@@ -630,6 +655,9 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    /**
+     * 选择上传文件
+     */
     selectFile() {
         var input = document.createElement('input');
         input.type = 'file';
@@ -637,11 +665,13 @@ export default class Content extends Component<IProps, IState> {
         input.click();
         input.onchange = (e: any) => {
             var files = e.target.files;
+
+            // 默认 2 文件
             let type = 2;
 
             const file = files[0] as File
             if (this.isVideo(file.name)) {
-                type = 3;
+                type = 3; // 视频
             }
             // 将文件放到form
             var formData = new FormData();
@@ -657,16 +687,28 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
+    /**
+     * 是否视频
+     * @param name 
+     * @returns 
+     */
     isVideo(name: string) {
         var videoExtensions = /\.(mp4|mov|avi|mkv|flv)$/i;
         return videoExtensions.test(name);
     }
 
+    /**
+     * 邀请点击
+     */
     invitation() {
         const { group } = this.props;
-        const url = window.location.origin + "/invitation-group?code=" + group.id;
-        copy(url)
-        Toast.success('邀请地址已经复制');
+        if (group.group) {
+            const url = window.location.origin + "/invitation-group?code=" + group.id;
+            copy(url)
+            Toast.success('邀请地址已经复制');
+        } else {
+            Toast.error('暂未实现功能')
+        }
     }
 
     async clickFriends(id: string) {
@@ -691,8 +733,14 @@ export default class Content extends Component<IProps, IState> {
         })
     }
 
+    /**
+     * 渲染用户基本信息
+     * @param dto 
+     * @returns 
+     */
     renderInfo(dto: GetUserDto | undefined) {
 
+        // 判断是否为当前用户或智能助手
         const iscurren = dto?.id === user.id || dto?.id === "00000000-0000-0000-0000-000000000000";
 
         return (<>
@@ -930,12 +978,12 @@ export default class Content extends Component<IProps, IState> {
     }
 
     render() {
-        const { groupinUsers, users, addFriend } = this.state;
+        const { groupinUsers, users, addFriend, data, height } = this.state;
         const { group } = this.props;
 
         return (
             <>
-                <div className="content-header">
+                <div className="content-header ">
                     <div
                         style={{
                             fontSize: '20px',
@@ -962,14 +1010,20 @@ export default class Content extends Component<IProps, IState> {
                     float: 'left',
                     width: 'calc(100% - 180px)',
                 }}>
-                    <div className="content-box " style={{ flexBasis: `calc(100% - ${this.state.height}px - 10px)`, }}>
-                        {this.ListComponent(this.state.height)}
+                    <div className="content-box " style={{ flexBasis: `calc(100% - ${height}px - 10px)`, }}>
+                        <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
+                            {data.map((x, i) => {
+                                return (<div key={"ListComponent_" + i}>
+                                    {this.rowRenderer(x, i)}
+                                </div>)
+                            })}
+                        </div>
                     </div>
-                    <div className="draggable-line" onMouseDown={this.handleMouseDown}></div>
+                    <div className="draggable-line " onMouseDown={this.handleMouseDown}></div>
                     <div
-                        className="resizable-box"
+                        className="resizable-box slide-in-bottom"
                         ref={this.resizableRef}
-                        style={{ height: `${this.state.height}px` }}
+                        style={{ height: `${height}px` }}
                     >
                         <div className='content-function'>
                             <Popover position='top' content={this.renderEmoji()} trigger="click">
@@ -1046,7 +1100,7 @@ export default class Content extends Component<IProps, IState> {
                         {groupinUsers.map((item, index) => {
                             const user = users.find(x => x.id == item.userId)
                             return (
-                                <div key={"groupInUser_" + index} className='grou-user-item'>
+                                <div key={"groupInUser_" + index} className='grou-user-item slide-in-bottom'>
                                     <div className='grou-user-item-content'>
                                         <div style={{
                                             float: 'left'
@@ -1079,7 +1133,7 @@ export default class Content extends Component<IProps, IState> {
                                                     <Tag style={{
                                                         boxSizing: 'content-box',
                                                         float: 'right',
-                                                    }} color='red'>频道主人</Tag> :
+                                                    }} color='red'>频道主</Tag> :
                                                     <Tag style={{
                                                         boxSizing: 'content-box',
                                                         float: 'right',

@@ -44,4 +44,9 @@ public class ChatService : IChatService
     {
         throw new NotImplementedException();
     }
+
+    public Task<ResultDto> CountermandMessage(Guid id)
+    {
+        throw new NotImplementedException();
+    }
 }

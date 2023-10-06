@@ -21,6 +21,9 @@ public class ChatMessageRepository : BaseRepository<ChatDbContext, ChatMessage, 
             {
                 Content = messages.Content,
                 Type = messages.Type,
+                Countermand = messages.Countermand,
+                RevertId = messages.RevertId,
+                ChatGroupId = messages.ChatGroupId,
                 UserId = messages.UserId ?? Guid.Empty
             };
 

@@ -69,7 +69,7 @@ public class CommandHandler
         {
             Avatar = command.Dto.Avatar,
 
-            Description = command.Dto.Description,
+            Description = command.Dto.Description ?? string.Empty,
             Name = command.Dto.Name,
         };
 
@@ -178,4 +178,37 @@ public class CommandHandler
         }
     }
 
+    [EventHandler]
+    public async Task CountermandAsync(CountermandCommand command)
+    {
+        var value = await _chatMessageRepository.FindAsync(x =>
+            x.Id == command.Id && x.Creator == _userContext.GetUserId<Guid>());
+
+        if (value == null)
+        {
+            return;
+        }
+
+        // 判断消息创建时间是否超过5分钟
+        if (value.CreationTime < DateTime.Now.AddMinutes(-5))
+        {
+            throw new UserFriendlyException("消息超过5分钟不能撤回");
+        }
+
+        value.Content = string.Empty;
+        value.Countermand = true;
+
+        await _chatMessageRepository.UpdateAsync(value);
+
+        var systemCommand = new SystemCommand(new Notification()
+        {
+            createdTime = DateTime.Now,
+            content = "撤回消息",
+            data = value.Id,
+            type = NotificationType.Countermand
+        }, new[] { value.ChatGroupId },
+            true);
+
+        await _eventBus.PublishAsync(systemCommand);
+    }
 }

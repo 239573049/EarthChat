@@ -293,7 +293,7 @@ class Home extends Component<{}, AppState> {
 
         return (
             <>
-                <div className="middle" style={{ width: `${middleWidth}px` }}>
+                <div className="middle " style={{ width: `${middleWidth}px` }}>
                     <div style={{
                         marginTop: '30px',
                         fontSize: '20px',
@@ -362,8 +362,8 @@ class Home extends Component<{}, AppState> {
                         />
                     </div>
                 </div>
-                <div className="resizer" onMouseDown={this.handleMouseDown}></div>
-                <div className="right" style={{ width: rightWidth }}>
+                <div className="resizer " onMouseDown={this.handleMouseDown}></div>
+                <div className="right " style={{ width: rightWidth }}>
                     {renderContent()}
                 </div>
 

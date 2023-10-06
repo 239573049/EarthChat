@@ -65,6 +65,15 @@ public class ChatService : BaseService<ChatService>, IChatService
         return query.Result.CreateResult();
     }
 
+    /// <inheritdoc />
+    public async Task<ResultDto> CountermandMessage(Guid id)
+    {
+        var command = new CountermandCommand(id);
+        await PublishAsync(command);
+
+        return new ResultDto();
+    }
+
     [Authorize]
     public async Task InvitationGroupAsync(Guid id)
     {

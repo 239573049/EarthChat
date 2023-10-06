@@ -62,6 +62,14 @@ class ChatService {
         return Request.post(`${baseURL}/InvitationGroup/${id}`)
     }
 
+    /**
+     * 撤回消息
+     * @param id 
+     * @returns 
+     */
+    countermandMessage(id:string){
+        return Request.post(`${baseURL}/CountermandMessage/`+id)
+    }
 }
 
 export default new ChatService()

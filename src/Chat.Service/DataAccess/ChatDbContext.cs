@@ -65,6 +65,7 @@ public class ChatDbContext : MasaDbContext
 
             options.HasIndex(x => x.ChatGroupId);
             options.HasIndex(x => x.UserId);
+
         });
 
         builder.Entity<ChatGroup>(options =>
