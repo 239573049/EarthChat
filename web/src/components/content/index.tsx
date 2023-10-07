@@ -456,7 +456,7 @@ export default class Content extends Component<IProps, IState> {
             positioningSize++;
             setTimeout(() => {
                 this.positioning(id);
-            }, 300);
+            }, 500);
         }
     }
 
