@@ -44,9 +44,4 @@ public class ChatMessage : AuditAggregateRoot<Guid, Guid>
     
     [NotMapped]
     public virtual User User { get; set; }
-
-    protected override DateTime GetCurrentTime()
-    {
-        return DateTime.Now;
-    }
 }

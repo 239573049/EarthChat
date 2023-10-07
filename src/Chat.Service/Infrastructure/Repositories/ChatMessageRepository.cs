@@ -35,7 +35,13 @@ public class ChatMessageRepository : BaseRepository<ChatDbContext, ChatMessage, 
 
     public async Task CreateAsync(ChatMessage message)
     {
-        await Context.ChatMessages.AddAsync(message); 
+        await Context.ChatMessages.AddAsync(message);
         await Context.SaveChangesAsync();
+    }
+
+    public async Task<bool> UpdateCountermand(Guid id, Guid userId, bool countermand)
+    {
+        return (await Context.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE \"ChatMessages\" SET \"Countermand\"={countermand} where \"Id\"={id} and \"Creator\" = {userId};"))>0;
     }
 }

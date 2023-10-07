@@ -12,4 +12,13 @@ public interface IChatMessageRepository : IBaseRepository<ChatMessage, Guid>
     /// <param name="message"></param>
     /// <returns></returns>
     Task CreateAsync(ChatMessage message);
+
+    /// <summary>
+    /// 更新消息的撤回状态
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="userId"></param>
+    /// <param name="countermand"></param>
+    /// <returns></returns>
+    Task<bool> UpdateCountermand(Guid id, Guid userId, bool countermand);
 }

@@ -195,20 +195,23 @@ public class CommandHandler
             throw new UserFriendlyException("消息超过5分钟不能撤回");
         }
 
-        value.Content = string.Empty;
-        value.Countermand = true;
-
-        await _chatMessageRepository.UpdateAsync(value);
-
-        var systemCommand = new SystemCommand(new Notification()
+        if (await _chatMessageRepository.UpdateCountermand(value.Id, _userContext.GetUserId<Guid>(), true))
         {
-            createdTime = DateTime.Now,
-            content = "撤回消息",
-            data = value.Id,
-            type = NotificationType.Countermand
-        }, new[] { value.ChatGroupId },
-            true);
+            var systemCommand = new SystemCommand(new Notification()
+                {
+                    createdTime = DateTime.Now,
+                    content = "撤回消息",
+                    data = value.Id,
+                    type = NotificationType.Countermand
+                }, new[] { value.ChatGroupId },
+                true);
 
-        await _eventBus.PublishAsync(systemCommand);
+            await _eventBus.PublishAsync(systemCommand);
+        }
+        else
+        {
+            throw new UserFriendlyException("撤回失败");
+        }
+
     }
 }
