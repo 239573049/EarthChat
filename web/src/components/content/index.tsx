@@ -372,12 +372,10 @@ export default class Content extends Component<IProps, IState> {
             })
     }
 
-    rendetContent = (item: any, u: any) => {
+    rendetContent = (item: any, u: any, iscurren: boolean) => {
         const className = user?.id === u?.id ? 'message-item-content-user' : '';
 
-
-        // 判断是否为当前用户或智能助手
-        const iscurren = item?.userId === user.id;
+        const float = iscurren ? "right" : '' as any;
 
         if (item.type === "Text" || item.type === 0) {
             return (
@@ -387,7 +385,10 @@ export default class Content extends Component<IProps, IState> {
                     <div className='image-menu-item' onClick={() => this.revert(item)}>回复</div>
                     {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
                 </div>} position='rightTop' trigger="contextMenu" >
-                    <div className={'message-item-content ' + className} style={{ display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap' }}>
+                    <div className={'message-item-content ' + className} style={{
+                        display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap',
+                        float: float
+                    }}>
                         {item.content}
                     </div>
                 </Tooltip>
@@ -412,6 +413,7 @@ export default class Content extends Component<IProps, IState> {
                                 maxWidth: '45%',
                                 borderRadius: '8px',
                                 marginLeft: '10px',
+                                float: float
                             }}
                             height={'100%'}
                             src={item.content}
@@ -421,21 +423,37 @@ export default class Content extends Component<IProps, IState> {
             )
         } else if (item.type === "File" || item.type === 2) {
             return (
-                <Card
-                    className='message-item-content '
-                    style={{ width: 300, display: 'inline-block', marginBottom: '20px', marginLeft: '10px' }}
-                >
-                    <span>
-                        {item.content.substring(item.content.lastIndexOf("/") + 1)}
-                    </span>
-                    <Button onClick={() => this.download(item.content)} style={{
-                        float: 'right'
-                    }}>下载</Button>
-                </Card>
+
+                <Tooltip style={{
+                    backgroundColor: 'var(--message-item-content-background-color)'
+                }} content={<div className='image-menu'>
+                    {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
+                </div>} position='rightTop' trigger="contextMenu" >
+                    <Card
+                        className='message-item-content '
+                        style={{
+                            width: 300, display: 'inline-block', marginBottom: '20px', marginLeft: '10px',
+                            float: float
+                        }}
+                    >
+                        <span>
+                            {item.content.substring(item.content.lastIndexOf("/") + 1)}
+                        </span>
+                        <Button onClick={() => this.download(item.content)} style={{
+                            float: 'right'
+                        }}>下载</Button>
+                    </Card>
+                </Tooltip>
             )
         } else if (item.type === "Video" || item.type === 3) {
             return (
-                <VideoPlayer url={item.content} />
+                <Tooltip style={{
+                    backgroundColor: 'var(--message-item-content-background-color)'
+                }} content={<div className='image-menu'>
+                    {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
+                </div>} position='rightTop' trigger='hover'>
+                    <VideoPlayer float={float} url={item.content} />
+                </Tooltip>
             )
         }
     }
@@ -493,33 +511,56 @@ export default class Content extends Component<IProps, IState> {
                 date = this.formatTime(item.creationTime)
             }
 
-            let user = users.find(x => x.id === item.userId)
-
+            let userItem = users.find(x => x.id === item.userId)
 
             if (item.countermand) {
                 return (<div style={{
                     textAlign: 'center',
-                    marginTop:'8px',
-                    marginBottom:'8px'
+                    marginTop: '8px',
+                    marginBottom: '8px'
                 }}>
-                    {user?.name + "撤回一条消息。"}
+                    {userItem?.name + "撤回一条消息。"}
                 </div>)
             }
 
-            return (
-                <div key={item.Id} style={{ margin: '15px' }}>
+            // 判断是否为当前用户
+            const iscurren = item?.userId === user?.id;
+
+            if (iscurren) {
+                return <>
                     {date && <div style={{
                         textAlign: 'center'
                     }}>{date}</div>}
-                    <Tooltip position='right' content={() => this.renderInfo(user)} trigger="click" >
-                        <Avatar size='small' style={{ float: 'left' }} src={user?.avatar} />
-                    </Tooltip>
-                    <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                        {user?.name}
+                    <div style={{
+                        float: 'right',
+                        width: '100%',
+                    }}>
+                        <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
+                            <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar} />
+                        </Tooltip>
+                        <div style={{ paddingRight: '10px', float: 'right', width: "calc(100% - 50px)", textAlign: 'end' }}>
+                            {userItem?.name}
+                        </div>
+                        {this.rendetContent(item, userItem, iscurren)}
                     </div>
-                    {this.rendetContent(item, user)}
-                </div>
-            );
+                </>
+            } else {
+                return <> {date && <div style={{
+                    textAlign: 'center'
+                }}>{date}</div>}
+                    <div style={{
+                        margin: '8px',
+                    }}>
+                        <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
+                            <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar} />
+                        </Tooltip>
+                        <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
+                            {userItem?.name}
+                        </div>
+                        {this.rendetContent(item, userItem, iscurren)}
+                    </div>
+                </>
+            }
         } catch (error) {
             console.log(error);
 

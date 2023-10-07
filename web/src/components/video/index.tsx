@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 interface VideoPlayerProps {
   url: string;
+  float: any,
 }
 
 class VideoPlayer extends Component<VideoPlayerProps> {
@@ -17,18 +18,19 @@ class VideoPlayer extends Component<VideoPlayerProps> {
   }
 
   render() {
-    const { url } = this.props;
+    const { url, float } = this.props;
 
     return (<video
-        style={{
-          borderRadius: 8,
-          width: '400px',
-          cursor: 'pointer',
-        }}
-        src={url}
-        controls
-        autoPlay={false}
-      ></video>
+      style={{
+        borderRadius: 8,
+        width: '400px',
+        cursor: 'pointer',
+        float: float
+      }}
+      src={url}
+      controls
+      autoPlay={false}
+    ></video>
     );
   }
 }

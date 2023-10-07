@@ -1,18 +1,17 @@
 // 根据body的属性值来判断主题
-body[theme-mode='dark'] {
-    --select-background-color: #1A1A1A;
-    --sekect-chat-item-background-color: #2D2D2D;
+body[theme-mode="dark"] {
+    --select-background-color: #1a1a1a;
+    --sekect-chat-item-background-color: #2d2d2d;
     --select-group-item-background-color: #242424;
     --message-item-content-background-color: #262626;
 }
 
-body:not([theme-mode='dark']) {
-    --select-background-color: #EAEAEA;
-    --sekect-chat-item-background-color: #F5F5F5;
-    --select-group-item-background-color: #E9E9E9;
-    --message-item-content-background-color: #FFFFFF;
+body:not([theme-mode="dark"]) {
+    --select-background-color: #eaeaea;
+    --sekect-chat-item-background-color: #f5f5f5;
+    --select-group-item-background-color: #e9e9e9;
+    --message-item-content-background-color: #ffffff;
 }
-
 
 .content-header {
     height: 65px;
@@ -27,10 +26,7 @@ body:not([theme-mode='dark']) {
         margin-top: 10px;
         width: 100%;
         align-items: center;
-
     }
-
-
 }
 
 .icon-function {
@@ -39,7 +35,7 @@ body:not([theme-mode='dark']) {
 }
 
 .icon-function:hover {
-    fill: #0065C9 !important;
+    fill: #0065c9 !important;
 }
 
 .content-divider {
@@ -57,7 +53,8 @@ body:not([theme-mode='dark']) {
     flex-grow: 1;
 }
 
-.resizable-box {}
+.resizable-box {
+}
 
 .draggable-line {
     height: 2px;
@@ -65,15 +62,13 @@ body:not([theme-mode='dark']) {
     cursor: ns-resize;
 }
 
-
-
 ::view-transition-old(root) {
     animation: none;
 }
 
 ::view-transition-new(root) {
     mix-blend-mode: normal;
-    animation: clip .5s ease-in;
+    animation: clip 0.5s ease-in;
 }
 
 @keyframes clip {
@@ -106,7 +101,8 @@ body:not([theme-mode='dark']) {
     background-color: var(--message-item-content-background-color);
 }
 
-.message-item-content-user {}
+.message-item-content-user {
+}
 
 .grou-user-item {
     height: 25px;
@@ -125,7 +121,6 @@ body:not([theme-mode='dark']) {
 .grou-user-item-content:hover {
     background-color: var(--select-group-item-background-color);
 }
-
 
 .user-group {
     .semi-list-items {
@@ -146,11 +141,11 @@ body:not([theme-mode='dark']) {
 }
 
 .emoji-item:hover {
-    background-color: var(--user-tab-background-color) ;
+    background-color: var(--user-tab-background-color);
 }
 
 .emoji-select {
-    background-color: #0066CC !important;
+    background-color: #0066cc !important;
     border-radius: 8px;
 }
 
@@ -165,30 +160,31 @@ body:not([theme-mode='dark']) {
     background-color: var(--chat-panel-background-color);
 }
 
-.image-menu{
+.image-menu {
     background-color: var(--message-item-content-background-color);
     color: var(--semi-color-text-0);
 }
 
-.image-menu-item{
+.image-menu-item {
     border-radius: 8px;
     text-align: center;
     padding: 8px;
     cursor: pointer;
 }
 
-.image-menu-item:hover{
+.image-menu-item:hover {
     background-color: var(--sekect-chat-item-background-color);
 }
 
-
-.semi-tooltip-content{
+.semi-tooltip-content {
     color: var(--semi-color-text-0);
     background-color: var(--setting-tong-theme-background-color);
     border-radius: 8px;
 }
 
-.semi-tooltip-wrapper{
+.semi-tooltip-wrapper {
     background-color: var(--setting-tong-theme-background-color);
 }
 
+.item-curren {
+}
