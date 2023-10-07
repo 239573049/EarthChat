@@ -429,8 +429,8 @@ export default class Content extends Component<IProps, IState> {
     }
 
     positioning(id: string) {
-        id = "row_" + id;
-        var dom = document.getElementById(id);
+        id = id;
+        const dom = document.getElementById("row_" + id);
 
         const container = document.getElementById('message-list');
 
@@ -447,7 +447,7 @@ export default class Content extends Component<IProps, IState> {
         } else {
             container!.scrollTop = 0;
 
-            if (positioningSize > 8) {
+            if (positioningSize > 10) {
                 Toast.success("定位超时！");
                 positioningSize = 0;
                 return;
