@@ -26,6 +26,7 @@ public class CreateChatMessageDto
     /// </summary>
     public Dictionary<string, string> Extends { get; set; }
 
+    public Guid? RevertId { get; set; }
     /// <summary>
     /// 群组Id
     /// </summary>

@@ -1,10 +1,11 @@
 ﻿using Chat.Service.Domain.Chats.Aggregates;
+using Chat.Service.Infrastructure.Repositories.Views;
 
 namespace Chat.Service.Domain.Chats.Repositories;
 
 public interface IChatMessageRepository : IBaseRepository<ChatMessage, Guid>
 {
-    Task<List<ChatMessage>> GetListAsync(Guid queryGroupId, int page = 1, int pageSize = 20);
+    Task<List<ChatMessageView>> GetListAsync(Guid queryGroupId, int page = 1, int pageSize = 20);
 
     /// <summary>
     /// 创建并直接写入到数据库

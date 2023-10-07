@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Chat.Contracts.Chats;
 using Chat.Service.Domain.Chats.Aggregates;
+using Chat.Service.Infrastructure.Repositories.Views;
 
 namespace Chat.Service.Application.MappProfile;
 
@@ -16,5 +17,6 @@ public class ChatMessageProfile : Profile
 
         CreateMap<ChatGroupInUserDto, ChatGroupInUser>();
 
+        CreateMap<ChatMessageView,ChatMessageDto>();
     }
 }

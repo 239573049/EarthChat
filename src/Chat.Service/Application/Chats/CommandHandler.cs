@@ -3,6 +3,7 @@ using Chat.Contracts.Chats;
 using Chat.Contracts.Hubs;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Hubs.Commands;
+using Chat.Service.Application.System.Commands;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
@@ -51,6 +52,7 @@ public class CommandHandler
         {
             Content = command.Dto.Content,
             Type = command.Dto.Type,
+            RevertId = command.Dto.RevertId,
             ChatGroupId = command.Dto.ChatGroupId,
             UserId = _userContext.GetUserId<Guid>()
         };
@@ -207,6 +209,12 @@ public class CommandHandler
                 true);
 
             await _eventBus.PublishAsync(systemCommand);
+
+            if (value.Type is ChatType.File or ChatType.Audio or ChatType.Image or ChatType.Video)
+            {
+                var deleteFile = new DeleteFileSystemCommand(value.Content);
+                await _eventBus.PublishAsync(deleteFile);
+            }
         }
         else
         {

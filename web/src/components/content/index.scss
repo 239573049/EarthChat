@@ -188,3 +188,10 @@ body:not([theme-mode="dark"]) {
 
 .item-curren {
 }
+
+.revert-item{
+    background-color: var(--select-background-color);
+    padding: 8px;
+    border-radius: 8px;
+    margin: 5px;
+}

@@ -16,3 +16,13 @@
         color: blue;
     }
 }
+
+
+.revert-value{
+    padding: 8px;
+    border-radius: 8px;
+    margin: 8px;
+    background: var(--select-background-color);
+    display: inline-block;
+    max-height: 62px;
+}

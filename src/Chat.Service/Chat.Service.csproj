@@ -45,6 +45,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Infrastructure\Repositories\Views\" />
       <Folder Include="wwwroot\" />
     </ItemGroup>
 

@@ -31,12 +31,15 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
 
     private readonly IChatMessageRepository _chatMessageRepository;
 
+    private readonly RedisClient _redisClient;
+
     public BackgroundTaskService(IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory,
-        ILogger<BackgroundTaskService> logger)
+        ILogger<BackgroundTaskService> logger, RedisClient redisClient)
     {
         _serviceProvider = serviceProvider;
         _httpClientFactory = httpClientFactory;
         _logger = logger;
+        _redisClient = redisClient;
 
         // 请注意由于仓储使用的是作用域，所以需要在这个单例的服务中创建一个作用域。
         _serviceScope = serviceProvider.CreateScope();
@@ -49,6 +52,9 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
         Task.Run(Start);
     }
 
+    /// <summary>
+    /// 指令模板
+    /// </summary>
     private const string CommandTemplate =
         """
         命令行帮助手册：
@@ -93,20 +99,57 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                     if (item.Value.StartsWith("ai help") || item.Value.StartsWith("ai -h"))
                     {
                         content = CommandTemplate;
-                    }else if (item.Value.StartsWith("ai status"))
+                    }
+                    else if (item.Value.StartsWith("ai status"))
                     {
-                        // 获取当前进程的内存占用，和cpu占用
+                        // 获获取当前进程的内存占用，和cpu占用
                         var process = Process.GetCurrentProcess();
                         content =
                             $"当前内存占用：{process.WorkingSet64 / 1024 / 1024}MB";
                     }
                     else
                     {
+                        string key = "Background:ChatGPT:" + item.UserId.ToString("N");
+
+                        // 限制用户发送消息频率
+                        if (await _redisClient.ExistsAsync(key))
+                        {
+                            var count = await _redisClient.GetAsync<int>(key);
+
+                            // 限制用户的智能助手使用限制
+                            if (count > 20)
+                            {
+                                var messageLimit = new ChatMessageDto
+                                {
+                                    Content = "您今天的额度已经用完！",
+                                    Type = ChatType.Text,
+                                    UserId = Guid.Empty,
+                                    CreationTime = DateTime.Now,
+                                    GroupId = item.Id,
+                                    Id = Guid.NewGuid(),
+                                };
+
+                                await _hubContext.Clients.Group(item.Id.ToString("N"))
+                                    .SendAsync("ReceiveMessage", item.Id, messageLimit);
+
+                                // 创建助手的消息
+                                var chatMessageLimit = new ChatMessage(Guid.NewGuid(), messageLimit.CreationTime)
+                                {
+                                    Content = messageLimit.Content,
+                                    Type = ChatType.Text,
+                                    ChatGroupId = item.Id
+                                };
+
+                                await _chatMessageRepository.CreateAsync(chatMessageLimit);
+                                return;
+                            }
+                        }
+
                         var httpClient = _httpClientFactory.CreateClient(Constant.ChatGPT);
                         var response = await httpClient.PostAsJsonAsync("v1/chat/completions", new
                         {
                             model = "gpt-3.5-turbo",
-                            temperature = 0.1,
+                            temperature = 0,
                             stream = false,
                             max_tokens = 1000,
                             messages = new[]
@@ -125,34 +168,55 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                             }
                         });
 
-                        var result = await response.Content.ReadFromJsonAsync<GetChatGPTDto>();
-                        content = result?.choices.FirstOrDefault()?.message.content ?? "聊天机器人出错了";
+                        // 如果状态码不对则需要异常
+                        if (response.IsSuccessStatusCode)
+                        {
+                            var result = await response.Content.ReadFromJsonAsync<GetChatGPTDto>();
+                            content = result?.choices?.FirstOrDefault()?.message?.content ?? "聊天机器人出错了";
+                            
+                            // 当消息成功则扣除额度
+                            if (await _redisClient.ExistsAsync(key))
+                            {
+                                await _redisClient.IncrByAsync(key, 1);
+                            }
+                            else
+                            {
+                                // 获取当前时间
+                                DateTime now = DateTime.Now;
+
+                                // 获取当天的23:59:59
+                                DateTime endOfDay = new DateTime(now.Year, now.Month, now.Day, 23, 59, 59);
+
+                                await _redisClient.IncrByAsync(key, 1);
+                                await _redisClient.ExpireAsync(key, endOfDay - now);
+                            }
+                        }
+                        else
+                        {
+                            content = "聊天机器人出错了，请联系管理员！";
+                        }
+
                     }
+
+                    var message = new ChatMessageDto
+                    {
+                        Content = content,
+                        Type = ChatType.Text,
+                        UserId = Guid.Empty,
+                        CreationTime = DateTime.Now,
+                        GroupId = item.Id,
+                        Id = Guid.NewGuid()
+                    };
 
                     if (item.Group)
                     {
-                        var message = new ChatMessageDto
-                        {
-                            Content = content,
-                            Type = ChatType.Text,
-                            UserId = Guid.Empty,
-                            CreationTime = DateTime.Now,
-                            GroupId = item.Id,
-                            Id = Guid.NewGuid(),
-                            User = new GetUserDto
-                            {
-                                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
-                                Id = Guid.Empty,
-                                Name = "聊天机器人",
-                            }
-                        };
-
                         await _hubContext.Clients.Group(item.Id.ToString("N"))
                             .SendAsync("ReceiveMessage", item.Id, message);
                     }
                     else
                     {
-                        // TODO: 好友发送处理；
+                        await _hubContext.Clients.Group(item.Id.ToString("N"))
+                            .SendAsync("ReceiveMessage", item.Id, message);
                     }
 
                     // 创建助手的消息

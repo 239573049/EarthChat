@@ -10,12 +10,13 @@ import PubSub from 'pubsub-js';
 import copy from 'copy-to-clipboard';
 import ChatService from '../../services/chatService';
 import emojiService from '../../services/emojiService';
-import { IconPlus } from '@douyinfe/semi-icons';
+import { IconPlus, IconSmallTriangleTop } from '@douyinfe/semi-icons';
 import { GetUserInfos } from '../../store/user-store'
 import { emoji } from '../../store/emoji';
 import FriendService from '../../services/friendService'
 import VideoPlayer from '../video';
 import chatService from '../../services/chatService';
+import RenderText from '../render-text';
 
 interface IProps {
     group: ChatGroupDto;
@@ -39,7 +40,8 @@ interface IState {
         visible: boolean,
         id: string;
         user: GetUserDto
-    }
+    },
+    revertValue: any
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -107,7 +109,8 @@ export default class Content extends Component<IProps, IState> {
             visible: false,
             id: '',
             user: {} as GetUserDto
-        }
+        },
+        revertValue: undefined
     }
 
 
@@ -198,6 +201,7 @@ export default class Content extends Component<IProps, IState> {
 
                         // 这里是为了保证用户的基本信息完整
                         const userInfo = await GetUserInfos(userids)
+
                         this.setState({
                             groupinUsers: res,
                             users: userInfo
@@ -304,17 +308,27 @@ export default class Content extends Component<IProps, IState> {
 
     async sendMessage() {
         const { group } = this.props
+        const { revertValue } = this.state;
         const value = this.mentionRef.current?.getValue();
 
+        let revertId: null = null
+        if (revertValue) {
+            revertId = revertValue.id;
+        }
+
+        this.setState({
+            revertValue: undefined
+        })
+
         if (value && value.content.length > 0) {
-            await ChatHubService.send('SendMessage', value.content, group.id, 0);
+            await ChatHubService.send('SendMessage', value.content, group.id, 0, revertId);
 
             this.mentionRef.current?.setValue('')
             for (let i = 0; i < value.base64.length; i++) {
                 fileService.uploadBase64(value.base64[i], 'image.png')
                     .then((res: any) => {
                         if (res.code === '200') {
-                            ChatHubService.send('SendMessage', res.data, group.id, 1);
+                            ChatHubService.send('SendMessage', res.data, group.id, 1, revertId);
                         }
                     })
             }
@@ -324,7 +338,7 @@ export default class Content extends Component<IProps, IState> {
                 fileService.uploadBase64(value.base64[i], 'image.png')
                     .then((res: any) => {
                         if (res.code === '200') {
-                            ChatHubService.send('SendMessage', res.data, group.id, 1);
+                            ChatHubService.send('SendMessage', res.data, group.id, 1, revertId);
                         }
                     })
             }
@@ -359,8 +373,9 @@ export default class Content extends Component<IProps, IState> {
     }
 
     revert(item: any) {
-        console.log(item);
-
+        this.setState({
+            revertValue: item
+        })
     }
 
     countermand(item: any) {
@@ -372,10 +387,70 @@ export default class Content extends Component<IProps, IState> {
             })
     }
 
+    revertRender(item: any) {
+        if (item.type === "Text" || item.type === 0) {
+            return <RenderText content={item.content} />
+        } else if (item.type === "Image" || item.type === 1) {
+            return <div >
+                <Image
+                    width={'100%'}
+                    style={{
+                        width: 'auto',
+                        height: 'auto',
+                        marginBottom: '20px',
+                        marginTop: '8px',
+                        maxWidth: '45%',
+                        borderRadius: '8px',
+                        marginLeft: '10px'
+                    }}
+                    height={'100%'}
+                    src={item.content}
+                />
+            </div>
+        } else if (item.type === "File" || item.type === 2) {
+            return <Card
+                className='message-item-content '
+                style={{
+                    width: 300, display: 'inline-block', marginBottom: '20px', marginLeft: '10px'
+                }}
+            >
+                <span>
+                    {item.content.substring(item.content.lastIndexOf("/") + 1)}
+                </span>
+                <Button onClick={() => this.download(item.content)} style={{
+                    float: 'right'
+                }}>下载</Button>
+            </Card>
+        } else if (item.type === "Video" || item.type === 3) {
+            return <VideoPlayer float={null} url={item.content} />
+        }
+    }
+
+    positioning(id: string) {
+        id = "row_" + id;
+        var dom = document.getElementById(id);
+
+        const container = document.getElementById('message-list');
+
+        if (dom && container) {
+            var domRect = dom.getBoundingClientRect();
+            var containerRect = container.getBoundingClientRect();
+
+            // Check if the element is not fully visible
+            if (domRect.top < containerRect.top || domRect.bottom > containerRect.bottom) {
+                container.scrollTop += domRect.top - containerRect.top;
+            }
+        }
+    }
+
     rendetContent = (item: any, u: any, iscurren: boolean) => {
         const className = user?.id === u?.id ? 'message-item-content-user' : '';
 
+        const { users } = this.state;
+
         const float = iscurren ? "right" : '' as any;
+
+        const revertUser = users.find(x => x.id === item?.revert?.userId)
 
         if (item.type === "Text" || item.type === 0) {
             return (
@@ -389,7 +464,14 @@ export default class Content extends Component<IProps, IState> {
                         display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap',
                         float: float
                     }}>
-                        {item.content}
+                        {revertUser && <div className='revert-item'>
+                            {revertUser?.name}
+                            <Button theme='borderless' size='small' onClick={() => this.positioning(item.revert.id)} icon={<IconSmallTriangleTop />}></Button>
+                            <div>
+                                {this.revertRender(item.revert)}
+                            </div>
+                        </div>}
+                        <RenderText content={item.content} />
                     </div>
                 </Tooltip>
             )
@@ -402,7 +484,34 @@ export default class Content extends Component<IProps, IState> {
                         <div className='image-menu-item' onClick={() => this.addEmoji(item)}>添加到表情</div>
                         {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
                     </div>} position='rightTop' trigger="contextMenu" >
-                        <Image
+                        {revertUser ? <div style={{
+                            width: 'auto',
+                            height: 'auto',
+                            marginBottom: '20px',
+                            marginTop: '8px',
+                            maxWidth: '45%',
+                            borderRadius: '8px',
+                            marginLeft: '10px',
+                            float: float,
+                            padding: '8px',
+                            backgroundColor: 'var(--message-item-content-background-color)'
+                        }}>
+                            {revertUser && <div style={{
+                                float: float
+                            }} className='revert-item'>
+                                {revertUser?.name}
+                                <Button theme='borderless' size='small' onClick={() => this.positioning(item.revert.id)} icon={<IconSmallTriangleTop />}></Button>
+                                <div>
+                                    {this.revertRender(item.revert)}
+                                </div>
+                            </div>}
+                            <Image
+                                width={'100%'}
+                                className={className}
+                                height={'100%'}
+                                src={item.content}
+                            />
+                        </div> : <Image
                             width={'100%'}
                             className={className}
                             style={{
@@ -417,13 +526,13 @@ export default class Content extends Component<IProps, IState> {
                             }}
                             height={'100%'}
                             src={item.content}
-                        />
+                        />}
+
                     </Tooltip>
                 </div>
             )
         } else if (item.type === "File" || item.type === 2) {
             return (
-
                 <Tooltip style={{
                     backgroundColor: 'var(--message-item-content-background-color)'
                 }} content={<div className='image-menu'>
@@ -523,6 +632,8 @@ export default class Content extends Component<IProps, IState> {
                 </div>)
             }
 
+            item.user = userItem
+
             // 判断是否为当前用户
             const iscurren = item?.userId === user?.id;
 
@@ -534,7 +645,7 @@ export default class Content extends Component<IProps, IState> {
                     <div style={{
                         float: 'right',
                         width: '100%',
-                    }}>
+                    }} id={"row_" + item.id}>
                         <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
                             <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar} />
                         </Tooltip>
@@ -550,7 +661,7 @@ export default class Content extends Component<IProps, IState> {
                 }}>{date}</div>}
                     <div style={{
                         margin: '8px',
-                    }}>
+                    }} id={"row_" + item.id}>
                         <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
                             <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar} />
                         </Tooltip>
@@ -563,7 +674,6 @@ export default class Content extends Component<IProps, IState> {
             }
         } catch (error) {
             console.log(error);
-
         }
     }
 
@@ -1018,7 +1128,7 @@ export default class Content extends Component<IProps, IState> {
     }
 
     render() {
-        const { groupinUsers, users, addFriend, data, height } = this.state;
+        const { groupinUsers, users, addFriend, data, height, revertValue } = this.state;
         const { group } = this.props;
 
         return (
@@ -1051,7 +1161,11 @@ export default class Content extends Component<IProps, IState> {
                     width: 'calc(100% - 180px)',
                 }}>
                     <div className="content-box " style={{ flexBasis: `calc(100% - ${height}px - 10px)`, }}>
-                        <div onScroll={this.onScroll} id='message-list' style={{ height: '100%', overflow: 'auto', maxHeight: `calc((100vh - ${height}px))` }}>
+                        <div onScroll={this.onScroll} id='message-list' style={{
+                            height: '100%',
+                            overflow: 'auto',
+                            maxHeight: `calc((100vh - ${height}px))`
+                        }}>
                             {data.map((x, i) => {
                                 return (<div key={"ListComponent_" + i}>
                                     {this.rowRenderer(x, i)}
@@ -1101,8 +1215,10 @@ export default class Content extends Component<IProps, IState> {
                             } />
 
                         </div>
-                        <Mention ref={this.mentionRef} style={{
-                            height: 'calc(100% - 160px)',
+                        <Mention onCloseRevert={() => this.setState({
+                            revertValue: undefined
+                        })} revertValue={revertValue} ref={this.mentionRef} style={{
+                            height: revertValue ? 'calc(100% - 238px)' : 'calc(100% - 160px)',
                         }} onSubmit={async () => await this.sendMessage()} />
                         <div style={{
                             float: 'right',

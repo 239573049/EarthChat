@@ -1,9 +1,13 @@
 import { ClipboardEvent, KeyboardEvent, Component } from 'react';
 import './index.scss'
+import { IconClose } from '@douyinfe/semi-icons';
+import { Button } from '@douyinfe/semi-ui';
 
 interface MentionProps {
   onSubmit: () => void;
   style: any;
+  revertValue: any;
+  onCloseRevert: any
 }
 
 interface MentionState {
@@ -96,7 +100,7 @@ class Mention extends Component<MentionProps, MentionState> {
 
   onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     // 如果是快捷键则调用发送。
-    if (e.keyCode === 13) {
+    if (e.keyCode === 13 && !e.shiftKey) {
       e.preventDefault();
       this.props.onSubmit();
     }
@@ -104,21 +108,33 @@ class Mention extends Component<MentionProps, MentionState> {
 
 
   render() {
+    const { revertValue, onCloseRevert } = this.props;
     return (
-      <div
-        contentEditable
-        id="editor-container"
-        onInput={this.handleInput}
-        onPaste={this.handlePaste}
-        onKeyDown={this.onKeyDown}
-        style={{
-          padding: '10px',
-          outline: 'none',
-          overflow: 'auto',
-          ...this.props.style,
-        }}
-      >
-      </div>
+      <>
+      {revertValue && <div className='revert-value'>
+        <div>{revertValue.user?.name}:</div>
+        <span>
+          {revertValue.content}
+        </span>
+        <Button style={{
+          marginLeft:'5px'
+        }} theme='borderless' icon={<IconClose />} onClick={() => onCloseRevert()} size='small'></Button>
+      </div>}
+        <div
+          contentEditable
+          id="editor-container"
+          onInput={this.handleInput}
+          onPaste={this.handlePaste}
+          onKeyDown={this.onKeyDown}
+          style={{
+            padding: '10px',
+            outline: 'none',
+            overflow: 'auto',
+            ...this.props.style,
+          }}
+        >
+        </div>
+      </>
     );
   }
 }

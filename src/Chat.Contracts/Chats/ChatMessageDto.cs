@@ -48,6 +48,9 @@ public class ChatMessageDto
     [Key("groupId")]
     public Guid GroupId { get; set; }
 
+    [Key("revert")]
+    public ChatMessageDto? Revert { get; set; }
+
     [Key("creationTime")]
     public DateTime CreationTime { get; set; }
 }

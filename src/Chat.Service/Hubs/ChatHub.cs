@@ -82,7 +82,8 @@ public class ChatHub : Hub
     /// <param name="value"></param>
     /// <param name="groupId"></param>
     /// <param name="type"></param>
-    public async Task SendMessage(string value, Guid groupId, int type)
+    /// <param name="revertId"></param>
+    public async Task SendMessage(string value, Guid groupId, int type,Guid? revertId = null)
     {
         if (value.IsNullOrWhiteSpace())
         {
@@ -110,6 +111,7 @@ public class ChatHub : Hub
             Type = (ChatType)type,
             UserId = userId.Value,
             CreationTime = DateTime.Now,
+            RevertId = revertId,
             GroupId = groupId,
             Id = Guid.NewGuid()
         };
@@ -118,10 +120,19 @@ public class ChatHub : Hub
         {
             Content = value,
             Id = message.Id,
+            RevertId = revertId,
             ChatGroupId = groupId,
             Type = (ChatType)type,
             UserId = userId.Value
         });
+
+        // 如果发送的内容关联了回复id则查询回复内容
+        if (message.RevertId != null && message.RevertId != Guid.Empty)
+        {
+            var messageQuery = new GetMessageQuery((Guid)message.RevertId);
+            await _eventBus.PublishAsync(messageQuery);
+            message.Revert = messageQuery.Result;
+        }
 
         if (await _redisClient.ExistsAsync(key))
         {

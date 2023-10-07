@@ -31,16 +31,6 @@ public class QueryHandler
     {
         var list = await _chatMessageRepository.GetListAsync(query.groupId, query.page, query.pageSize);
 
-        foreach (var message in list.Where(message => message.UserId == Guid.Empty))
-        {
-            message.User = new User(Guid.Empty)
-            {
-                Account = string.Empty,
-                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
-                Name = "聊天机器人",
-            };
-        }
-
         query.Result = new PaginatedListBase<ChatMessageDto>
         {
             Result = _mapper.Map<List<ChatMessageDto>>(list.OrderBy(x => x.CreationTime))
@@ -104,5 +94,13 @@ public class QueryHandler
         var value = await _chatGroupRepository.FindAsync(x => x.Id == query.Id);
 
         query.Result = _mapper.Map<ChatGroupDto>(value);
+    }
+
+    [EventHandler]
+    public async Task GetMessageAsync(GetMessageQuery query)
+    {
+        var value = await _chatMessageRepository.FindAsync(x => x.Id == query.Id);
+
+        query.Result = _mapper.Map<ChatMessageDto>(value);
     }
 }
