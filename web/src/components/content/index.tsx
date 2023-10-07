@@ -66,6 +66,8 @@ const Emoji = ({ symbol, label, onClick }: any) => (
     </span>
 );
 
+var positioningSize = 0;
+
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
 
@@ -432,14 +434,29 @@ export default class Content extends Component<IProps, IState> {
 
         const container = document.getElementById('message-list');
 
-        if (dom && container) {
+        if (dom) {
             var domRect = dom.getBoundingClientRect();
-            var containerRect = container.getBoundingClientRect();
+            var containerRect = container!.getBoundingClientRect();
 
             // Check if the element is not fully visible
             if (domRect.top < containerRect.top || domRect.bottom > containerRect.bottom) {
-                container.scrollTop += domRect.top - containerRect.top;
+                container!.scrollTop += domRect.top - containerRect.top;
             }
+
+            positioningSize = 0;
+        } else {
+            container!.scrollTop = 0;
+
+            if (positioningSize > 8) {
+                Toast.success("定位超时！");
+                positioningSize = 0;
+                return;
+            }
+
+            positioningSize++;
+            setTimeout(() => {
+                this.positioning(id);
+            }, 300);
         }
     }
 
