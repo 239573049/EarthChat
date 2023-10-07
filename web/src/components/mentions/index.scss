@@ -24,5 +24,8 @@
     margin: 8px;
     background: var(--select-background-color);
     display: inline-block;
-    max-height: 62px;
+    max-width: 80%;
+    max-height: 50px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

@@ -111,15 +111,23 @@ class Mention extends Component<MentionProps, MentionState> {
     const { revertValue, onCloseRevert } = this.props;
     return (
       <>
-      {revertValue && <div className='revert-value'>
-        <div>{revertValue.user?.name}:</div>
-        <span>
-          {revertValue.content}
-        </span>
-        <Button style={{
-          marginLeft:'5px'
-        }} theme='borderless' icon={<IconClose />} onClick={() => onCloseRevert()} size='small'></Button>
-      </div>}
+        {revertValue && <div className='revert-value'>
+          <div>{revertValue.user?.name}:</div>
+          <div style={{
+            height: '50px',
+            minWidth:'50px',
+            whiteSpace: 'nowrap',
+            textOverflow: 'ellipsis',
+            overflow:'hidden',
+            float: 'left',
+            width:'calc(100% - 35px)'
+          }}>
+            {revertValue.content}
+          </div>
+          <Button style={{
+            marginLeft: '5px'
+          }} theme='borderless' icon={<IconClose />} onClick={() => onCloseRevert()} size='small'></Button>
+        </div>}
         <div
           contentEditable
           id="editor-container"
