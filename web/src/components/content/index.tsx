@@ -815,7 +815,7 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.props.group.id, 1);
+                        ChatHubService.send('SendMessage', res.data, this.props.group.id, 1, null);
                     }
                 })
 
@@ -847,7 +847,7 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.props.group.id, type);
+                        ChatHubService.send('SendMessage', res.data, this.props.group.id, type, null);
                     }
                 })
 
@@ -959,7 +959,7 @@ export default class Content extends Component<IProps, IState> {
 
     async emojiClick(v: any) {
         const { group } = this.props
-        await ChatHubService.send('SendMessage', v, group.id, 0);
+        await ChatHubService.send('SendMessage', v, group.id, 0, null);
     }
 
     renderDefault() {
@@ -1025,7 +1025,7 @@ export default class Content extends Component<IProps, IState> {
 
     async sendEmoji(item: any) {
         const { group } = this.props
-        await ChatHubService.send('SendMessage', item.path, group.id, 1);
+        await ChatHubService.send('SendMessage', item.path, group.id, 1, null);
     }
 
     removeEmoji(item: string) {
