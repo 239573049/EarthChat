@@ -6,71 +6,34 @@ using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Microsoft.SemanticKernel;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.ConfigureHttpJsonOptions(options =>
-{
-    options.SerializerOptions.WriteIndented = true;
-    options.SerializerOptions.IncludeFields = true;
-    options.SerializerOptions.Converters.Add(new DateTimeConverter());
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    options.SerializerOptions.Converters.Add(new DateTimeNullableConvert());
-});
+// builder.Services.ConfigureHttpJsonOptions(options =>
+// {
+//     options.SerializerOptions.WriteIndented = true;
+//     options.SerializerOptions.IncludeFields = true;
+//     options.SerializerOptions.Converters.Add(new DateTimeConverter());
+//     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+//     options.SerializerOptions.Converters.Add(new DateTimeNullableConvert());
+// });
 
 builder.Configuration.GetSection("OpenAI").Get<OpenAIOptions>();
 
-builder.Services.AddEndpointsApiExplorer();
-
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SK API", Version = "v1" });
-    //添加Api层注释（true表示显示控制器注释）
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    c.IncludeXmlComments(xmlPath, true);
-    //添加Domain层注释（true表示显示控制器注释）
-    var xmlFile1 = $"{Assembly.GetExecutingAssembly().GetName().Name.Replace("Api", "Domain")}.xml";
-    var xmlPath1 = Path.Combine(AppContext.BaseDirectory, xmlFile1);
-    c.IncludeXmlComments(xmlPath1, true);
-    c.DocInclusionPredicate((docName, apiDes) =>
+builder.Services
+    .AddSwaggerGen(options =>
     {
-        if (!apiDes.TryGetMethodInfo(out MethodInfo method))
-            return false;
-        var version = method.DeclaringType.GetCustomAttributes(true).OfType<ApiExplorerSettingsAttribute>()
-            .Select(m => m.GroupName);
-        if (docName == "v1" && !version.Any())
-            return true;
-        var actionVersion = method.GetCustomAttributes(true).OfType<ApiExplorerSettingsAttribute>()
-            .Select(m => m.GroupName);
-        if (actionVersion.Any())
-            return actionVersion.Any(v => v == docName);
-        return version.Any(v => v == docName);
-    });
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-    {
-        Description =
-            "Directly enter bearer {token} in the box below (note that there is a space between bearer and token)",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-    });
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
+        options.SwaggerDoc("v1",
+            new OpenApiInfo
             {
-                Reference = new OpenApiReference()
-                {
-                    Id = "Bearer",
-                    Type = ReferenceType.SecurityScheme
-                }
-            },
-            Array.Empty<string>()
-        }
+                Title = "ChatApp",
+                Version = "v1",
+                Contact = new OpenApiContact { Name = "ChatApp" }
+            });
+        foreach (var item in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.xml"))
+            options.IncludeXmlComments(item, true);
+        options.DocInclusionPredicate((docName, action) => true);
     });
-});
 
 builder.Services.AddCors(options =>
 {
@@ -115,18 +78,29 @@ builder.Services.AddControllersWithViews()
     });
 
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient("ChatGPT", (services, c) =>
+{
+    c.DefaultRequestHeaders.Add("X-Token", "token");
+    c.DefaultRequestHeaders.Add("Accept", "application/json");
+    c.DefaultRequestHeaders.Add("User-Agent", "Chat");
+});
 
-builder.Services.AddTransient<IKernel>((_) =>
-    {
-        return Kernel.Builder
-            .WithAzureChatCompletionService(
-                OpenAIOptions.Model,
-                OpenAIOptions.Endpoint,
-                OpenAIOptions.Key)
-            .Build();
-    });
+builder.Services.AddTransient<IKernel>((services) =>
+{
+    var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
+    return Kernel.Builder
+        .WithOpenAIChatCompletionService(
+            OpenAIOptions.Model,
+            OpenAIOptions.Endpoint,
+            OpenAIOptions.Key, httpClient: httpClientFactory.CreateClient("ChatGPT"))
+        .Build();
+});
 
-var app = builder.Build();
+
+var app = builder.Services.AddServices(builder, options =>
+{
+    options.MapHttpMethodsForUnmatched = new[] { "Post" }; //当请求类型匹配失败后，默认映射为Post请求 (当前项目范围内，除非范围配置单独指定)
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -134,7 +108,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseAuthentication();
 app.UseAuthorization()
     .UseCors("CorsPolicy");

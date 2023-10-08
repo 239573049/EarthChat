@@ -6,6 +6,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <DocumentationFile>bin\Debug\Chat.SemanticServer.xml</DocumentationFile>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
@@ -20,6 +24,22 @@
 
     <ItemGroup>
       <Folder Include="plugins\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Update="plugins\*.txt">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="plugins\*.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="plugins\Travel\Attractions\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\Travel\Delicacy\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\Travel\Traffic\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\Travel\Weather\config.json" />
     </ItemGroup>
 
 </Project>

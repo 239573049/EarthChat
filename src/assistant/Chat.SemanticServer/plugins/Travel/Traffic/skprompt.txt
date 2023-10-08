@@ -1,3 +1,0 @@
-{{ConversationSummarySkill.SummarizeConversation $history}}
-为我推荐本次旅行适合的交通方式：
-我的请求是：{{$input}}
