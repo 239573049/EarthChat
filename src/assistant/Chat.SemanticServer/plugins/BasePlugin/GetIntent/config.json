@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "type": "completion",
+  "description": "获取用户的意图。",
+  "completion": {
+    "max_tokens": 500,
+    "temperature": 0.0,
+    "top_p": 0.0,
+    "presence_penalty": 0.0,
+    "frequency_penalty": 0.0
+  },
+  "input": {
+    "parameters": [
+      {
+        "name": "input",
+        "description": "用户的请求。",
+        "defaultValue": ""
+      },
+      {
+        "name": "history",
+        "description": "对话的历史。",
+        "defaultValue": ""
+      },
+      {
+        "name": "options",
+        "description": "可供选择的选项。",
+        "defaultValue": ""
+      }
+    ]
+  }
+}

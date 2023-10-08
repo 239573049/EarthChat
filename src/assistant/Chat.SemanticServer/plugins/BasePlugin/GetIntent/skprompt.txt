@@ -1,0 +1,8 @@
+{{ConversationSummarySkill.SummarizeConversation $history}}
+用户: {{$input}}
+
+---------------------------------------------
+
+提供用户的意图。其意图应为以下内容之一: {{$options}}
+
+意图: 
