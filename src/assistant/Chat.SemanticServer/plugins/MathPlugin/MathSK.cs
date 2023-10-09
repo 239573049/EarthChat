@@ -5,7 +5,7 @@ using Microsoft.SemanticKernel.SkillDefinition;
 
 namespace Chat.SemanticServer.plugins.MathPlugin
 {
-    public class MathSk
+    public class MathSK
     {
         /// <summary>
         /// 得到负数

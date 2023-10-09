@@ -23,23 +23,37 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="plugins\" />
+        <Content Remove="plugins\Translate\EN\config.json" />
+        <Content Remove="plugins\Translate\JP\config.json" />
+        <Content Remove="plugins\Translate\KO\config.json" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="plugins\*.txt">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <None Update="plugins\Translate\EN\skprompt.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
-        <None Update="plugins\*.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <None Update="plugins\Translate\JP\skprompt.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="plugins\Translate\KO\skprompt.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="plugins\Travel\Attractions\config.json" />
-      <_ContentIncludedByDefault Remove="plugins\Travel\Delicacy\config.json" />
-      <_ContentIncludedByDefault Remove="plugins\Travel\Traffic\config.json" />
-      <_ContentIncludedByDefault Remove="plugins\Travel\Weather\config.json" />
+        <None Include="plugins\Translate\EN\config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="plugins\Translate\JP\config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Include="plugins\Translate\KO\config.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="plugins\Calculate\Multiplication\" />
     </ItemGroup>
 
 </Project>

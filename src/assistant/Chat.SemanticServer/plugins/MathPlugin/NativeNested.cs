@@ -1,8 +1,10 @@
 ﻿using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
+using System.Threading.Tasks;
+using Chat.SemanticServer.plugins.MathPlugin;
 
-namespace Chat.SemanticServer.plugins.MathPlugin
+namespace Xzy.SK.Api.plugins.MathPlugin
 {
     public class NativeNested
     {
@@ -18,7 +20,7 @@ namespace Chat.SemanticServer.plugins.MathPlugin
         {
             string request = context.Variables["input"];
             var mathPlugin1 = _kernel.ImportSemanticSkillFromDirectory("plugins", "MathPlugin");
-            var mathPlugin2 = _kernel.ImportSkill(new MathSk(), "MathPlugin");
+            var mathPlugin2 = _kernel.ImportSkill(new MathSK(), "MathPlugin");
 
             var maxmin = await _kernel.RunAsync(request, mathPlugin1["FindMaxMin"]);
 
