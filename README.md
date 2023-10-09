@@ -6,7 +6,7 @@
 
 
 <h1 align="center">Token Chat</h1>
-<p align="center"><strong>一个支持上万用户的Chat系统！</strong></p>
+<p align="center"><strong>一个支持百万用户的Chat系统！</strong></p>
 
 
 <div align="center">
