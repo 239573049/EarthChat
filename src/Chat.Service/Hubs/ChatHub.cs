@@ -25,11 +25,10 @@ public class ChatHub : Hub
     public override async Task OnConnectedAsync()
     {
         var userId = GetUserId();
-        if (userId == null)
+        if (userId == null || userId == Guid.Empty)
         {
             throw new UnauthorizedAccessException();
         }
-
 
         await _redisClient.SetAsync(Constant.OnLineKey + userId.Value.ToString("N"), userId.Value);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
@@ -83,7 +82,7 @@ public class ChatHub : Hub
     /// <param name="groupId"></param>
     /// <param name="type"></param>
     /// <param name="revertId"></param>
-    public async Task SendMessage(string value, Guid groupId, int type,Guid? revertId = null)
+    public async Task SendMessage(string value, Guid groupId, int type, Guid? revertId = null)
     {
         if (value.IsNullOrWhiteSpace())
         {
@@ -156,6 +155,7 @@ public class ChatHub : Hub
             Id = groupId,
             Value = value,
             Group = true,
+            RevertId = message.Id,
             UserId = userId.Value
         });
     }
