@@ -9,14 +9,14 @@ using Microsoft.SemanticKernel;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.Services.ConfigureHttpJsonOptions(options =>
-// {
-//     options.SerializerOptions.WriteIndented = true;
-//     options.SerializerOptions.IncludeFields = true;
-//     options.SerializerOptions.Converters.Add(new DateTimeConverter());
-//     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-//     options.SerializerOptions.Converters.Add(new DateTimeNullableConvert());
-// });
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.IncludeFields = true;
+    options.SerializerOptions.Converters.Add(new DateTimeConverter());
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.SerializerOptions.Converters.Add(new DateTimeNullableConvert());
+});
 
 builder.Configuration.GetSection("OpenAI").Get<OpenAIOptions>();
 
