@@ -11,7 +11,7 @@
 
 <div align="center">
     <a href="#交流群"><img src="https://img.shields.io/badge/交流群-blue.svg?style=plasticr"></a>
-    <a href="https://116.196.96.91/docs/intro/"><img src="https://img.shields.io/badge/项目文档-green.svg?style=plasticr"></a>
+    <a href="https://docs.chat.tokengo.top/docs/intro/"><img src="https://img.shields.io/badge/项目文档-green.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat"><img src="https://img.shields.io/badge/github-项目地址-yellow.svg?style=plasticr"></a>
     <a href="https://gitee.com/hejiale010426/chat"><img src="https://img.shields.io/badge/码云-项目地址-orange.svg?style=plasticr"></a>
     <a href="https://github.com/239573049/chat/blob/master/LICENSE" target="_blank">
