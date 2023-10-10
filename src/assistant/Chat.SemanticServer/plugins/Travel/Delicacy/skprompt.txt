@@ -1,0 +1,3 @@
+{{ConversationSummarySkill.SummarizeConversation $history}}
+为我推荐当地旅游的美食：
+我的要求是：{{$input}}

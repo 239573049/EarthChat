@@ -21,4 +21,6 @@ public class AssistantDto
     /// 链接Id
     /// </summary>
     public Guid Id { get; set; }
+
+    public Guid RevertId { get; set; }
 }

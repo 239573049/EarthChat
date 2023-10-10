@@ -1,0 +1,3 @@
+把2个数相乘：
+第一个数是：{{MathPlugin.Negative $num1}}
+第二个数是：{{$num2}}

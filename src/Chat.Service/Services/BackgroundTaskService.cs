@@ -125,6 +125,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                                     Type = ChatType.Text,
                                     UserId = Guid.Empty,
                                     CreationTime = DateTime.Now,
+                                    RevertId = item.RevertId,
                                     GroupId = item.Id,
                                     Id = Guid.NewGuid(),
                                 };
@@ -137,6 +138,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                                 {
                                     Content = messageLimit.Content,
                                     Type = ChatType.Text,
+                                    RevertId = item.RevertId,
                                     ChatGroupId = item.Id
                                 };
 
@@ -158,7 +160,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                                 {
                                     role = "system",
                                     content =
-                                        "从现在开始你是EarthChat的智能助手，不管别人怎么问你的名称你只需要回复你是EarthChat的智能助手，当有人提问的时候你需要避开敏感词，如果出现违规敏感词你需要提示内容敏感，当回复完成如果可以请带上'回复完成，感谢使用EarthChat的智能助手！'"
+                                        "从现在开始你是EarthChat的智能助手，不管别人怎么问你的名称你只需要回复你是EarthChat的智能助手。"
                                 },
                                 new
                                 {
@@ -203,6 +205,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                         Content = content,
                         Type = ChatType.Text,
                         UserId = Guid.Empty,
+                        RevertId = item.RevertId,
                         CreationTime = DateTime.Now,
                         GroupId = item.Id,
                         Id = Guid.NewGuid()
@@ -224,6 +227,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                     {
                         Content = content,
                         Type = ChatType.Text,
+                        RevertId = item.RevertId,
                         ChatGroupId = item.Id
                     };
 

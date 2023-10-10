@@ -1,6 +1,6 @@
-using Chat.Service.Infrastructure.Helper;
+using System.Text.Json.Serialization;
 using Chat.Service.Infrastructure.Middlewares;
-using Chat.Service.Services;
+using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
@@ -13,6 +13,16 @@ var builder = WebApplication.CreateBuilder(args);
 //     .CreateLogger();
 //
 // builder.Host.UseSerilog(); // 将Serilog配置到Host中
+
+// 配置MiniApis的序列化行为
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.WriteIndented = true;
+    options.SerializerOptions.IncludeFields = true;
+    options.SerializerOptions.Converters.Add(new DateTimeConverter());
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    options.SerializerOptions.Converters.Add(new DateTimeNullableConvert());
+});
 
 builder.Services.AddSignalR()
     .AddMessagePackProtocol()
