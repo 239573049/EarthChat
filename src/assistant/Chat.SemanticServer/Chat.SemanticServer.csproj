@@ -11,14 +11,15 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FreeRedis" Version="1.1.6" />
         <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="10.4.0" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="0.24.230918.1-preview" />
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\BuildingBlocks\Chat.EventsBus.RabbitMq\Chat.EventsBus.RabbitMq.csproj" />
+      <ProjectReference Include="..\..\Chat.Contracts\Chat.Contracts.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
@@ -53,7 +54,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="plugins\Calculate\Multiplication\" />
+        <Folder Include="plugins\Weather\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="plugins\MathPlugin\FindMaxMin\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\Plan\吃饭\config.json" />
     </ItemGroup>
 
 </Project>

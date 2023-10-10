@@ -6,6 +6,4 @@ public class EventsBusOptions
     /// 重试次数
     /// </summary>
     public readonly int Retry = 3;
-
-    
 }

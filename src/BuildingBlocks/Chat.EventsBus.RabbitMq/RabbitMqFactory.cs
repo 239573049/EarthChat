@@ -5,24 +5,23 @@ namespace Chat.EventsBus.RabbitMq;
 
 public class RabbitMqFactory : IDisposable
 {
-    private readonly RabbitOptions _options;
     private readonly ConnectionFactory _factory;
     private IConnection? _connection;
 
     public RabbitMqFactory(IOptions<RabbitOptions> options)
     {
-        _options = options?.Value;
+        var options1 = options?.Value;
         // 将Options中的参数添加到ConnectionFactory
         _factory = new ConnectionFactory
         {
-            HostName = _options.HostName,
-            UserName = _options.UserName,
-            Password = _options.Password,
-            Port = _options.Port
+            HostName = options1!.HostName,
+            UserName = options1.UserName,
+            Password = options1.Password,
+            Port = options1.Port
         };
     }
 
-    public IModel CreateRabbitMQ()
+    public IModel CreateRabbitMq()
     {
         // 当第一次创建RabbitMQ的时候进行链接
         _connection ??= _factory.CreateConnection();

@@ -5,7 +5,6 @@ using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.SemanticKernel.Skills.Core;
-using Xzy.SK.Api.plugins;
 
 namespace Chat.SemanticServer.Services;
 
@@ -23,7 +22,7 @@ public class SKService : ServiceBase
         //对话摘要  SK.Skills.Core 核心技能
         kernel.ImportSkill(new ConversationSummarySkill(kernel), "ConversationSummarySkill");
 
-        var pluginsDirectory = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "plugins");
+        var pluginsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
         var intentPlugin = kernel
             .ImportSemanticSkillFromDirectory(pluginsDirectory, "BasePlugin");
         var travelPlugin = kernel
