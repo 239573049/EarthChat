@@ -91,8 +91,8 @@ builder.Services.AddTransient<IKernel>((services) =>
     return Kernel.Builder
         .WithOpenAIChatCompletionService(
             OpenAIOptions.Model,
-            OpenAIOptions.Endpoint,
-            OpenAIOptions.Key, httpClient: httpClientFactory.CreateClient("ChatGPT"))
+            OpenAIOptions.Key,
+            httpClient: httpClientFactory.CreateClient("ChatGPT"))
         .Build();
 });
 
