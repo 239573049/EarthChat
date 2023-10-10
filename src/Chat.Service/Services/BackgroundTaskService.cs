@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Channels;
 using Chat.Contracts.Chats;
+using Chat.Service.Application.Chats.Queries;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Microsoft.AspNetCore.SignalR;
@@ -33,6 +34,8 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
 
     private readonly RedisClient _redisClient;
 
+    private readonly IEventBus _eventBus;
+
     public BackgroundTaskService(IServiceProvider serviceProvider, IHttpClientFactory httpClientFactory,
         ILogger<BackgroundTaskService> logger, RedisClient redisClient)
     {
@@ -45,7 +48,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
         _serviceScope = serviceProvider.CreateScope();
         _chatMessageRepository = _serviceScope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
         _hubContext = _serviceScope.ServiceProvider.GetRequiredService<IHubContext<ChatHub>>();
-
+        _eventBus = _serviceScope.ServiceProvider.GetRequiredService<IEventBus>();
         // 使用管道的话会控制ChatGPT的数量，相当于当前系统只运行一个服务。
         _channel = Channel.CreateBounded<AssistantDto>(5000);
         _cancellationTokenSource = new CancellationTokenSource();
@@ -175,7 +178,7 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                         {
                             var result = await response.Content.ReadFromJsonAsync<GetChatGPTDto>();
                             content = result?.choices?.FirstOrDefault()?.message?.content ?? "聊天机器人出错了";
-                            
+
                             // 当消息成功则扣除额度
                             if (await _redisClient.ExistsAsync(key))
                             {
@@ -197,7 +200,6 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                         {
                             content = "聊天机器人出错了，请联系管理员！";
                         }
-
                     }
 
                     var message = new ChatMessageDto
@@ -211,6 +213,9 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
                         Id = Guid.NewGuid()
                     };
 
+                    var messageQuery = new GetMessageQuery((Guid)message.RevertId);
+                    await _eventBus.PublishAsync(messageQuery);
+                    message.Revert = messageQuery.Result;
                     if (item.Group)
                     {
                         await _hubContext.Clients.Group(item.Id.ToString("N"))
