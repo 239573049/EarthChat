@@ -28,7 +28,9 @@ public class UserCommandHandler
 
     public UserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, IMapper mapper,
         IChatGroupInUserRepository chatGroupInUserRepository, IChatGroupRepository chatGroupRepository,
-        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus, IFriendRequestRepository friendRequestRepository, IFriendRepository friendRepository, IHubContext<ChatHub> chatHubContext, RedisClient redisClient)
+        IUserContext userContext, IEmojiRepository emojiRepository, IEventBus eventBus,
+        IFriendRequestRepository friendRequestRepository, IFriendRepository friendRepository,
+        IHubContext<ChatHub> chatHubContext, RedisClient redisClient)
     {
         _userRepository = userRepository;
         _unitOfWork = unitOfWork;
@@ -171,7 +173,7 @@ public class UserCommandHandler
             RequestId = _userContext.GetUserId<Guid>(),
             ApplicationDate = DateTime.Now,
             BeAppliedForId = command.Input.BeAppliedForId,
-            Description = command.Input.Description,
+            Description = command.Input.Description.IsNullOrEmpty() ? string.Empty : command.Input.Description,
             State = FriendState.ApplyFor
         };
 
@@ -180,6 +182,7 @@ public class UserCommandHandler
         var systemCommand = new SystemCommand(new Notification()
         {
             content = "有新的好友申请",
+            data = request.Id,
             createdTime = DateTime.Now,
             type = NotificationType.FriendRequest
         }, new[] { command.Input.BeAppliedForId }, false);
@@ -191,7 +194,8 @@ public class UserCommandHandler
     [EventHandler]
     public async Task FriendHandle(FriendHandleCommand command)
     {
-        var value = await _friendRequestRepository.FindAsync(x => x.Id == command.Id && x.State == FriendState.ApplyFor);
+        var value = await _friendRequestRepository.FindAsync(x =>
+            x.Id == command.Id && x.State == FriendState.ApplyFor);
 
         if (value == null)
         {
@@ -243,9 +247,8 @@ public class UserCommandHandler
             {
                 await _chatHubContext.Groups.AddToGroupAsync(connectionId, groupId.ToString("N"));
             }
-            
+
             #endregion
-            
         }
 
         await _friendRequestRepository.UpdateAsync(value);

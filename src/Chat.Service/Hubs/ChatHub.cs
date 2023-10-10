@@ -91,7 +91,10 @@ public class ChatHub : Hub
 
         var userId = GetUserId();
         // 未登录用户不允许发送消息
-        if (userId == null) return;
+        if (userId == null || userId == Guid.Empty)
+        {
+            throw new UnauthorizedAccessException();
+        }
 
         string key = $"user:{userId}:count";
 
@@ -166,34 +169,12 @@ public class ChatHub : Hub
     /// <returns></returns>
     public Guid? GetUserId()
     {
-        var userId = Context.User.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_ID);
+        var userId = Context.User?.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_ID);
 
         if (userId == null) return null;
 
         if (string.IsNullOrEmpty(userId.Value)) return null;
 
         return Guid.Parse(userId.Value);
-    }
-
-    /// <summary>
-    /// 获取当前用户头像
-    /// </summary>
-    /// <returns></returns>
-    private string GetAvatar()
-    {
-        var avatar = Context.User.FindFirst(x => x.Type == "avatar");
-
-        return avatar?.Value == null ? "" : avatar.Value;
-    }
-
-    /// <summary>
-    /// 获取当前用户名称
-    /// </summary>
-    /// <returns></returns>
-    private string GetName()
-    {
-        var name = Context.User.FindFirst(x => x.Type == ClaimType.DEFAULT_USER_NAME);
-
-        return name?.Value == null ? "" : name.Value;
     }
 }
