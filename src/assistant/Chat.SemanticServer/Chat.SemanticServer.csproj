@@ -54,12 +54,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="plugins\Weather\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <_ContentIncludedByDefault Remove="plugins\MathPlugin\FindMaxMin\config.json" />
       <_ContentIncludedByDefault Remove="plugins\Plan\吃饭\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\ChatPlugin\AnalysisWeather\config.json" />
     </ItemGroup>
 
 </Project>

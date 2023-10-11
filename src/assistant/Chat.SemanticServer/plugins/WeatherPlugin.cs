@@ -17,7 +17,8 @@ public class WeatherPlugin
         var path = Path.Combine(AppContext.BaseDirectory, "adcode.json");
         if (File.Exists(path))
         {
-            _codes = JsonSerializer.Deserialize<List<AdCode>>(File.ReadAllBytes(path));
+            var str = File.ReadAllText(path);
+            _codes = JsonSerializer.Deserialize<List<AdCode>>(str);
         }
 
         _codes ??= new List<AdCode>();
@@ -32,14 +33,23 @@ public class WeatherPlugin
 
     [SKFunction, Description("获取天气")]
     [SKParameter("input", "入参")]
-    public string GetWeather(SKContext context)
+    public async Task<string> GetWeather(SKContext context)
     {
+        var value = _codes.FirstOrDefault(x => x.name.StartsWith(context.Result));
+        if (value == null)
+        {
+            return "请先描述指定城市！";
+        }
         var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-        http.GetAsync(
-            "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city=");
+        var result =await http.GetAsync(
+            "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city="+value.adcode);
 
+        if (result.IsSuccessStatusCode)
+        {
+            return await result.Content.ReadAsStringAsync();
+        }
 
-        return "";
+        return "获取天气失败了！";
     }
 }
 

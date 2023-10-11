@@ -3,6 +3,7 @@ using System.Text.Json;
 using Chat.Contracts.Chats;
 using Chat.Contracts.Eto.Semantic;
 using Chat.EventsBus.Contract;
+using Chat.SemanticServer.Module;
 using Chat.SemanticServer.plugins;
 using Chat.SemanticServer.plugins.ChatPlugin;
 using FreeRedis;
@@ -24,10 +25,10 @@ public class IntelligentAssistantHandle : IEventsBusHandle<IntelligentAssistantE
     private readonly RedisClient _redisClient;
     private readonly ILogger<IntelligentAssistantHandle> _logger;
 
-    public IntelligentAssistantHandle(IKernel _kernel, RedisClient redisClient,
+    public IntelligentAssistantHandle(IKernel kernel, RedisClient redisClient,
         ILogger<IntelligentAssistantHandle> logger, IHttpClientFactory httpClientFactory)
     {
-        _kernel = _kernel;
+        _kernel = kernel;
         _redisClient = redisClient;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
@@ -55,6 +56,11 @@ public class IntelligentAssistantHandle : IEventsBusHandle<IntelligentAssistantE
             请确保服务器正常运行以获取准确的状态信息和回答
         """;
 
+    private const string WeatherTemplate =
+        """
+        当前{province}的天气{weather}，平均温度{temperature_float},风向{winddirection},湿度{humidity};
+        """;
+    
     /// <inheritdoc />
     public async Task HandleAsync(IntelligentAssistantEto item)
     {
@@ -201,5 +207,67 @@ public class IntelligentAssistantHandle : IEventsBusHandle<IntelligentAssistantE
         {
             _logger.LogError("智能助手出现异常 {e}", e);
         }
+    }
+
+    public async Task<string> SKHandle(string value)
+    {
+        //对话摘要  SK.Skills.Core 核心技能
+        _kernel.ImportSkill(new ConversationSummarySkill(_kernel), "ConversationSummarySkill");
+
+        var pluginsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
+
+        var intentPlugin = _kernel
+            .ImportSemanticSkillFromDirectory(pluginsDirectory, "BasePlugin");
+        var travelPlugin = _kernel
+            .ImportSemanticSkillFromDirectory(pluginsDirectory, "Travel");
+
+        var chatPlugin = _kernel
+            .ImportSemanticSkillFromDirectory(pluginsDirectory, "ChatPlugin");
+
+        var getWeather = _kernel.ImportSkill(new WeatherPlugin(_httpClientFactory), "WeatherPlugin");
+
+        var getIntentVariables = new ContextVariables
+        {
+            ["input"] = value,
+            ["options"] = "Weather,Attractions,Delicacy,Traffic" //给GPT的意图，通过Prompt限定选用这些里面的
+        };
+        string intent = (await _kernel.RunAsync(getIntentVariables, intentPlugin["GetIntent"])).Result.Trim();
+        ISKFunction MathFunction = null;
+        SKContext result = null;
+
+        //获取意图后动态调用Fun
+        if (intent is "Attractions" or "Delicacy" or "Traffic")
+        {
+            MathFunction = _kernel.Skills.GetFunction("Travel", intent);
+            result = await _kernel.RunAsync(value, MathFunction);
+        }
+        else if (intent is "Weather")
+        {
+            var newValue = (await _kernel.RunAsync(new ContextVariables
+            {
+                ["input"] = value
+            }, chatPlugin["Weather"])).Result;
+            MathFunction = _kernel.Skills.GetFunction("WeatherPlugin", "GetWeather");
+            result = await _kernel.RunAsync(newValue, MathFunction);
+
+            if (!result.Result.IsNullOrWhiteSpace())
+            {
+                var weather = JsonSerializer.Deserialize<GetWeatherModule>(result.Result);
+                var live = weather?.lives.FirstOrDefault();
+                return WeatherTemplate
+                    .Replace("{province}", newValue)
+                    .Replace("{weather}",live?.weather)
+                    .Replace("{temperature_float}",live?.temperature_float)
+                    .Replace("{winddirection}",live?.winddirection)
+                    .Replace("{humidity}",live.humidity);
+
+            }
+        }
+        else
+        {
+            result = await _kernel.RunAsync(value);
+        }
+
+        return result.Result;
     }
 }
