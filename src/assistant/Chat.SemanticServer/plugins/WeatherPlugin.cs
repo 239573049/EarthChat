@@ -35,22 +35,34 @@ public class WeatherPlugin
     [SKParameter("input", "入参")]
     public async Task<string> GetWeather(SKContext context)
     {
-        var value = _codes.FirstOrDefault(x => x.name.StartsWith(context.Result));
+        var weatherInput = JsonSerializer.Deserialize<WeatherInput>(context.Result);
+        var value = _codes.FirstOrDefault(x => x.name.StartsWith(weatherInput.city));
         if (value == null)
         {
             return "请先描述指定城市！";
         }
-        var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-        var result =await http.GetAsync(
-            "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city="+value.adcode);
 
-        if (result.IsSuccessStatusCode)
+        if (weatherInput.time == "今天")
         {
-            return await result.Content.ReadAsStringAsync();
+            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
+            var result = await http.GetAsync(
+                "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city=" +
+                value.adcode);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return await result.Content.ReadAsStringAsync();
+            }
         }
 
         return "获取天气失败了！";
     }
+}
+
+public class WeatherInput
+{
+    public string city { get; set; }
+    public string time { get; set; }
 }
 
 public class AdCode

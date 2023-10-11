@@ -229,11 +229,11 @@ public class IntelligentAssistantHandle : IEventsBusHandle<IntelligentAssistantE
         var getIntentVariables = new ContextVariables
         {
             ["input"] = value,
-            ["options"] = "Weather,Attractions,Delicacy,Traffic" //给GPT的意图，通过Prompt限定选用这些里面的
+            ["options"] = "Weather,Attractions,Delicacy,Traffic,博客园" //给GPT的意图，通过Prompt限定选用这些里面的
         };
         string intent = (await _kernel.RunAsync(getIntentVariables, intentPlugin["GetIntent"])).Result.Trim();
         ISKFunction MathFunction = null;
-        SKContext result = null;
+        SKContext? result = null;
 
         //获取意图后动态调用Fun
         if (intent is "Attractions" or "Delicacy" or "Traffic")
@@ -255,12 +255,11 @@ public class IntelligentAssistantHandle : IEventsBusHandle<IntelligentAssistantE
                 var weather = JsonSerializer.Deserialize<GetWeatherModule>(result.Result);
                 var live = weather?.lives.FirstOrDefault();
                 return WeatherTemplate
-                    .Replace("{province}", newValue)
+                    .Replace("{province}", live!.city)
                     .Replace("{weather}",live?.weather)
                     .Replace("{temperature_float}",live?.temperature_float)
                     .Replace("{winddirection}",live?.winddirection)
                     .Replace("{humidity}",live.humidity);
-
             }
         }
         else

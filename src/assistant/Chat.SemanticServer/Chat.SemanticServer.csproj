@@ -57,6 +57,7 @@
       <_ContentIncludedByDefault Remove="plugins\MathPlugin\FindMaxMin\config.json" />
       <_ContentIncludedByDefault Remove="plugins\Plan\吃饭\config.json" />
       <_ContentIncludedByDefault Remove="plugins\ChatPlugin\AnalysisWeather\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\BasePlugin\JSON\config.json" />
     </ItemGroup>
 
 </Project>

@@ -44,6 +44,6 @@ var app = builder.Services.AddServices(builder, options =>
 
 var test = app.Services.GetService<IntelligentAssistantHandle>();
 
-var format = await test.SKHandle("深圳今天的天气咋样？");
+var format = await test.SKHandle("今天深圳的天气怎么样？");
 Console.WriteLine(format);
 app.Run();
