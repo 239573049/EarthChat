@@ -1,10 +1,10 @@
 {
   "schema": 1,
   "type": "completion",
-  "description": "把2个数相乘",
+  "description": "获取城市天气",
   "completion": {
     "max_tokens": 200,
-    "temperature": 0.5,
+    "temperature": 0.3,
     "top_p": 0.0,
     "presence_penalty": 0.0,
     "frequency_penalty": 0.0
@@ -12,13 +12,8 @@
   "input": {
     "parameters": [
       {
-        "name": "num1",
-        "description": "数字1",
-        "defaultValue": ""
-      },
-      {
-        "name": "num2",
-        "description": "数字2",
+        "name": "input",
+        "description": "获取城市天气",
         "defaultValue": ""
       }
     ]
