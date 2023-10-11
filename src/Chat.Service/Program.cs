@@ -1,4 +1,7 @@
 using System.Text.Json.Serialization;
+using Chat.Contracts.Eto.Chat;
+using Chat.Contracts.Eto.Semantic;
+using Chat.Service.Application.Chats.EventBus;
 using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -46,6 +49,7 @@ builder.Services.Configure<GiteeOptions>(gitee);
 
 builder.Services.AddScoped<ExceptionMiddleware>();
 
+builder.Services.AddSingleton<ChatMessageHandle>();
 builder.Services.Configure<IpRateLimitOptions>
     (builder.Configuration.GetSection("IpRateLimit"));
 
@@ -64,6 +68,7 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
     c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
 });
+
 
 // 使用静态文件压缩。
 builder.Services.AddResponseCompression(options =>
@@ -173,6 +178,8 @@ app.UseAuthorization()
     .UseCors("CorsPolicy");
 
 app.MapHub<ChatHub>("/chatHub");
+
+app.Services.GetService<ChatMessageHandle>();
 
 await app.RunAsync();
 

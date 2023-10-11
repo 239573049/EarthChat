@@ -1,3 +1,0 @@
-{{ConversationSummarySkill.SummarizeConversation $history}}
-为我查询所在地的天气：
-我的请求是：{{$input}}

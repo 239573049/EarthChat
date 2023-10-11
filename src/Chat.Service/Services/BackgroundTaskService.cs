@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Channels;
 using Chat.Contracts.Chats;
+using Chat.Contracts.Eto.Semantic;
 using Chat.Service.Application.Chats.Queries;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
@@ -43,7 +44,6 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
         _httpClientFactory = httpClientFactory;
         _logger = logger;
         _redisClient = redisClient;
-
         // 请注意由于仓储使用的是作用域，所以需要在这个单例的服务中创建一个作用域。
         _serviceScope = serviceProvider.CreateScope();
         _chatMessageRepository = _serviceScope.ServiceProvider.GetRequiredService<IChatMessageRepository>();
@@ -93,8 +93,20 @@ public class BackgroundTaskService : ISingletonDependency, IDisposable
 
                 if (value.IsNullOrWhiteSpace())
                 {
-                    return;
+                    continue;
                 }
+
+                await _redisClient.PublishAsync(nameof(IntelligentAssistantEto), JsonSerializer.Serialize(
+                    new IntelligentAssistantEto()
+                    {
+                        Group = item.Group,
+                        Id = item.Id,
+                        RevertId = item.RevertId,
+                        UserId = item.UserId,
+                        Value = item.Value
+                    }));
+
+                continue;
 
                 try
                 {

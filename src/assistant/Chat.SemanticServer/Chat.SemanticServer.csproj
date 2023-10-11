@@ -12,13 +12,13 @@
 
     <ItemGroup>
         <PackageReference Include="FreeRedis" Version="1.1.6" />
+        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.0" />
         <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="0.24.230918.1-preview" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\BuildingBlocks\Chat.EventsBus.RabbitMq\Chat.EventsBus.RabbitMq.csproj" />
       <ProjectReference Include="..\..\Chat.Contracts\Chat.Contracts.csproj" />
       <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
@@ -58,6 +58,7 @@
       <_ContentIncludedByDefault Remove="plugins\Plan\吃饭\config.json" />
       <_ContentIncludedByDefault Remove="plugins\ChatPlugin\AnalysisWeather\config.json" />
       <_ContentIncludedByDefault Remove="plugins\BasePlugin\JSON\config.json" />
+      <_ContentIncludedByDefault Remove="plugins\Travel\Weather\config.json" />
     </ItemGroup>
 
 </Project>

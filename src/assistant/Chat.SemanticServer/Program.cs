@@ -1,19 +1,18 @@
-using System.Text.Json;
 using Chat.SemanticServer.Options;
 using Chat.SemanticServer.Services;
 using FreeRedis;
 using Microsoft.SemanticKernel;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.GetSection(nameof(ChatServiceOptions)).Get<ChatServiceOptions>();
 builder.Configuration.GetSection("OpenAI").Get<OpenAIOptions>();
 
 builder.Services.AddSingleton<IntelligentAssistantHandle>();
 
-builder.Services.AddEventsBusRabbitMq(builder.Configuration);
 builder.Services.AddHttpClient("ChatGPT", (services, c) =>
 {
-    c.BaseAddress = new Uri(OpenAIOptions.Endpoint);
     c.DefaultRequestHeaders.Add("X-Token", "token");
     c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
@@ -42,8 +41,6 @@ var app = builder.Services.AddServices(builder, options =>
     options.MapHttpMethodsForUnmatched = new[] { "Post" }; //当请求类型匹配失败后，默认映射为Post请求 (当前项目范围内，除非范围配置单独指定)
 });
 
-var test = app.Services.GetService<IntelligentAssistantHandle>();
+app.Services.GetService<IntelligentAssistantHandle>();
 
-var format = await test.SKHandle("今天深圳的天气怎么样？");
-Console.WriteLine(format);
 app.Run();

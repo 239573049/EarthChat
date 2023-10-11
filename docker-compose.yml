@@ -38,6 +38,21 @@ services:
     volumes:
       - ./main.conf:/etc/nginx/conf.d/default.conf
 
+  rabbitmq:
+    restart: always # 开机自启
+    image: rabbitmq:3.11-management # RabbitMQ使用的镜像
+    container_name: rabbitmq # docker名称
+    hostname: rabbit
+    ports:
+      - 5672:5672 # 只是RabbitMQ SDK使用的端口
+      - 15672:15672 # 这是RabbitMQ管理界面使用的端口
+    environment:
+      TZ: Asia/Shanghai # 设置RabbitMQ时区
+      RABBITMQ_DEFAULT_USER: token # rabbitMQ账号
+      RABBITMQ_DEFAULT_PASS: dd666666 # rabbitMQ密码
+    volumes:
+      - ./data:/var/lib/rabbitmq
+
   chat-web:
     build:
       context: ./web

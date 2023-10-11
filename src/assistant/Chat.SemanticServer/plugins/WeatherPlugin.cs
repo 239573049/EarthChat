@@ -3,7 +3,7 @@ using System.Text.Json;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 
-namespace Chat.SemanticServer.plugins.ChatPlugin;
+namespace Chat.SemanticServer.plugins;
 
 /// <summary>
 /// 获取天气插件
@@ -42,20 +42,17 @@ public class WeatherPlugin
             return "请先描述指定城市！";
         }
 
-        if (weatherInput.time == "今天")
+        var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
+        var result = await http.GetAsync(
+            "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city=" +
+            value.adcode);
+
+        if (result.IsSuccessStatusCode)
         {
-            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-            var result = await http.GetAsync(
-                "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city=" +
-                value.adcode);
-
-            if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadAsStringAsync();
-            }
+            return await result.Content.ReadAsStringAsync();
         }
-
-        return "获取天气失败了！";
+        
+        return string.Empty;
     }
 }
 
