@@ -5,7 +5,7 @@
 </p>
 
 
-<h1 align="center">Token Chat</h1>
+<h1 align="center">Earth Chat</h1>
 <p align="center"><strong>一个支持百万用户的Chat系统！</strong></p>
 
 
