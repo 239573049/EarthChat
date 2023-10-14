@@ -81,6 +81,20 @@ services:
     networks:
       - chat
 
+
+  chat-semantic-server:
+    build:
+      context: ./
+      dockerfile: ./src/assistant/Chat.SemanticServer/Dockerfile
+    container_name: chat-semantic-server
+    image: registry.cn-shenzhen.aliyuncs.com/gotrays/chat-api
+    restart: always
+    depends_on:
+     - redis
+     - postgres
+    networks:
+      - chat
+
 networks:
   chat:
     driver: bridge

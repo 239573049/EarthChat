@@ -3,6 +3,7 @@ using Chat.SemanticServer.Services;
 using FreeRedis;
 using Microsoft.SemanticKernel;
 using System.Text.Json;
+using Microsoft.SemanticKernel.Connectors.AI.OpenAI.ChatCompletion;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +17,11 @@ builder.Services.AddHttpClient("ChatGPT", (services, c) =>
     c.DefaultRequestHeaders.Add("X-Token", "token");
     c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
+}).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+{
+    ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
 });
+;
 
 builder.Services.AddTransient<IKernel>((services) =>
 {
@@ -33,6 +38,11 @@ builder.Services.AddTransient<IKernel>((services) =>
     client.Serialize = o => JsonSerializer.Serialize(o);
     client.Deserialize = (s, t) => JsonSerializer.Deserialize(s, t);
     return client;
+}).AddSingleton<OpenAIChatCompletion>((services) =>
+{
+    var httpClientFactory = services.GetRequiredService<IHttpClientFactory>();
+    return new OpenAIChatCompletion(OpenAIOptions.Model, OpenAIOptions.Key,
+        httpClient: httpClientFactory.CreateClient("ChatGPT"));
 });
 
 

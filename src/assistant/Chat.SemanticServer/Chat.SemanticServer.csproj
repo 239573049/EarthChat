@@ -4,6 +4,9 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>5fe37f57-2027-43f7-a9a4-a818d6b816ab</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <DockerfileContext>..\..\..</DockerfileContext>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -16,6 +19,7 @@
         <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="0.24.230918.1-preview" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     </ItemGroup>
 
     <ItemGroup>

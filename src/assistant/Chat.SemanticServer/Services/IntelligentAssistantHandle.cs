@@ -4,9 +4,12 @@ using Chat.Contracts.Chats;
 using Chat.Contracts.Eto.Chat;
 using Chat.Contracts.Eto.Semantic;
 using Chat.SemanticServer.Module;
+using Chat.SemanticServer.Options;
 using Chat.SemanticServer.plugins;
 using FreeRedis;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.AI.ChatCompletion;
+using Microsoft.SemanticKernel.Connectors.AI.OpenAI.ChatCompletion;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 using Microsoft.SemanticKernel.Skills.Core;
@@ -22,14 +25,17 @@ public class IntelligentAssistantHandle
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly RedisClient _redisClient;
     private readonly ILogger<IntelligentAssistantHandle> _logger;
+    private readonly OpenAIChatCompletion _chatCompletion;
 
     public IntelligentAssistantHandle(IKernel kernel, RedisClient redisClient,
-        ILogger<IntelligentAssistantHandle> logger, IHttpClientFactory httpClientFactory)
+        ILogger<IntelligentAssistantHandle> logger, IHttpClientFactory httpClientFactory,
+        OpenAIChatCompletion chatCompletion)
     {
         _kernel = kernel;
         _redisClient = redisClient;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _chatCompletion = chatCompletion;
 
         _redisClient.Subscribe(nameof(IntelligentAssistantEto),
             ((s, o) => { HandleAsync(JsonSerializer.Deserialize<IntelligentAssistantEto>(o as string)); }));
@@ -134,7 +140,7 @@ public class IntelligentAssistantHandle
             var getIntentVariables = new ContextVariables
             {
                 ["input"] = value,
-                ["options"] = "Weather,Attractions,Delicacy,Traffic,博客园" //给GPT的意图，通过Prompt限定选用这些里面的
+                ["options"] = "Weather,Attractions,Delicacy,Traffic" //给GPT的意图，通过Prompt限定选用这些里面的
             };
             string intent = (await _kernel.RunAsync(getIntentVariables, intentPlugin["GetIntent"])).Result.Trim();
             ISKFunction MathFunction = null;
@@ -176,7 +182,12 @@ public class IntelligentAssistantHandle
             }
             else
             {
-                result = await _kernel.RunAsync(value);
+                var chatHistory = _chatCompletion.CreateNewChat();
+                chatHistory.AddUserMessage(value);
+                var reply = await _chatCompletion.GenerateMessageAsync(chatHistory);
+                
+                await SendMessage(reply, item.RevertId, item.Id);
+                return;
             }
 
 
