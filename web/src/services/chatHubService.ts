@@ -6,7 +6,7 @@ import config from '../config';
 
 
 const connection = new HubConnectionBuilder()
-    .withUrl(config.API + "/chathub", {
+    .withUrl(config.API + "/api/chatHub", {
         accessTokenFactory: () => localStorage.getItem('token')!
     })
     .withAutomaticReconnect()

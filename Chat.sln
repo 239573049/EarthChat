@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9122D35F-670
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution items", "{16EB5FD0-8400-4F4D-985D-C506AA5A0544}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
 		README.md = README.md
 	EndProjectSection
@@ -17,15 +19,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Contracts", "src\Chat.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "client", "client", "{13DC15C5-E2AD-47D4-B14F-F84223CB7B92}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.Client", "client\Chat.Client\Chat.Client.csproj", "{EF25CED4-BA3E-4C49-88A0-98533D7FC1FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.Client", "client\Chat.Client\Chat.Client.csproj", "{EF25CED4-BA3E-4C49-88A0-98533D7FC1FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{66FE2180-E291-4899-B735-B2439965B8BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{66FE2180-E291-4899-B735-B2439965B8BF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{96AE19A0-A93E-4F2C-9A1C-C6B88138C077}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assistant", "assistant", "{BE317470-5294-4BC6-86A2-CCD202B8FBDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.SemanticServer", "src\assistant\Chat.SemanticServer\Chat.SemanticServer.csproj", "{4D255C41-417C-42D5-B569-9B2B1B03E9D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.SemanticServer", "src\assistant\Chat.SemanticServer\Chat.SemanticServer.csproj", "{4D255C41-417C-42D5-B569-9B2B1B03E9D1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,8 +62,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{4718329F-DA45-47D4-904E-99246E4F6681} = {9122D35F-670F-444B-B1C6-FA8FEC1E841C}
 		{6AA026F1-9439-40CB-9DD6-BF947E334697} = {9122D35F-670F-444B-B1C6-FA8FEC1E841C}
-		{EF25CED4-BA3E-4C49-88A0-98533D7FC1FE} = {13DC15C5-E2AD-47D4-B14F-F84223CB7B92}
 		{13DC15C5-E2AD-47D4-B14F-F84223CB7B92} = {9122D35F-670F-444B-B1C6-FA8FEC1E841C}
+		{EF25CED4-BA3E-4C49-88A0-98533D7FC1FE} = {13DC15C5-E2AD-47D4-B14F-F84223CB7B92}
 		{66FE2180-E291-4899-B735-B2439965B8BF} = {9122D35F-670F-444B-B1C6-FA8FEC1E841C}
 		{BE317470-5294-4BC6-86A2-CCD202B8FBDA} = {9122D35F-670F-444B-B1C6-FA8FEC1E841C}
 		{4D255C41-417C-42D5-B569-9B2B1B03E9D1} = {BE317470-5294-4BC6-86A2-CCD202B8FBDA}

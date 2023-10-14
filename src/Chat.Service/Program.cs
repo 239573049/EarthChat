@@ -177,7 +177,7 @@ app.UseAuthentication();
 app.UseAuthorization()
     .UseCors("CorsPolicy");
 
-app.MapHub<ChatHub>("/chatHub");
+app.MapHub<ChatHub>("/api/chatHub");
 
 app.Services.GetService<ChatMessageHandle>();
 
