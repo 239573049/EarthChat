@@ -15,10 +15,12 @@ class ChatService {
         return Request.post(`${baseURL}/Group?connections=` + connection.connectionId, value)
     }
 
-    getGroupInUser(groupId: string) {
+    getGroupInUser(groupId: string,page:number,pageSize:number) {
         return Request.get(`${baseURL}/GroupInUser`, {
             params: {
                 groupId,
+                page,
+                pageSize,
             }
         })
     }

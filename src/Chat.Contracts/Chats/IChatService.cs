@@ -33,15 +33,17 @@ public interface IChatService
     /// 获取群组中的用户。
     /// </summary>
     /// <param name="groupId"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
     /// <returns></returns>
-    Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId);
+    Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId, int page, int pageSize);
 
     /// <summary>
     /// 只获取群组在线用户id
     /// </summary>
     /// <param name="groupId"></param>
     /// <returns></returns>
-    Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId); 
+    Task<ResultDto<Guid[]>> GetOnLineUserIdsAsync(Guid groupId); 
 
     /// <summary>
     /// 通过id获取指定群聊基本信息

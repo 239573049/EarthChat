@@ -7,6 +7,9 @@ public abstract class BaseService<T> : ServiceBase where T : class
 
     protected IUserContext UserContext
         => GetRequiredService<IUserContext>();
+
+    protected RedisClient RedisClient
+        => GetRequiredService<RedisClient>();
     
     protected TOptions? GetOptions<TOptions>() where TOptions : class
     {

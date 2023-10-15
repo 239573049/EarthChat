@@ -29,13 +29,13 @@ public class ChatService : IChatService
         throw new NotImplementedException();
     }
 
-    public async Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId, int page, int pageSize)
     {
         return await Caller.GetHttpClient()
             .GetFromJsonAsync<List<GroupUserDto>>("Chats/GroupInUser?groupId=" + groupId);
     }
 
-    public Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId)
+    public Task<ResultDto<Guid[]>> GetOnLineUserIdsAsync(Guid groupId)
     {
         throw new NotImplementedException();
     }

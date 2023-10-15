@@ -20,16 +20,19 @@ public class ChatGroupInUserRepository : BaseRepository<ChatDbContext, ChatGroup
                 .Include(x => x.ChatGroup)
                 .Select(x => x.ChatGroup)
                 .ToListAsync();
-        
+
         return query;
     }
 
-    public async Task<List<User>> GetGroupInUserAsync(Guid groupId)
+    public async Task<List<User>> GetGroupInUserAsync(Guid groupId, int page, int pageSize, Guid[] queryUserIds)
     {
         var query = Context.ChatGroupInUsers
             .Where(x => x.ChatGroupId == groupId)
             .Include(x => x.User)
-            .Select(x => x.User);
+            .Select(x => x.User)
+            .OrderByDescending(x => queryUserIds.Contains(x.Id) ? 1 : 0)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize);
 
         return await query.ToListAsync();
     }

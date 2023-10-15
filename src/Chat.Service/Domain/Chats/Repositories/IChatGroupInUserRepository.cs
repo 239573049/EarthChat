@@ -11,6 +11,10 @@ public interface IChatGroupInUserRepository : IBaseRepository<ChatGroupInUser,Gu
     /// 获取群组中的用户。
     /// </summary>
     /// <param name="groupId"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <param name="queryUserIds"></param>
     /// <returns></returns>
-    Task<List<User>> GetGroupInUserAsync(Guid groupId);
+    Task<List<User>> GetGroupInUserAsync(Guid groupId, int page, int pageSize, Guid[] queryUserIds);
+
 }

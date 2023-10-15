@@ -34,27 +34,25 @@ public class ChatService : BaseService<ChatService>, IChatService
         return new ResultDto();
     }
 
-    [Authorize]
-    public async Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId)
+    public async Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId, int page, int pageSize)
     {
-        var query = new GetGroupInUserQuery(groupId);
+        var userIds =
+            await RedisClient.LRangeAsync<Guid>(Constant.Group.GroupUsers + groupId.ToString("N"), page - 1, pageSize);
+
+        var query = new GetGroupInUserQuery(groupId, page, pageSize, userIds);
+        
         await PublishAsync(query);
-        return query.Result
-            .Select(x => new GroupUserDto(x.Id, x.OnLine))
-            .OrderByDescending(x => x.OnLine)
-            .ToList();
+        
+        return query.Result.Select(x => new GroupUserDto(x.Id, userIds.Contains(x.Id))).ToList();
     }
 
     [Authorize]
-    public async Task<ResultDto<IEnumerable<Guid>>> GetOnLineUserIdsAsync(Guid groupId)
+    public async Task<ResultDto<Guid[]>> GetOnLineUserIdsAsync(Guid groupId)
     {
-        var query = new GetGroupInUserQuery(groupId);
-        await PublishAsync(query);
-        var redis = GetService<RedisClient>();
-        var values =
-            await redis.MGetAsync<Guid?>(query.Result.Select(x => Constant.OnLineKey + x.Id.ToString("N")).ToArray());
-        values = values.Where(x => x.HasValue).ToArray();
-        return query.Result.Where(x => values.Any(y => x.Id == y)).Select(x => x.Id).CreateResult();
+        var userIds = await RedisClient.LRangeAsync<Guid>(Constant.Group.GroupUsers + groupId.ToString("N"), 0, -1) ??
+                      Array.Empty<Guid>();
+
+        return userIds.CreateResult();
     }
 
     [Authorize]

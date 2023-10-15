@@ -17,4 +17,14 @@ public class Constant
     {
         public const string Default = "Chat:Role";
     }
+    
+    public class Group
+    {
+        private const string Default = "Chat:Group";
+
+        /// <summary>
+        /// 群聊人数Key
+        /// </summary>
+        public const string GroupUsers = Default + ":Users";
+    }
 }

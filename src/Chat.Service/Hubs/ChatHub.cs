@@ -31,10 +31,16 @@ public class ChatHub : Hub
 
         var groupsQuery = new GetUserGroupQuery(userId.Value);
         await _eventBus.PublishAsync(groupsQuery);
+        
         foreach (var groupDto in groupsQuery.Result)
         {
+            var key = Constant.Group.GroupUsers + groupDto.Id.ToString("N");
             // 加入群组
             await Groups.AddToGroupAsync(Context.ConnectionId, groupDto.Id.ToString("N"));
+
+            // 如果用户不存在当前群聊在线人数中，则添加。
+            await _redisClient.LRemAsync(key,-1, userId);
+            await _redisClient.LPushAsync(key, userId);
         }
 
         var systemCommand = new SystemCommand(new Notification()
@@ -54,20 +60,41 @@ public class ChatHub : Hub
         var userId = GetUserId();
         if (userId.HasValue)
         {
-            await _redisClient.DelAsync(Constant.OnLineKey + userId.Value.ToString("N"));
-            await _redisClient.LRemAsync(Constant.Connections + userId, 0, Context.ConnectionId);
-
-            var groupsQuery = new GetUserGroupQuery(userId.Value);
-            await _eventBus.PublishAsync(groupsQuery);
-
-            var systemCommand = new SystemCommand(new Notification()
+            // 当集合的数量少于对于1则当前链接是最后一个
+            if ((await _redisClient.LRangeAsync<string>(Constant.Connections + userId, 0, 2)).Length <= 1)
             {
-                createdTime = DateTime.Now,
-                type = NotificationType.GroupUserNew,
-                content = "用户下线",
-            }, groupsQuery.Result.Select(x => x.Id).ToArray(), true);
+                // 需要去掉在线标识
+                await _redisClient.DelAsync(Constant.OnLineKey + userId.Value.ToString("N"));
 
-            await _eventBus.PublishAsync(systemCommand);
+                // 获取当前用户所在的链接群
+                var groupsQuery = new GetUserGroupQuery(userId.Value);
+                await _eventBus.PublishAsync(groupsQuery);
+        
+                // 退出所有链接
+                foreach (var groupDto in groupsQuery.Result)
+                {
+                    var key = Constant.Group.GroupUsers + groupDto.Id.ToString("N");
+                    // 加入群组
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupDto.Id.ToString("N"));
+
+                    // 清空当前用户群的在线列表
+                    await _redisClient.LRemAsync(key, -1, userId);
+                }
+                
+                var systemCommand = new SystemCommand(new Notification()
+                {
+                    createdTime = DateTime.Now,
+                    type = NotificationType.GroupInOffLine,
+                    content = "用户下线",
+                    data = userId
+                }, groupsQuery.Result.Select(x => x.Id).ToArray(), true);
+
+                await _eventBus.PublishAsync(systemCommand);
+            }
+            
+            // 移除当前链接
+            await _redisClient.LRemAsync(Constant.Connections + userId, -1, Context.ConnectionId);
+
         }
     }
 

@@ -123,7 +123,7 @@ public partial class ChatMessage : UserControl
         ViewModel.MessageList = messageList;
         if (!_groupInUserModels.TryGetValue(messageList.Id, out var list))
         {
-            var chatService = await MainAppHelper.GetService<IChatService>().GetGroupInUserAsync(messageList.Id);
+            var chatService = await MainAppHelper.GetService<IChatService>().GetGroupInUserAsync(messageList.Id, TODO, TODO);
             if (!_groupInUserModels.ContainsKey(messageList.Id))
             {
                 var userService = MainAppHelper.GetRequiredService<IUserService>();

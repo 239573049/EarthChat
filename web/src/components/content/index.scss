@@ -109,6 +109,7 @@ body:not([theme-mode="dark"]) {
     max-height: 25px;
     cursor: pointer;
     width: 100%;
+    transition: all 0.5s; /* 这行代码会使数据移动更平滑 */
 }
 
 .grou-user-item-content {

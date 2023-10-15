@@ -17,6 +17,7 @@ import FriendService from '../../services/friendService'
 import VideoPlayer from '../video';
 import chatService from '../../services/chatService';
 import RenderText from '../render-text';
+import FlipMove from 'react-flip-move';
 
 interface IProps {
     group: ChatGroupDto;
@@ -40,6 +41,11 @@ interface IState {
         visible: boolean,
         id: string;
         user: GetUserDto
+    },
+    groupinUser: {
+        page: number,
+        pageSize: number,
+        loading: boolean,
     },
     revertValue: any
 }
@@ -112,7 +118,12 @@ export default class Content extends Component<IProps, IState> {
             id: '',
             user: {} as GetUserDto
         },
-        revertValue: undefined
+        revertValue: undefined,
+        groupinUser: {
+            page: 1,
+            pageSize: 50,
+            loading: false
+        }
     }
 
 
@@ -144,7 +155,14 @@ export default class Content extends Component<IProps, IState> {
         if (group.id !== this.props.group.id) {
             this.setState({
                 data: [],
+                groupinUser: {
+                    page: 1,
+                    pageSize: 50,
+                    loading: false,
+                },
+                groupinUsers: [],
                 page: 1,
+                users: [],
                 groudUserPage: 1,
             }, () => {
                 this.loadingGroupUser();
@@ -153,67 +171,57 @@ export default class Content extends Component<IProps, IState> {
 
     }
 
+    getGroupInUser(groupId: string, page: number, pageSize: number) {
 
-    getOnLineUserIds() {
-        const { group } = this.props;
+        const { groupinUser } = this.state;
+        if (groupinUser.loading) {
+            return
+        }
 
-        ChatService.getOnLineUserIds(group.id)
-            .then(res => {
-                if (res.code === "200") {
-                    const { groupinUsers } = this.state;
-                    const updatedGroupinUsers = groupinUsers.map(user => {
-                        if (res.data.includes(user.userId)) {
-                            return {
-                                ...user,
-                                onLine: true
-                            };
-                        } else {
-                            return user;
-                        }
-                    });
+        ChatService.getGroupInUser(groupId, page, pageSize)
+            .then(async (res: any[]) => {
+                if (res) {
+                    if (res.length > 0) {
 
-                    this.setState({
-                        // 在更新Ui的时候先排序，根据在线状态排序。
-                        groupinUsers: updatedGroupinUsers.sort((a, b) => {
-                            if (a.onLine && !b.onLine) {
-                                return -1;
-                            } else if (!a.onLine && b.onLine) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        })
-                    });
-
-                } else {
-                    Toast.error(res.message)
-                }
-            })
-    }
-
-
-    loadingGroupUser() {
-        const { group } = this.props;
-
-        if (group.group) {
-            ChatService.getGroupInUser(group.id)
-                .then(async (res: any[]) => {
-                    if (res) {
+                        const { users, groupinUsers } = this.state;
                         const userids = res.map(x => x.userId)
 
                         // 这里是为了保证用户的基本信息完整
                         const userInfo = await GetUserInfos(userids)
 
+                        for (let i = 0; i < userInfo.length; i++) {
+                            // 如果不存在才添加
+                            if (users.findIndex(y => y.id === userInfo[i].id) === -1) {
+                                users.push(userInfo[i])
+                            }
+
+                        }
+
+                        groupinUsers.push(...res)
+
                         this.setState({
-                            groupinUsers: res,
-                            users: userInfo
-                        }, () => {
-                            // 获取群聊所有的用户成功以后获取用户状态
-                            this.getOnLineUserIds()
-                            this.loadingMessage()
+                            groupinUsers,
+                            users: users,
+                            groupinUser: {
+                                page: page + 1,
+                                pageSize: pageSize,
+                                loading: false,
+                            }
                         })
+
                     }
-                })
+                }
+            })
+
+    }
+
+    loadingGroupUser() {
+        const { group } = this.props;
+        const { groupinUser } = this.state;
+
+        if (group.group) {
+            this.getGroupInUser(group.id, groupinUser.page, groupinUser.pageSize)
+            this.loadingMessage();
         } else {
             GetUserInfos([group.creator, user.id])
                 .then(userInfo => {
@@ -241,16 +249,50 @@ export default class Content extends Component<IProps, IState> {
         })
     }
 
-    onNotification(_: any, messageData: any) {
-        if (messageData.type === "GroupUserNew") {
+    async onNotification(_: any, messageData: any) {
 
+        if (messageData.type === "GroupUserNew") {
+            debugger
             // 如果是当前用户的推送则忽略
             if (messageData.data === user.id) {
                 return;
             }
-            // 当存在新用户登录则刷新状态。
-            this.getOnLineUserIds()
-        } else if (messageData.type === "FriendRequest") {
+            var users = await GetUserInfos([messageData.data])
+            const { groupinUsers } = this.state;
+
+            var index = groupinUsers.findIndex((x: any) => x.userId === messageData.data);
+            if (index === -1) {
+                this.setState({
+                    groupinUsers: [{
+                        userId: messageData.data,
+                        onLine: true,
+                    }, ...groupinUsers]
+                })
+            } else {
+                this.setState({
+                    groupinUsers: [{
+                        userId: messageData.data,
+                        onLine: true,
+                    }, ...groupinUsers.filter((d, i) => i !== index || d.userId !== messageData.data)]
+                })
+            }
+        }
+        else if (messageData.type === "GroupInOffLine") {
+            const { groupinUsers } = this.state;
+            var index = groupinUsers.findIndex((x: any) => x.userId === messageData.data);
+            if (index !== -1) {
+                groupinUsers.splice(index, 1)
+                groupinUsers.push({
+                    userId: messageData.data,
+                    onLine: false,
+                })
+            }
+
+            this.setState({
+                groupinUsers: [...groupinUsers]
+            })
+        }
+        else if (messageData.type === "FriendRequest") {
             Notification.info({
                 content: messageData.content
             })
@@ -499,6 +541,7 @@ export default class Content extends Component<IProps, IState> {
                         backgroundColor: 'var(--message-item-content-background-color)'
                     }} content={<div className='image-menu'>
                         <div className='image-menu-item' onClick={() => this.addEmoji(item)}>添加到表情</div>
+                        <div className='image-menu-item' onClick={() => this.revert(item)}>回复</div>
                         {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
                     </div>} position='rightTop' trigger="contextMenu" >
                         {revertUser ? <div style={{
@@ -553,6 +596,7 @@ export default class Content extends Component<IProps, IState> {
                 <Tooltip style={{
                     backgroundColor: 'var(--message-item-content-background-color)'
                 }} content={<div className='image-menu'>
+                    <div className='image-menu-item' onClick={() => this.revert(item)}>回复</div>
                     {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
                 </div>} position='rightTop' trigger="contextMenu" >
                     <Card
@@ -699,12 +743,23 @@ export default class Content extends Component<IProps, IState> {
      */
     loadingMessage() {
         const { group } = this.props;
-        const { page } = this.state;
+        const { page, users } = this.state;
         ChatService.getList(group.id, page, 20)
-            .then((res: any) => {
+            .then(async (res: any) => {
                 if (res.code === "200") {
+
+                    var userids = res.data.result.map((x: any) => x.userId)
+                    var userinfos = await GetUserInfos(userids);
+                    userinfos.forEach(x => {
+                        // 如果不存在才添加
+                        if (users.findIndex(y => y.id === x.id) === -1) {
+                            users.push(x)
+                        }
+                    })
+
                     this.setState({
                         data: res.data.result,
+                        users: users
                     }, () => {
                         this.scrollToBottom(true);
                     })
@@ -953,7 +1008,22 @@ export default class Content extends Component<IProps, IState> {
         var element = document.getElementById('group-in-user')!;
 
         if (element.scrollTop + element.clientHeight === element.scrollHeight) {
-            console.log(value);
+
+            const { groupinUser } = this.state;
+
+            if (groupinUser.loading) {
+                return;
+            }
+
+            this.setState({
+                groupinUser: {
+                    ...groupinUser,
+                    loading: true
+                }
+            })
+
+            this.getGroupInUser(this.props.group.id, groupinUser.page + 1, groupinUser.pageSize)
+
         }
     }
 
@@ -1270,52 +1340,59 @@ export default class Content extends Component<IProps, IState> {
                         id='group-in-user'
                         onScroll={this.onScrollGroupInUser}
                         className='user-group'>
-                        {groupinUsers.map((item, index) => {
-                            const user = users.find(x => x.id == item.userId)
-                            return (
-                                <div key={"groupInUser_" + index} className='grou-user-item slide-in-bottom'>
-                                    <div className='grou-user-item-content'>
-                                        <div style={{
-                                            float: 'left'
-                                        }}>
-                                            <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
-                                                {item?.onLine ? <Badge dot >
-                                                    <Avatar size='extra-small' src={user?.avatar} />
-                                                </Badge> :
-                                                    <Avatar size='extra-small' src={user?.avatar} />}
-                                            </Tooltip>
-                                        </div>
-                                        <div style={{
-                                            marginLeft: '10px',
-                                            userSelect: 'none',
-                                            fontSize: '14px',
-                                            width: "70px",
-                                            float: 'left',
-                                            whiteSpace: 'nowrap',
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis'
-                                        }}>
-                                            {user?.name}
-                                        </div>
-                                        {(user?.id === '00000000-0000-0000-0000-000000000000' || !user?.id) ?
-                                            <Tag style={{
-                                                boxSizing: 'content-box',
-                                                float: 'right',
-                                            }} color="blue">机器人</Tag> : (
-                                                user?.id === group.creator ?
-                                                    <Tag style={{
-                                                        boxSizing: 'content-box',
-                                                        float: 'right',
-                                                    }} color='red'>频道主</Tag> :
-                                                    <Tag style={{
-                                                        boxSizing: 'content-box',
-                                                        float: 'right',
-                                                    }} color="grey">成员</Tag>
+                        <FlipMove
+                            staggerDurationBy="30"
+                            enterAnimation='accordionHorizontal'
+                            appearAnimation='accordionHorizontal'
+                            duration={500}>
 
-                                            )}
-                                    </div>
-                                </div>)
-                        })}
+                            {groupinUsers.map((item, index) => {
+                                const user = users.find(x => x.id == item.userId)
+                                return (
+                                    <div key={"test"+index} className='grou-user-item  '>
+                                        <div className='grou-user-item-content'>
+                                            <div style={{
+                                                float: 'left'
+                                            }}>
+                                                <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
+                                                    {item?.onLine ? <Badge dot >
+                                                        <Avatar size='extra-small' src={user?.avatar} />
+                                                    </Badge> :
+                                                        <Avatar size='extra-small' src={user?.avatar} />}
+                                                </Tooltip>
+                                            </div>
+                                            <div style={{
+                                                marginLeft: '10px',
+                                                userSelect: 'none',
+                                                fontSize: '14px',
+                                                width: "70px",
+                                                float: 'left',
+                                                whiteSpace: 'nowrap',
+                                                overflow: 'hidden',
+                                                textOverflow: 'ellipsis'
+                                            }}>
+                                                {user?.name}
+                                            </div>
+                                            {(user?.id === '00000000-0000-0000-0000-000000000000' || !user?.id) ?
+                                                <Tag style={{
+                                                    boxSizing: 'content-box',
+                                                    float: 'right',
+                                                }} color="blue" >机器人{JSON.stringify(user)}</Tag> : (
+                                                    user?.id === group.creator ?
+                                                        <Tag style={{
+                                                            boxSizing: 'content-box',
+                                                            float: 'right',
+                                                        }} color='red'>频道主</Tag> :
+                                                        <Tag style={{
+                                                            boxSizing: 'content-box',
+                                                            float: 'right',
+                                                        }} color="grey">成员</Tag>
+
+                                                )}
+                                        </div>
+                                    </div>)
+                            })}
+                        </FlipMove>
                     </div>
                 </div>
                 <Modal

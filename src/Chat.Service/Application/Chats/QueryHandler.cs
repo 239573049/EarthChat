@@ -74,18 +74,11 @@ public class QueryHandler
     [EventHandler]
     public async Task GetGroupInUserAsync(GetGroupInUserQuery query)
     {
-        var result = await _chatGroupInUserRepository.GetGroupInUserAsync(query.groupId);
+        var result = await _chatGroupInUserRepository.GetGroupInUserAsync(query.GroupId,query.Page,query.PageSize,query.UserIds);
 
         query.Result =
             _mapper.Map<List<UserDto>>(result);
 
-        query.Result.Add(new UserDto()
-        {
-            Id = Guid.Empty,
-            Account = string.Empty,
-            Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
-            Name = "聊天机器人",
-        });
     }
 
     [EventHandler]

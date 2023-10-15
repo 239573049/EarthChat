@@ -30,5 +30,10 @@ public enum NotificationType
     /// <summary>
     /// 撤回消息
     /// </summary>
-    Countermand
+    Countermand,
+    
+    /// <summary>
+    /// 用户下线
+    /// </summary>
+    GroupInOffLine
 }
