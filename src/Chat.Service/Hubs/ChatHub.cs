@@ -1,4 +1,4 @@
-﻿using Chat.Contracts.Chats;
+using Chat.Contracts.Chats;
 using Chat.Contracts.Hubs;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Chats.Queries;
@@ -25,11 +25,7 @@ public class ChatHub : Hub
     public override async Task OnConnectedAsync()
     {
         var userId = GetUserId();
-        if (userId == null || userId == Guid.Empty)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
+        
         await _redisClient.SetAsync(Constant.OnLineKey + userId.Value.ToString("N"), userId.Value);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
 
