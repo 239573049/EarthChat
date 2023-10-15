@@ -708,7 +708,7 @@ export default class Content extends Component<IProps, IState> {
                         width: '100%',
                     }} id={"row_" + item.id}>
                         <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
-                            <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar} />
+                            <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar+"?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingRight: '10px', float: 'right', width: "calc(100% - 50px)", textAlign: 'end' }}>
                             {userItem?.name}
@@ -724,7 +724,7 @@ export default class Content extends Component<IProps, IState> {
                         margin: '8px',
                     }} id={"row_" + item.id}>
                         <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
-                            <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar} />
+                            <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar+"?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
                             {userItem?.name}
@@ -970,7 +970,7 @@ export default class Content extends Component<IProps, IState> {
                 width: "320px",
                 height: '110px',
             }}>
-                <Avatar size="large" src={dto?.avatar} style={{ margin: 4, float: 'left' }} alt='User'>
+                <Avatar size="large" src={dto?.avatar+"?reduction=true"} style={{ margin: 4, float: 'left' }} alt='User'>
                 </Avatar>
                 <div style={{
                     float: 'left',
@@ -1356,9 +1356,9 @@ export default class Content extends Component<IProps, IState> {
                                             }}>
                                                 <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
                                                     {item?.onLine ? <Badge dot >
-                                                        <Avatar size='extra-small' src={user?.avatar} />
+                                                        <Avatar size='extra-small' src={user?.avatar+"?reduction=true"} />
                                                     </Badge> :
-                                                        <Avatar size='extra-small' src={user?.avatar} />}
+                                                        <Avatar size='extra-small' src={user?.avatar+"?reduction=true"} />}
                                                 </Tooltip>
                                             </div>
                                             <div style={{
@@ -1417,7 +1417,7 @@ export default class Content extends Component<IProps, IState> {
                     <Form onSubmit={(v) => this.addFriends(v)}>
                         <Avatar style={{
                             marginLeft: '45%',
-                        }} src={addFriend.user.avatar} />
+                        }} src={addFriend.user.avatar+"?reduction=true"} />
                         <div style={{
                             textAlign: 'center',
 
