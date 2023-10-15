@@ -43,7 +43,7 @@ public static class JwtServiceCollectionExtension
                     OnMessageReceived = context =>
                     {
                         var path = context.HttpContext.Request.Path;
-                        if (!path.StartsWithSegments("/chatHub")) return Task.CompletedTask;
+                        if (!path.StartsWithSegments("/api/chatHub")) return Task.CompletedTask;
 
                         var accessToken = context.Request.Query["access_token"];
 
