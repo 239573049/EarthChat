@@ -1003,7 +1003,7 @@ export default class Content extends Component<IProps, IState> {
             </div></>)
     }
 
-    onScrollGroupInUser(value: any) {
+    onScrollGroupInUser() {
 
         var element = document.getElementById('group-in-user')!;
 
