@@ -67,10 +67,10 @@ public class CommandHandler
                 host = $"http://{host}";
             }
 
-            stream.Close();
-            // 压缩图片
-            var ext = Path.GetExtension(filePath);
-            await CompressImage(filePath, filePath.Replace(ext, "") + "_compress" + ext);
+            // stream.Close();
+            // // 压缩图片
+            // var ext = Path.GetExtension(filePath);
+            // await CompressImage(filePath, filePath.Replace(ext, "") + "_compress" + ext);
 
             command.Result = $"{host}/{fileName}";
             var createFileSystemCommand =
