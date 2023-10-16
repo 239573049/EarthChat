@@ -24,7 +24,7 @@ SignalR 提供了以下特点：
 
 ### 什么是 MessagePack？
 
-[MessagePack](https://msgpack.org/index.html) 
+[MessagePack](https://msgpack.org/index.html)
 是一种快速而紧凑的二进制序列化格式。 当担忧性能和带宽问题时，这很有用，因为它创建的消息比 [JSON](https://www.json.org/) 创建的小。 查看网络跟踪和日志时，二进制消息不可读取，除非这些字节是通过 MessagePack 分析器传递的。 SignalR 为 MessagePack 格式提供内置支持，并提供 API 供客户端和服务器使用。
 
 ### 在服务器上配置 MessagePack
@@ -118,7 +118,6 @@ SignalR 通过一种称为“后端”或“后台”存储的机制实现横向
 - **资源和成本**：后端存储引入了额外的资源和成本，尤其是当使用付费服务（如 Azure Service Bus）或需要管理和维护的服务（如 Redis 或 SQL Server）时。
 
 ### Redis横向扩展
-
 
 SignalR 使用 Redis 作为后端存储来实现横向扩展的方式是基于 Redis 的发布/订阅 (pub/sub) 功能。这使得在多个 SignalR 服务器实例之间同步和传递消息成为可能。以下是 SignalR 如何使用 Redis 实现横向扩展的过程：
 

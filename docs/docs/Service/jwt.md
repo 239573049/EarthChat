@@ -155,7 +155,7 @@ app.UseAuthorization()
 
 6. **如何生成token**
 
-在这里封装了一个生成工具，实现我们会使用`GetClaimsIdentity`方法嫁给你UserDto生成`ClaimsIdentity`对象，并且使用注入的方式得到`JwtOptions`,将其传递到`GeneratorAccessToken`方法，返回的token就是我们需要的。
+在这里封装了一个生成工具，首先我们会使用`GetClaimsIdentity`方法给你UserDto生成`ClaimsIdentity`对象，并且使用注入的方式得到`JwtOptions`,将其传递到`GeneratorAccessToken`方法，返回的token就是我们需要的。
 
 ```csharp
 public class JwtHelper
