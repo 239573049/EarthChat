@@ -2,6 +2,13 @@
 
 public class ExceptionMiddleware : IMiddleware
 {
+    private readonly ILogger<ExceptionMiddleware> _logger;
+
+    public ExceptionMiddleware(ILogger<ExceptionMiddleware> logger)
+    {
+        _logger = logger;
+    }
+
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
         try
@@ -23,12 +30,14 @@ public class ExceptionMiddleware : IMiddleware
                 }
             }
         }
-        catch (UnauthorizedAccessException)
+        catch (UnauthorizedAccessException unauthorizedAccessException)
         {
+            _logger.LogError(unauthorizedAccessException.Message);
             context.Response.StatusCode = 401;
         }
         catch (UserFriendlyException e)
         {
+            _logger.LogError(e.Message);
             context.Response.StatusCode = 200;
             await context.Response.Body.WriteAsync(JsonSerializer.SerializeToUtf8Bytes(e.CreateExceptionResult("400"),
                 new JsonSerializerOptions()
@@ -39,6 +48,7 @@ public class ExceptionMiddleware : IMiddleware
         }
         catch (Exception e)
         {
+            _logger.LogError("{e}", e);
             context.Response.StatusCode = 200;
             await context.Response.Body.WriteAsync(
                 JsonSerializer.SerializeToUtf8Bytes(e.CreateExceptionResult("400"), new JsonSerializerOptions()
