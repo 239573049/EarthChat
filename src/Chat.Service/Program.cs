@@ -1,6 +1,4 @@
 using System.Text.Json.Serialization;
-using Chat.Contracts.Eto.Chat;
-using Chat.Contracts.Eto.Semantic;
 using Chat.Service.Application.Chats.EventBus;
 using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
@@ -11,11 +9,11 @@ var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Log.Logger = new LoggerConfiguration()
-//     .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
-//     .CreateLogger();
-//
-// builder.Host.UseSerilog(); // 将Serilog配置到Host中
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
+    .CreateLogger();
+
+builder.Host.UseSerilog(); // 将Serilog配置到Host中
 
 // 配置MiniApis的序列化行为
 builder.Services.ConfigureHttpJsonOptions(options =>

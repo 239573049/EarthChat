@@ -3,25 +3,23 @@ using Chat.Service.Application.System.Commands;
 using Chat.Service.Application.System.Queries;
 using Chat.Service.Infrastructure.Helper;
 using Infrastructure;
-using SkiaSharp;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Processing;
-using SkiaSharp;
 
 namespace Chat.Service.Application.Files;
 
 public class CommandHandler
 {
+    private readonly ILogger<CommandHandler> _logger;
     private readonly IHttpContextAccessor _contextAccessor;
     private readonly IEventBus _eventBus;
     private readonly IUserContext _userContext;
 
-    public CommandHandler(IHttpContextAccessor contextAccessor, IEventBus eventBus, IUserContext userContext)
+    public CommandHandler(IHttpContextAccessor contextAccessor, IEventBus eventBus, IUserContext userContext,
+        ILogger<CommandHandler> logger)
     {
         _contextAccessor = contextAccessor;
         _eventBus = eventBus;
         _userContext = userContext;
+        _logger = logger;
     }
 
     [EventHandler]
@@ -47,13 +45,9 @@ public class CommandHandler
                 info.Directory.Create();
             }
 
-            if (fileName.IsImage())
-            {
-            }
 
             await using var stream = new FileStream(filePath, FileMode.Create);
             await command.Stream.CopyToAsync(stream);
-
             // 回去当前请求的域名
             var host = _contextAccessor.HttpContext!.Request.Host.Value;
 
@@ -68,9 +62,13 @@ public class CommandHandler
             }
 
             stream.Close();
-            // // 压缩图片
-            var ext = Path.GetExtension(filePath);
-            await ImageHelper.CompressImage(filePath, filePath.Replace(ext, "") + ".compress" + ext);
+
+            if (fileName.IsImage())
+            {
+                // // 压缩图片
+                var ext = Path.GetExtension(filePath);
+                ImageHelper.FitImage(filePath, filePath.Replace(ext, "") + ".compress" + ext, 256, 256);
+            }
 
             command.Result = $"{host}/{fileName}";
             var createFileSystemCommand =
@@ -80,6 +78,7 @@ public class CommandHandler
         }
         catch (Exception exception)
         {
+            _logger.LogError("上传文件发生异常：{Exception}", exception);
             if (info.Exists)
             {
                 info.Delete();

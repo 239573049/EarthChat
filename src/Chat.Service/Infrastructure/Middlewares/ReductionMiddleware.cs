@@ -16,8 +16,21 @@ public class ReductionMiddleware : IMiddleware
 
                 context.Request.Path = new PathString(imagePath.Replace(ext, ".compress" + ext)); // 示例逻辑
             }
-        }
 
-        await next(context);
+            await next(context);
+
+            // 如果没找到压缩图片就用原文件
+            if (context.Response.StatusCode == 404)
+            {
+                var ext = Path.GetExtension(context.Request.Path);
+                var newExt = ext.Replace(".compress", "");
+
+                context.Request.Path = new PathString(imagePath?.TrimEnd(ext) + newExt); // 示例逻辑
+            }
+        }
+        else
+        {
+            await next(context);
+        }
     }
 }
