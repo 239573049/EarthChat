@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Json;
+using Chat.Contracts;
 using Chat.Contracts.Chats;
 using Chat.Contracts.Eto.Chat;
 using Chat.Contracts.Eto.Semantic;
@@ -38,7 +39,17 @@ public class IntelligentAssistantHandle
         _chatCompletion = chatCompletion;
 
         _redisClient.Subscribe(nameof(IntelligentAssistantEto),
-            ((s, o) => { HandleAsync(JsonSerializer.Deserialize<IntelligentAssistantEto>(o as string)); }));
+            ((s, o) =>
+            {
+                try
+                {
+                    HandleAsync(JsonSerializer.Deserialize<IntelligentAssistantEto>(o as string));
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError("{e}", e);
+                }
+            }));
     }
 
     /// <summary>
@@ -78,47 +89,50 @@ public class IntelligentAssistantHandle
             return;
         }
 
-        string content = null;
         try
         {
             if (item.Value.StartsWith("ai help") || item.Value.StartsWith("ai -h"))
             {
-                content = CommandTemplate;
+                await SendMessage(CommandTemplate, item.RevertId, item.Id);
+                return;
             }
-            else if (item.Value.StartsWith("ai status"))
+
+            if (item.Value.StartsWith("ai status"))
             {
                 // 获获取当前进程的内存占用，和cpu占用
                 var process = Process.GetCurrentProcess();
-                content =
-                    $"当前内存占用：{process.WorkingSet64 / 1024 / 1024}MB";
+                var content =
+                    $"当前内存占用：{process.WorkingSet64 / 1024 / 1024}MB;{Environment.NewLine}{Environment.OSVersion}";
+
+                await SendMessage(content, item.RevertId, item.Id);
+                return;
             }
-            else
+
+            string key = "Background:ChatGPT:" + item.UserId.ToString("N");
+
+            // 限制用户发送消息频率
+            if (await _redisClient.ExistsAsync(key))
             {
-                string key = "Background:ChatGPT:" + item.UserId.ToString("N");
+                var count = await _redisClient.GetAsync<int>(key);
 
-                // 限制用户发送消息频率
-                if (await _redisClient.ExistsAsync(key))
+                // 限制用户的智能助手使用限制
+                if (count > 20)
                 {
-                    var count = await _redisClient.GetAsync<int>(key);
-
-                    // 限制用户的智能助手使用限制
-                    if (count > 20)
+                    var messageLimit = new ChatMessageEto
                     {
-                        var messageLimit = new ChatMessageEto
-                        {
-                            Content = "您今天的额度已经用完！",
-                            Type = ChatType.Text,
-                            UserId = Guid.Empty,
-                            CreationTime = DateTime.Now,
-                            RevertId = item.RevertId,
-                            GroupId = item.Id,
-                            Id = Guid.NewGuid(),
-                        };
+                        Content = "您今天的额度已经用完！",
+                        Type = ChatType.Text,
+                        UserId = Guid.Empty,
+                        CreationTime = DateTime.Now,
+                        RevertId = item.RevertId,
+                        GroupId = item.Id,
+                        Id = Guid.NewGuid(),
+                    };
 
-                        await _redisClient.PublishAsync(nameof(ChatMessageEto), JsonSerializer.Serialize(messageLimit));
+                    await SendMessage(messageLimit.Content, item.RevertId, item.Id);
+                    await _redisClient.PublishAsync(nameof(ChatMessageEto), JsonSerializer.Serialize(messageLimit));
 
-                        return;
-                    }
+                    return;
                 }
             }
 
@@ -185,7 +199,7 @@ public class IntelligentAssistantHandle
                 var chatHistory = _chatCompletion.CreateNewChat();
                 chatHistory.AddUserMessage(value);
                 var reply = await _chatCompletion.GenerateMessageAsync(chatHistory);
-                
+
                 await SendMessage(reply, item.RevertId, item.Id);
                 return;
             }
@@ -207,7 +221,7 @@ public class IntelligentAssistantHandle
         {
             Content = content,
             Type = ChatType.Text,
-            UserId = Guid.Empty,
+            UserId = Constant.Group.AssistantId,
             CreationTime = DateTime.Now,
             RevertId = revertId,
             GroupId = id,

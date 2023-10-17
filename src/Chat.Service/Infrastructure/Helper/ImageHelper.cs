@@ -52,7 +52,7 @@ public class ImageHelper
 
         using var image = SKImage.FromBitmap(resizedImage);
         using var outputStream = File.Create(outputPath);
-        var data = image.Encode(SKEncodedImageFormat.Jpeg, 90); // JPEG的质量设置为90
+        var data = image.Encode(SKEncodedImageFormat.Jpeg, 70); // JPEG的质量设置为90
         data.SaveTo(outputStream);
     }
 }

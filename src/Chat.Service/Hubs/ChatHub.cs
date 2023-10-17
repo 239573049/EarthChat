@@ -26,12 +26,15 @@ public class ChatHub : Hub
     {
         var userId = GetUserId();
         
+        // 在首次链接的时候将当前用户和链接id进行关联
         await _redisClient.SetAsync(Constant.OnLineKey + userId.Value.ToString("N"), userId.Value);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
 
+        // 通过事件获取到用户所有的群组
         var groupsQuery = new GetUserGroupQuery(userId.Value);
         await _eventBus.PublishAsync(groupsQuery);
         
+        // 在这里将当前的SignalR的链接id加入到获取的groupId中，这样就只有这个group的成员才能相互发送消息。
         foreach (var groupDto in groupsQuery.Result)
         {
             var key = Constant.Group.GroupUsers + groupDto.Id.ToString("N");
@@ -51,6 +54,7 @@ public class ChatHub : Hub
             data = userId
         }, groupsQuery.Result.Select(x => x.Id).ToArray(), true);
 
+        // 在这里将通知前端有新的用户上线。
         await _eventBus.PublishAsync(systemCommand);
     }
 
@@ -159,6 +163,7 @@ public class ChatHub : Hub
             message.Revert = messageQuery.Result;
         }
 
+        // 为当前用户增加发送数量，以便限制用户的发送频率
         if (await _redisClient.ExistsAsync(key))
         {
             await _redisClient.IncrByAsync(key, 1);

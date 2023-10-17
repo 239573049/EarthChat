@@ -9,7 +9,15 @@ public class UserService : BaseService<UserService>, IUserService
     public async Task<ResultDto<GetUserDto>> GetAsync()
     {
         var user = GetRequiredService<IUserContext>();
-        var query = new GetUserQuery(user.GetUserId<Guid>());
+        var userId = user.GetUserId<Guid>();
+
+        // 未获取到用户id则直接401
+        if (userId == Guid.Empty)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        var query = new GetUserQuery(userId);
         await PublishAsync(query);
 
         // 未获取到用户消息则直接401
@@ -23,7 +31,7 @@ public class UserService : BaseService<UserService>, IUserService
 
     public async Task<ResultDto> CreateAsync(CreateUserDto dto)
     {
-        dto.Avatar = "/favicon.png";
+        dto.Avatar = Constant.User.DefaultAvatar;
         var command = new CreateUserCommand(dto);
         await PublishAsync(command);
 
@@ -45,18 +53,6 @@ public class UserService : BaseService<UserService>, IUserService
         var query = new GetUserListQuery(userIds);
         await PublishAsync(query);
 
-        if (userIds.Any(x => x == Guid.Empty))
-        {
-            query.Result.Add(new UserDto()
-            {
-                Id = Guid.Empty,
-                Account = "chat_ai",
-                Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
-                Name = "聊天机器人",
-            });
-        }
-        
         return query.Result;
     }
-
 }

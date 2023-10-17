@@ -9,70 +9,65 @@ namespace Chat.Service.Application.Files;
 public class CommandHandler
 {
     private readonly ILogger<CommandHandler> _logger;
-    private readonly IHttpContextAccessor _contextAccessor;
     private readonly IEventBus _eventBus;
     private readonly IUserContext _userContext;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public CommandHandler(IHttpContextAccessor contextAccessor, IEventBus eventBus, IUserContext userContext,
-        ILogger<CommandHandler> logger)
+    public CommandHandler(IEventBus eventBus, IUserContext userContext,
+        ILogger<CommandHandler> logger, IWebHostEnvironment webHostEnvironment)
     {
-        _contextAccessor = contextAccessor;
         _eventBus = eventBus;
         _userContext = userContext;
         _logger = logger;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     [EventHandler]
     public async Task LocalAsync(UploadCommand command)
     {
+        // 生成一个唯一的文件名
         var fileName =
             $"files/{DateTime.Now:yyyyMMdd}/{StringHelper.RandomString(12)}/{command.FileName}";
-        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", fileName);
+        
+        // 在这里使用webroot的目录
+        var filePath = Path.Combine(_webHostEnvironment.WebRootPath, fileName);
         var info = new FileInfo(filePath);
         try
         {
             var dayUploadQuantityQuery = new DayUploadQuantityQuery(_userContext.GetUserId<Guid>());
             await _eventBus.PublishAsync(dayUploadQuantityQuery);
 
-            if (dayUploadQuantityQuery.Result > 500)
+            if (dayUploadQuantityQuery.Result > Constant.File.MaxUploadFile)
             {
                 throw new UserFriendlyException("您已经超出当天限量。");
             }
 
-
-            if (!info.Directory.Exists)
+            // 当文件夹不存在则创建
+            if (info.Directory?.Exists == false)
             {
                 info.Directory.Create();
             }
 
-
+            // 创建文件
             await using var stream = new FileStream(filePath, FileMode.Create);
+            // 直接copy Stream性能更好
             await command.Stream.CopyToAsync(stream);
-            // 回去当前请求的域名
-            var host = _contextAccessor.HttpContext!.Request.Host.Value;
-
-            // 判断是否https
-            if (_contextAccessor.HttpContext!.Request.IsHttps)
-            {
-                host = $"https://{host}";
-            }
-            else
-            {
-                host = $"http://{host}";
-            }
-
+            
+            // 关闭stream，防止压缩图片出现文件被占用
             stream.Close();
 
+            // 在这里会判断当前是否为图片
             if (fileName.IsImage())
             {
-                // // 压缩图片
+                // 压缩图片
                 var ext = Path.GetExtension(filePath);
+                // 在压缩文件的时候会按照规则生成 .compress后缀名
                 ImageHelper.FitImage(filePath, filePath.Replace(ext, "") + ".compress" + ext, 256, 256);
             }
 
-            command.Result = $"{host}/{fileName}";
+            command.Result = $"/{fileName}";
             var createFileSystemCommand =
-                new CreateFileSystemCommand(info.Name, info.FullName, $"{host}/{fileName}", info.Length);
+                new CreateFileSystemCommand(info.Name, info.FullName, $"/{fileName}", info.Length);
 
             await _eventBus.PublishAsync(createFileSystemCommand);
         }
@@ -85,9 +80,4 @@ public class CommandHandler
             }
         }
     }
-    // [EventHandler]
-    // public async Task MinIoAsync(UploadCommand command)
-    // {
-    //     
-    // }
 }

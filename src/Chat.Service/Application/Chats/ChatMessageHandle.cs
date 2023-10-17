@@ -5,7 +5,7 @@ using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Chat.Service.Application.Chats.EventBus;
+namespace Chat.Service.Application.Chats;
 
 public class ChatMessageHandle  : IDisposable
 {

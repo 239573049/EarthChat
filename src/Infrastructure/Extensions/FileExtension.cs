@@ -11,7 +11,6 @@ public static class FileExtension
             case ".jpeg":
             case ".png":
             case ".bmp":
-            case ".gif":
             case ".tiff":
             case ".webp":  // 这是另一种常见的图片格式
                 return true;

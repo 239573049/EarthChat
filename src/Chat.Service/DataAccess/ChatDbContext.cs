@@ -66,7 +66,6 @@ public class ChatDbContext : MasaDbContext
             options.HasIndex(x => x.ChatGroupId);
             options.HasIndex(x => x.UserId);
             options.HasIndex(x => x.RevertId);
-
         });
 
         builder.Entity<ChatGroup>(options =>
@@ -149,6 +148,16 @@ public class ChatDbContext : MasaDbContext
         };
 
         builder.Entity<User>().HasData(user);
+
+        var assistant = new User(Constant.Group.AssistantId)
+        {
+            Account = "chat_ai",
+            Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+            Name = "聊天机器人",
+            Password = "123456"
+        };
+
+        builder.Entity<User>().HasData(assistant);
 
         // TODO: 定义空的Guid，用于表示世界频道
         var group = new ChatGroup(Guid.NewGuid())

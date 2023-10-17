@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Chat.Service.Application.Chats.EventBus;
+using Chat.Service.Application.Chats;
 using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -141,6 +141,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = ctx =>
     {
+        // 给所有文件加上浏览器缓存 7天
         ctx.Context.Response.Headers.Append(
             "Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
     }
@@ -152,7 +153,7 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseIpRateLimiting();
 
-
+// IsDevelopment表示只有在环境变量存在Development的时候才会显示swagger
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger().UseSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "ChatApp"));
@@ -162,22 +163,7 @@ if (app.Environment.IsDevelopment())
 
 await using var context = app.Services.CreateScope().ServiceProvider.GetService<ChatDbContext>();
 {
-    try
-    {
-        sqlType = sqlType?.ToLower();
-        // 根据工具变量传递的数据库类型处理。
-        if (sqlType == "postgresql" || sqlType == "pgsql")
-        {
-            // 执行sql
-            await context.Database.ExecuteSqlRawAsync("CREATE EXTENSION hstore;");
-        }
-
-    }
-    catch (Exception e)
-    {
-        Console.WriteLine(e);
-    }
-    // 判断是否需要创建数据库
+    // 自动迁移数据库
     context!.Database.EnsureCreated();
 }
 

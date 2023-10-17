@@ -2,6 +2,9 @@
 
 namespace Chat.Service.Infrastructure.Middlewares;
 
+/// <summary>
+/// 压缩中间件
+/// </summary>
 public class ReductionMiddleware : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -26,6 +29,9 @@ public class ReductionMiddleware : IMiddleware
                 var newExt = ext.Replace(".compress", "");
 
                 context.Request.Path = new PathString(imagePath?.TrimEnd(ext) + newExt); // 示例逻辑
+                
+                // 由于状态码是404所以在此请求不会出现异常！
+                await next(context);
             }
         }
         else
