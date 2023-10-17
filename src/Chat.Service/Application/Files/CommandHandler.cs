@@ -67,10 +67,10 @@ public class CommandHandler
                 host = $"http://{host}";
             }
 
-            // stream.Close();
+            stream.Close();
             // // 压缩图片
-            // var ext = Path.GetExtension(filePath);
-            // await CompressImage(filePath, filePath.Replace(ext, "") + "_compress" + ext);
+            var ext = Path.GetExtension(filePath);
+            await ImageHelper.CompressImage(filePath, filePath.Replace(ext, "") + ".compress" + ext);
 
             command.Result = $"{host}/{fileName}";
             var createFileSystemCommand =
@@ -86,21 +86,6 @@ public class CommandHandler
             }
         }
     }
-
-    public static async Task CompressImage(string inputPath, string outputPath, int quality = 50)
-    {
-        using var inputStream = new SKFileStream(inputPath);
-        using var original = SKBitmap.Decode(inputStream);
-        var imageInfo = new SKImageInfo(original.Width, original.Height);
-
-        using var surface = SKSurface.Create(imageInfo);
-        surface.Canvas.DrawBitmap(original, 0, 0);
-        using var image = surface.Snapshot();
-        using var data = image.Encode(SKEncodedImageFormat.Jpeg, quality);
-        await using var fileStream = File.Create(outputPath);
-        await data.AsStream().CopyToAsync(fileStream);
-    }
-
     // [EventHandler]
     // public async Task MinIoAsync(UploadCommand command)
     // {

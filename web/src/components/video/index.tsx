@@ -25,6 +25,7 @@ class VideoPlayer extends Component<VideoPlayerProps> {
         borderRadius: 8,
         width: '400px',
         cursor: 'pointer',
+        height: '300px',
         float: float
       }}
       src={url}

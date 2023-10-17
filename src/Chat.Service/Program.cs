@@ -48,6 +48,7 @@ builder.Services.Configure<GiteeOptions>(gitee);
 #endregion
 
 builder.Services.AddScoped<ExceptionMiddleware>();
+builder.Services.AddScoped<ReductionMiddleware>();
 
 builder.Services.AddSingleton<ChatMessageHandle>();
 builder.Services.Configure<IpRateLimitOptions>
@@ -135,6 +136,18 @@ var app = builder.Services
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
 
+
+app.UseMiddleware<ReductionMiddleware>();
+var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append(
+            "Cache-Control", $"public, max-age={cacheMaxAgeOneWeek}");
+    }
+});
+
 app.UseResponseCompression();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -172,7 +185,6 @@ await using var context = app.Services.CreateScope().ServiceProvider.GetService<
 
 #endregion
 
-app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization()
     .UseCors("CorsPolicy");

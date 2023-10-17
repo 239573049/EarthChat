@@ -4,14 +4,16 @@ import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
+  Svg: React.ComponentType<React.ComponentProps<'svg'>> | null;
+  src: string | null;
   description: JSX.Element;
 };
 
 const FeatureList: FeatureItem[] = [
   {
     title: '快捷部署',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: null,
+    src: "static/docs-relation.png",
     description: (
       <>
         在window上只需要Redis和后端服务即可部署最小服务体验。
@@ -20,6 +22,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: '性能',
+    src: null,
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
@@ -29,6 +32,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Earth Chat描述',
+    src: null,
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
@@ -38,11 +42,11 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({ title, Svg, description, src }: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        {Svg !== null ? <Svg className={styles.featureSvg} role="img" /> : <img src='/static/docs-relation.png'></img>}
       </div>
       <div className="text--center padding-horiz--md">
         <h3>{title}</h3>

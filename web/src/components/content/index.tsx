@@ -546,10 +546,10 @@ export default class Content extends Component<IProps, IState> {
                     </div>} position='rightTop' trigger="contextMenu" >
                         {revertUser ? <div style={{
                             width: 'auto',
-                            height: 'auto',
+                            height: '300px',
                             marginBottom: '20px',
                             marginTop: '8px',
-                            maxWidth: '45%',
+                            maxWidth: '60%',
                             borderRadius: '8px',
                             marginLeft: '10px',
                             float: float,
@@ -569,6 +569,9 @@ export default class Content extends Component<IProps, IState> {
                                 width={'100%'}
                                 className={className}
                                 height={'100%'}
+                                style={{
+                                    maxHeight: '300px',
+                                }}
                                 src={item.content}
                             />
                         </div> : <Image
@@ -576,10 +579,10 @@ export default class Content extends Component<IProps, IState> {
                             className={className}
                             style={{
                                 width: 'auto',
-                                height: 'auto',
+                                height: '300px',
                                 marginBottom: '20px',
                                 marginTop: '8px',
-                                maxWidth: '45%',
+                                maxWidth: '60%',
                                 borderRadius: '8px',
                                 marginLeft: '10px',
                                 float: float
@@ -708,7 +711,7 @@ export default class Content extends Component<IProps, IState> {
                         width: '100%',
                     }} id={"row_" + item.id}>
                         <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
-                            <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar+"?reduction=true"} />
+                            <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingRight: '10px', float: 'right', width: "calc(100% - 50px)", textAlign: 'end' }}>
                             {userItem?.name}
@@ -724,7 +727,7 @@ export default class Content extends Component<IProps, IState> {
                         margin: '8px',
                     }} id={"row_" + item.id}>
                         <Tooltip position='right' content={() => this.renderInfo(userItem)} trigger="click" >
-                            <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar+"?reduction=true"} />
+                            <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
                             {userItem?.name}
@@ -970,7 +973,7 @@ export default class Content extends Component<IProps, IState> {
                 width: "320px",
                 height: '110px',
             }}>
-                <Avatar size="large" src={dto?.avatar+"?reduction=true"} style={{ margin: 4, float: 'left' }} alt='User'>
+                <Avatar size="large" src={dto?.avatar + "?reduction=true"} style={{ margin: 4, float: 'left' }} alt='User'>
                 </Avatar>
                 <div style={{
                     float: 'left',
@@ -1349,16 +1352,16 @@ export default class Content extends Component<IProps, IState> {
                             {groupinUsers.map((item, index) => {
                                 const user = users.find(x => x.id == item.userId)
                                 return (
-                                    <div key={"test"+index} className='grou-user-item  '>
+                                    <div key={"test" + index} className='grou-user-item  '>
                                         <div className='grou-user-item-content'>
                                             <div style={{
                                                 float: 'left'
                                             }}>
                                                 <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
                                                     {item?.onLine ? <Badge dot >
-                                                        <Avatar size='extra-small' src={user?.avatar+"?reduction=true"} />
+                                                        <Avatar size='extra-small' src={user?.avatar + "?reduction=true"} />
                                                     </Badge> :
-                                                        <Avatar size='extra-small' src={user?.avatar+"?reduction=true"} />}
+                                                        <Avatar size='extra-small' src={user?.avatar + "?reduction=true"} />}
                                                 </Tooltip>
                                             </div>
                                             <div style={{
@@ -1417,7 +1420,7 @@ export default class Content extends Component<IProps, IState> {
                     <Form onSubmit={(v) => this.addFriends(v)}>
                         <Avatar style={{
                             marginLeft: '45%',
-                        }} src={addFriend.user.avatar+"?reduction=true"} />
+                        }} src={addFriend.user.avatar + "?reduction=true"} />
                         <div style={{
                             textAlign: 'center',
 
