@@ -448,7 +448,7 @@ export default class Content extends Component<IProps, IState> {
                         marginLeft: '10px'
                     }}
                     height={'100%'}
-                    src={item.content}
+                    src={item.content + "?reduction=true"}
                 />
             </div>
         } else if (item.type === "File" || item.type === 2) {
@@ -572,7 +572,7 @@ export default class Content extends Component<IProps, IState> {
                                 style={{
                                     maxHeight: '300px',
                                 }}
-                                src={item.content}
+                                src={item.content + "?reduction=true"}
                             />
                         </div> : <Image
                             width={'100%'}
@@ -588,7 +588,7 @@ export default class Content extends Component<IProps, IState> {
                                 float: float
                             }}
                             height={'100%'}
-                            src={item.content}
+                            src={item.content + "?reduction=true"}
                         />}
 
                     </Tooltip>
