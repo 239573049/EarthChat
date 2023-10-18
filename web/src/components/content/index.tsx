@@ -1142,7 +1142,7 @@ export default class Content extends Component<IProps, IState> {
             })}
             <Button size='large' style={{
                 margin: '10px',
-                position: 'absolute'
+                float: 'left'
             }} theme='borderless' onClick={() => this.uploadEmoji()} icon={<IconPlus />}></Button>
         </div>)
     }
