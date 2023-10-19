@@ -7,7 +7,6 @@ import config from "../config";
 const connection = new HubConnectionBuilder()
   .withUrl(config.API + "/api/chatHub", {
     accessTokenFactory: () => localStorage.getItem("token")!,
-    transport: signalR.HttpTransportType.WebSockets,
   })
   .withAutomaticReconnect()
   .configureLogging(signalR.LogLevel.Information)
