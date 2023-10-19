@@ -67,13 +67,13 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("4a78d446-155d-4f4f-8eb8-535347148047"),
+                            Id = new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"),
                             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-                            CreationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1598),
+                            CreationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3929),
                             Creator = new Guid("00000000-0000-0000-0000-000000000000"),
                             Default = true,
                             Description = "世界频道，所有人默认加入的频道",
-                            ModificationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1598),
+                            ModificationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3929),
                             Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "世界频道"
                         });
@@ -101,8 +101,14 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("392e0e36-e072-4a6c-a096-64467f8a89d5"),
-                            ChatGroupId = new Guid("4a78d446-155d-4f4f-8eb8-535347148047"),
+                            UserId = new Guid("99c5439e-b481-4ae8-b6f5-3b29c112d731"),
+                            ChatGroupId = new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"),
+                            Id = new Guid("00000000-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            UserId = new Guid("6d53f694-4221-4e87-b8b2-2f54e8929303"),
+                            ChatGroupId = new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"),
                             Id = new Guid("00000000-0000-0000-0000-000000000000")
                         });
                 });
@@ -150,6 +156,8 @@ namespace Chat.Service.Migrations
                     b.HasIndex("ChatGroupId");
 
                     b.HasIndex("Id");
+
+                    b.HasIndex("RevertId");
 
                     b.HasIndex("UserId");
 
@@ -337,6 +345,12 @@ namespace Chat.Service.Migrations
                     b.Property<string>("GithubId")
                         .HasColumnType("text");
 
+                    b.Property<string>("Ip")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("ModificationTime")
                         .HasColumnType("timestamp without time zone");
 
@@ -365,14 +379,26 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("392e0e36-e072-4a6c-a096-64467f8a89d5"),
+                            Id = new Guid("99c5439e-b481-4ae8-b6f5-3b29c112d731"),
                             Account = "admin",
                             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-                            CreationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1477),
+                            CreationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3863),
                             Creator = new Guid("00000000-0000-0000-0000-000000000000"),
-                            ModificationTime = new DateTime(2023, 10, 6, 23, 54, 34, 673, DateTimeKind.Local).AddTicks(1489),
+                            ModificationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3880),
                             Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "管理员",
+                            Password = "3786F993CB0AF43E"
+                        },
+                        new
+                        {
+                            Id = new Guid("6d53f694-4221-4e87-b8b2-2f54e8929303"),
+                            Account = "chat_ai",
+                            Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+                            CreationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3918),
+                            Creator = new Guid("00000000-0000-0000-0000-000000000000"),
+                            ModificationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3918),
+                            Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Name = "聊天机器人",
                             Password = "3786F993CB0AF43E"
                         });
                 });

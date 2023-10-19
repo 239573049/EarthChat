@@ -179,6 +179,13 @@ public class ChatDbContext : MasaDbContext
 
         builder.Entity<ChatGroupInUser>().HasData(groupInUser);
 
+        var groupInAssistant = new ChatGroupInUser()
+        {
+            UserId = assistant.Id,
+            ChatGroupId = group.Id
+        };
+
+        builder.Entity<ChatGroupInUser>().HasData(groupInAssistant);
         #endregion
     }
 }
