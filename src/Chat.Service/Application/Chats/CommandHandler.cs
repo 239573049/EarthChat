@@ -54,7 +54,7 @@ public class CommandHandler
             Type = command.Dto.Type,
             RevertId = command.Dto.RevertId,
             ChatGroupId = command.Dto.ChatGroupId,
-            UserId = _userContext.GetUserId<Guid>()
+            UserId = command.Dto.UserId
         };
 
         await _chatMessageRepository.AddAsync(chatMessage);
@@ -220,6 +220,5 @@ public class CommandHandler
         {
             throw new UserFriendlyException("撤回失败");
         }
-
     }
 }

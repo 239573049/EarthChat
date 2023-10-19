@@ -139,7 +139,6 @@ export default class Content extends Component<IProps, IState> {
         this.onNotification = this.onNotification.bind(this);
         this.resizableRef = React.createRef();
         this.loadingCustom()
-        this.loadingGroupUser();
 
     }
 
@@ -178,7 +177,7 @@ export default class Content extends Component<IProps, IState> {
             return
         }
 
-        ChatService.getGroupInUser(groupId, page, pageSize)
+        ChatService.getGroupInUser(groupId, page, 50)
             .then(async (res: any[]) => {
                 if (res) {
                     if (res.length > 0) {
@@ -252,7 +251,6 @@ export default class Content extends Component<IProps, IState> {
     async onNotification(_: any, messageData: any) {
 
         if (messageData.type === "GroupUserNew") {
-            debugger
             // 如果是当前用户的推送则忽略
             if (messageData.data === user.id) {
                 return;
@@ -1008,7 +1006,7 @@ export default class Content extends Component<IProps, IState> {
 
     onScrollGroupInUser() {
 
-        var element = document.getElementById('group-in-user')!;
+        const element = document.getElementById('group-in-user')!;
 
         if (element.scrollTop + element.clientHeight === element.scrollHeight) {
 
@@ -1024,9 +1022,7 @@ export default class Content extends Component<IProps, IState> {
                     loading: true
                 }
             })
-
-            this.getGroupInUser(this.props.group.id, groupinUser.page + 1, groupinUser.pageSize)
-
+            this.getGroupInUser(this.props.group.id, groupinUser.page, groupinUser.pageSize)
         }
     }
 
