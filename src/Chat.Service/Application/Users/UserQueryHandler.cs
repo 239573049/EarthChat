@@ -83,6 +83,11 @@ public class UserQueryHandler
             ip = header.ToString();
         }
 
+        if (user == null)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
         if (user?.Ip != ip && !ip.IsNullOrWhiteSpace())
         {
             await _eventBus.PublishAsync(new UpdateLocationCommand(user.Id, ip));
