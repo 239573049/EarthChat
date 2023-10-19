@@ -77,11 +77,10 @@ public class UserQueryHandler
     {
         var user = await _userRepository.FindAsync(x => x.Id == query.userId);
 
-        StringValues ip = default;
-
-        if (_httpContextAccessor.HttpContext?.Request.Headers.TryGetValue("X-Forwarded-For", out ip) == false)
+        var ip = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+        if ((_httpContextAccessor?.HttpContext?.Request?.Headers)?.TryGetValue("X-Forwarded-For", out var header) == true)
         {
-            ip = _httpContextAccessor.HttpContext.Connection.RemoteIpAddress?.ToString();
+            ip = header.ToString();
         }
 
         if (user?.Ip != ip)
