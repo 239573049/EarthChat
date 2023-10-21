@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>8bfcd97a-e866-42d4-a3a6-31f02975d75c</UserSecretsId>
@@ -13,14 +13,14 @@
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
         <PackageReference Include="FreeRedis" Version="1.1.6" />
         <PackageReference Include="Masa.Contrib.Authentication.Identity" Version="$(MASAFrameworkVersion)" />
-        <PackageReference Include="Masa.Contrib.Data.EFCore.PostgreSql" Version="1.0.1-preview.2" />
-        <PackageReference Include="Masa.Contrib.Data.EFCore.Sqlite" Version="1.0.1-preview.3" />
+        <PackageReference Include="Masa.Contrib.Data.EFCore.PostgreSql" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Data.EFCore.Sqlite" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Masa.Contrib.Data.Mapping.Mapster" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Masa.Contrib.Ddd.Domain" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Masa.Contrib.Ddd.Domain.Repository.EFCore" Version="$(MASAFrameworkVersion)" />
-        <PackageReference Include="Masa.Contrib.Dispatcher.Events" Version="1.0.1-preview.3" />
-        <PackageReference Include="Masa.Contrib.Exceptions" Version="1.0.1-preview.3" />
+        <PackageReference Include="Masa.Contrib.Dispatcher.Events" Version="$(MASAFrameworkVersion)" />
+        <PackageReference Include="Masa.Contrib.Exceptions" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="$(MASAFrameworkVersion)" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
