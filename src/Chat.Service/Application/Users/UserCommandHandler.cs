@@ -2,6 +2,7 @@
 using Chat.Contracts.Chats;
 using Chat.Contracts.Hubs;
 using Chat.Service.Application.Hubs.Commands;
+using Chat.Service.Application.Third_party.Queries;
 using Chat.Service.Application.Users.Commands;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
@@ -252,5 +253,19 @@ public class UserCommandHandler
         }
 
         await _friendRequestRepository.UpdateAsync(value);
+    }
+
+    [EventHandler]
+    public async Task UpdateLocationAsync(UpdateLocationCommand command)
+    {
+        // ip未获取到则直接返回
+        if (command.Ip.IsNullOrWhiteSpace())
+        {
+            return;
+        }
+        var query = new GetObtainingIPHomeQuery(command.Ip);
+        await _eventBus.PublishAsync(query);
+
+        await _userRepository.UpdateLocationAsync(command.UserId, command.Ip, query.Result?.pro + query.Result?.city);
     }
 }

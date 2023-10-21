@@ -39,6 +39,16 @@ public class User : AuditAggregateRoot<Guid, Guid>
     /// </summary>
     public string Name { get; set; }
 
+    /// <summary>
+    /// 发送所在位置
+    /// </summary>
+    public string? Location { get; set; }
+
+    /// <summary>
+    /// 发送ip
+    /// </summary>
+    public string? Ip { get; set; }
+
     public string? GiteeId { get; set; }
 
     public string? GithubId { get; set; }

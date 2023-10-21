@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Chat.Service.Migrations
 {
-    public partial class addGroupId : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -26,6 +26,27 @@ namespace Chat.Service.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChatGroups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChatMessages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Content = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: false),
+                    Type = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
+                    ChatGroupId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RevertId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Countermand = table.Column<bool>(type: "boolean", nullable: false),
+                    Creator = table.Column<Guid>(type: "uuid", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
+                    Modifier = table.Column<Guid>(type: "uuid", nullable: false),
+                    ModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,6 +131,8 @@ namespace Chat.Service.Migrations
                     Password = table.Column<string>(type: "character varying(80)", maxLength: 80, nullable: false),
                     Avatar = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Name = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    Location = table.Column<string>(type: "text", nullable: true),
+                    Ip = table.Column<string>(type: "text", nullable: true),
                     GiteeId = table.Column<string>(type: "text", nullable: true),
                     GithubId = table.Column<string>(type: "text", nullable: true),
                     Creator = table.Column<Guid>(type: "uuid", nullable: false),
@@ -147,44 +170,28 @@ namespace Chat.Service.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "ChatMessages",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Content = table.Column<string>(type: "character varying(5000)", maxLength: 5000, nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
-                    ChatGroupId = table.Column<Guid>(type: "uuid", nullable: false),
-                    Creator = table.Column<Guid>(type: "uuid", nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    Modifier = table.Column<Guid>(type: "uuid", nullable: false),
-                    ModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ChatMessages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ChatMessages_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.InsertData(
                 table: "ChatGroups",
                 columns: new[] { "Id", "Avatar", "CreationTime", "Creator", "Default", "Description", "ModificationTime", "Modifier", "Name" },
-                values: new object[] { new Guid("b41a5f0a-d0e2-47f0-8aef-eb6f083bd720"), "https://avatars.githubusercontent.com/u/17716615?v=4", new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(936), new Guid("00000000-0000-0000-0000-000000000000"), true, "世界频道，所有人默认加入的频道", new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(937), new Guid("00000000-0000-0000-0000-000000000000"), "世界频道" });
+                values: new object[] { new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"), "https://avatars.githubusercontent.com/u/17716615?v=4", new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3929), new Guid("00000000-0000-0000-0000-000000000000"), true, "世界频道，所有人默认加入的频道", new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3929), new Guid("00000000-0000-0000-0000-000000000000"), "世界频道" });
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Account", "Avatar", "CreationTime", "Creator", "GiteeId", "GithubId", "ModificationTime", "Modifier", "Name", "Password" },
-                values: new object[] { new Guid("2ba08fb3-5cc4-4342-8e15-862cfee9b429"), "admin", "https://avatars.githubusercontent.com/u/17716615?v=4", new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(804), new Guid("00000000-0000-0000-0000-000000000000"), null, null, new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(816), new Guid("00000000-0000-0000-0000-000000000000"), "管理员", "3786F993CB0AF43E" });
+                columns: new[] { "Id", "Account", "Avatar", "CreationTime", "Creator", "GiteeId", "GithubId", "Ip", "Location", "ModificationTime", "Modifier", "Name", "Password" },
+                values: new object[,]
+                {
+                    { new Guid("6d53f694-4221-4e87-b8b2-2f54e8929303"), "chat_ai", "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png", new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3918), new Guid("00000000-0000-0000-0000-000000000000"), null, null, null, null, new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3918), new Guid("00000000-0000-0000-0000-000000000000"), "聊天机器人", "3786F993CB0AF43E" },
+                    { new Guid("99c5439e-b481-4ae8-b6f5-3b29c112d731"), "admin", "https://avatars.githubusercontent.com/u/17716615?v=4", new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3863), new Guid("00000000-0000-0000-0000-000000000000"), null, null, null, null, new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3880), new Guid("00000000-0000-0000-0000-000000000000"), "管理员", "3786F993CB0AF43E" }
+                });
 
             migrationBuilder.InsertData(
                 table: "ChatGroupInUsers",
                 columns: new[] { "ChatGroupId", "UserId", "Id" },
-                values: new object[] { new Guid("b41a5f0a-d0e2-47f0-8aef-eb6f083bd720"), new Guid("2ba08fb3-5cc4-4342-8e15-862cfee9b429"), new Guid("00000000-0000-0000-0000-000000000000") });
+                values: new object[,]
+                {
+                    { new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"), new Guid("6d53f694-4221-4e87-b8b2-2f54e8929303"), new Guid("00000000-0000-0000-0000-000000000000") },
+                    { new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"), new Guid("99c5439e-b481-4ae8-b6f5-3b29c112d731"), new Guid("00000000-0000-0000-0000-000000000000") }
+                });
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChatGroupInUsers_ChatGroupId",
@@ -210,6 +217,11 @@ namespace Chat.Service.Migrations
                 name: "IX_ChatMessages_Id",
                 table: "ChatMessages",
                 column: "Id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChatMessages_RevertId",
+                table: "ChatMessages",
+                column: "RevertId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChatMessages_UserId",

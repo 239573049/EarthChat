@@ -1,7 +1,5 @@
 ﻿using Chat.Service.Domain.Users.Aggregates;
 using Chat.Service.Domain.Users.Repositories;
-using Masa.BuildingBlocks.Data.UoW;
-using Masa.Contrib.Ddd.Domain.Repository.EFCore;
 
 namespace Chat.Service.Infrastructure.Repositories;
 
@@ -9,5 +7,11 @@ public class UserRepository : BaseRepository<ChatDbContext, User, Guid>, IUserRe
 {
     public UserRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
     {
+    }
+
+    public async Task UpdateLocationAsync(Guid userId, string Ip, string Location)
+    {
+        await Context.Database.ExecuteSqlInterpolatedAsync(
+            $"update \"Users\" set \"Ip\"={Ip},\"Location\"={Location} where \"Id\"={userId};");
     }
 }

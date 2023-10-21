@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Chat.Service.Migrations
 {
     [DbContext(typeof(ChatDbContext))]
-    [Migration("20230928172835_addGroupId")]
-    partial class addGroupId
+    [Migration("20231019105856_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -69,13 +69,13 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b41a5f0a-d0e2-47f0-8aef-eb6f083bd720"),
+                            Id = new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"),
                             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-                            CreationTime = new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(936),
+                            CreationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3929),
                             Creator = new Guid("00000000-0000-0000-0000-000000000000"),
                             Default = true,
                             Description = "世界频道，所有人默认加入的频道",
-                            ModificationTime = new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(937),
+                            ModificationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3929),
                             Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "世界频道"
                         });
@@ -103,8 +103,14 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("2ba08fb3-5cc4-4342-8e15-862cfee9b429"),
-                            ChatGroupId = new Guid("b41a5f0a-d0e2-47f0-8aef-eb6f083bd720"),
+                            UserId = new Guid("99c5439e-b481-4ae8-b6f5-3b29c112d731"),
+                            ChatGroupId = new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"),
+                            Id = new Guid("00000000-0000-0000-0000-000000000000")
+                        },
+                        new
+                        {
+                            UserId = new Guid("6d53f694-4221-4e87-b8b2-2f54e8929303"),
+                            ChatGroupId = new Guid("3b887aac-8655-4e00-9d25-8925c75a8143"),
                             Id = new Guid("00000000-0000-0000-0000-000000000000")
                         });
                 });
@@ -123,6 +129,9 @@ namespace Chat.Service.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("character varying(5000)");
 
+                    b.Property<bool>("Countermand")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone");
 
@@ -133,6 +142,9 @@ namespace Chat.Service.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid>("Modifier")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("RevertId")
                         .HasColumnType("uuid");
 
                     b.Property<int>("Type")
@@ -146,6 +158,8 @@ namespace Chat.Service.Migrations
                     b.HasIndex("ChatGroupId");
 
                     b.HasIndex("Id");
+
+                    b.HasIndex("RevertId");
 
                     b.HasIndex("UserId");
 
@@ -333,6 +347,12 @@ namespace Chat.Service.Migrations
                     b.Property<string>("GithubId")
                         .HasColumnType("text");
 
+                    b.Property<string>("Ip")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("ModificationTime")
                         .HasColumnType("timestamp without time zone");
 
@@ -361,14 +381,26 @@ namespace Chat.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2ba08fb3-5cc4-4342-8e15-862cfee9b429"),
+                            Id = new Guid("99c5439e-b481-4ae8-b6f5-3b29c112d731"),
                             Account = "admin",
                             Avatar = "https://avatars.githubusercontent.com/u/17716615?v=4",
-                            CreationTime = new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(804),
+                            CreationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3863),
                             Creator = new Guid("00000000-0000-0000-0000-000000000000"),
-                            ModificationTime = new DateTime(2023, 9, 29, 1, 28, 35, 463, DateTimeKind.Local).AddTicks(816),
+                            ModificationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3880),
                             Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
                             Name = "管理员",
+                            Password = "3786F993CB0AF43E"
+                        },
+                        new
+                        {
+                            Id = new Guid("6d53f694-4221-4e87-b8b2-2f54e8929303"),
+                            Account = "chat_ai",
+                            Avatar = "https://blog-simple.oss-cn-shenzhen.aliyuncs.com/ai.png",
+                            CreationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3918),
+                            Creator = new Guid("00000000-0000-0000-0000-000000000000"),
+                            ModificationTime = new DateTime(2023, 10, 19, 18, 58, 56, 755, DateTimeKind.Local).AddTicks(3918),
+                            Modifier = new Guid("00000000-0000-0000-0000-000000000000"),
+                            Name = "聊天机器人",
                             Password = "3786F993CB0AF43E"
                         });
                 });
@@ -390,15 +422,6 @@ namespace Chat.Service.Migrations
                         .HasConstraintName("UserId");
 
                     b.Navigation("ChatGroup");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Chat.Service.Domain.Chats.Aggregates.ChatMessage", b =>
-                {
-                    b.HasOne("Chat.Service.Domain.Users.Aggregates.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

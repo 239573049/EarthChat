@@ -4,6 +4,7 @@ using Chat.Contracts.Hubs;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Hubs.Commands;
 using Chat.Service.Application.System.Commands;
+using Chat.Service.Application.Third_party.Queries;
 using Chat.Service.Domain.Chats.Aggregates;
 using Chat.Service.Domain.Chats.Repositories;
 using Chat.Service.Domain.Users.Aggregates;
@@ -54,7 +55,7 @@ public class CommandHandler
             Type = command.Dto.Type,
             RevertId = command.Dto.RevertId,
             ChatGroupId = command.Dto.ChatGroupId,
-            UserId = _userContext.GetUserId<Guid>()
+            UserId = command.Dto.UserId
         };
 
         await _chatMessageRepository.AddAsync(chatMessage);
@@ -220,6 +221,5 @@ public class CommandHandler
         {
             throw new UserFriendlyException("撤回失败");
         }
-
     }
 }

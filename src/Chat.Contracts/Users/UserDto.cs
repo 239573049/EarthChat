@@ -20,6 +20,11 @@ public class UserDto
     public string Name { get; set; }
     
     /// <summary>
+    /// 发送所在位置
+    /// </summary>
+    public string Location { get; set; }
+    
+    /// <summary>
     /// 是否在线
     /// </summary>
     public bool OnLine { get; set; }

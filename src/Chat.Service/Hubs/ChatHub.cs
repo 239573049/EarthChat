@@ -13,19 +13,22 @@ public class ChatHub : Hub
 {
     private readonly IEventBus _eventBus;
     private readonly RedisClient _redisClient;
+    private readonly ILogger<ChatHub> _logger;
     private readonly BackgroundTaskService _backgroundTaskService;
 
-    public ChatHub(RedisClient redisClient, IEventBus eventBus, BackgroundTaskService backgroundTaskService)
+    public ChatHub(RedisClient redisClient, IEventBus eventBus, BackgroundTaskService backgroundTaskService,
+        ILogger<ChatHub> logger)
     {
         _redisClient = redisClient;
         _eventBus = eventBus;
         _backgroundTaskService = backgroundTaskService;
+        _logger = logger;
     }
 
     public override async Task OnConnectedAsync()
     {
         var userId = GetUserId();
-        
+
         // 在首次链接的时候将当前用户和链接id进行关联
         await _redisClient.SetAsync(Constant.OnLineKey + userId.Value.ToString("N"), userId.Value);
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
@@ -33,7 +36,7 @@ public class ChatHub : Hub
         // 通过事件获取到用户所有的群组
         var groupsQuery = new GetUserGroupQuery(userId.Value);
         await _eventBus.PublishAsync(groupsQuery);
-        
+
         // 在这里将当前的SignalR的链接id加入到获取的groupId中，这样就只有这个group的成员才能相互发送消息。
         foreach (var groupDto in groupsQuery.Result)
         {
@@ -42,7 +45,7 @@ public class ChatHub : Hub
             await Groups.AddToGroupAsync(Context.ConnectionId, groupDto.Id.ToString("N"));
 
             // 如果用户不存在当前群聊在线人数中，则添加。
-            await _redisClient.LRemAsync(key,-1, userId);
+            await _redisClient.LRemAsync(key, -1, userId);
             await _redisClient.LPushAsync(key, userId);
         }
 
@@ -73,7 +76,7 @@ public class ChatHub : Hub
                 // 获取当前用户所在的链接群
                 var groupsQuery = new GetUserGroupQuery(userId.Value);
                 await _eventBus.PublishAsync(groupsQuery);
-        
+
                 // 退出所有链接
                 foreach (var groupDto in groupsQuery.Result)
                 {
@@ -84,7 +87,7 @@ public class ChatHub : Hub
                     // 清空当前用户群的在线列表
                     await _redisClient.LRemAsync(key, -1, userId);
                 }
-                
+
                 var systemCommand = new SystemCommand(new Notification()
                 {
                     createdTime = DateTime.Now,
@@ -95,10 +98,9 @@ public class ChatHub : Hub
 
                 await _eventBus.PublishAsync(systemCommand);
             }
-            
+
             // 移除当前链接
             await _redisClient.LRemAsync(Constant.Connections + userId, -1, Context.ConnectionId);
-
         }
     }
 
@@ -111,84 +113,91 @@ public class ChatHub : Hub
     /// <param name="revertId"></param>
     public async Task SendMessage(string value, Guid groupId, int type, Guid? revertId = null)
     {
-        if (value.IsNullOrWhiteSpace())
+        try
         {
-            return;
+            if (value.IsNullOrWhiteSpace())
+            {
+                return;
+            }
+
+            var userId = GetUserId();
+            // 未登录用户不允许发送消息
+            if (userId == null || userId == Guid.Empty)
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            string key = $"user:{userId}:count";
+
+            // 限制用户发送消息频率
+            if (await _redisClient.ExistsAsync(key))
+            {
+                var count = await _redisClient.GetAsync<int>(key);
+
+                // 限制用户发送消息频率每分钟20条
+                if (count > 20) return;
+            }
+
+            var message = new ChatMessageDto
+            {
+                Content = value,
+                Type = (ChatType)type,
+                UserId = userId.Value,
+                CreationTime = DateTime.Now,
+                RevertId = revertId,
+                GroupId = groupId,
+                Id = Guid.NewGuid()
+            };
+
+            var createChat = new CreateChatMessageCommand(new CreateChatMessageDto
+            {
+                Content = value,
+                Id = message.Id,
+                RevertId = revertId,
+                ChatGroupId = groupId,
+                Type = (ChatType)type,
+                UserId = userId.Value
+            });
+
+            // 如果发送的内容关联了回复id则查询回复内容
+            if (message.RevertId != null && message.RevertId != Guid.Empty)
+            {
+                var messageQuery = new GetMessageQuery((Guid)message.RevertId);
+                await _eventBus.PublishAsync(messageQuery);
+                message.Revert = messageQuery.Result;
+            }
+
+            // 为当前用户增加发送数量，以便限制用户的发送频率
+            if (await _redisClient.ExistsAsync(key))
+            {
+                await _redisClient.IncrByAsync(key, 1);
+            }
+            else
+            {
+                await _redisClient.IncrByAsync(key, 1);
+                await _redisClient.ExpireAsync(key, 60);
+            }
+
+            // 发送消息新增事件
+            await _eventBus.PublishAsync(createChat);
+
+            // 转发到客户端
+            _ = Clients.Groups(groupId.ToString("N")).SendAsync("ReceiveMessage", groupId, message);
+
+            // 发送智能助手订阅事件
+            await _backgroundTaskService.WriteAsync(new AssistantDto()
+            {
+                Id = groupId,
+                Value = value,
+                Group = true,
+                RevertId = message.Id,
+                UserId = userId.Value
+            });
         }
-
-        var userId = GetUserId();
-        // 未登录用户不允许发送消息
-        if (userId == null || userId == Guid.Empty)
+        catch (Exception e)
         {
-            throw new UnauthorizedAccessException();
+            _logger.LogError("发送消息出现异常：{e}", e);
         }
-
-        string key = $"user:{userId}:count";
-
-        // 限制用户发送消息频率
-        if (await _redisClient.ExistsAsync(key))
-        {
-            var count = await _redisClient.GetAsync<int>(key);
-
-            // 限制用户发送消息频率每分钟20条
-            if (count > 20) return;
-        }
-
-        var message = new ChatMessageDto
-        {
-            Content = value,
-            Type = (ChatType)type,
-            UserId = userId.Value,
-            CreationTime = DateTime.Now,
-            RevertId = revertId,
-            GroupId = groupId,
-            Id = Guid.NewGuid()
-        };
-
-        var createChat = new CreateChatMessageCommand(new CreateChatMessageDto
-        {
-            Content = value,
-            Id = message.Id,
-            RevertId = revertId,
-            ChatGroupId = groupId,
-            Type = (ChatType)type,
-            UserId = userId.Value
-        });
-
-        // 如果发送的内容关联了回复id则查询回复内容
-        if (message.RevertId != null && message.RevertId != Guid.Empty)
-        {
-            var messageQuery = new GetMessageQuery((Guid)message.RevertId);
-            await _eventBus.PublishAsync(messageQuery);
-            message.Revert = messageQuery.Result;
-        }
-
-        // 为当前用户增加发送数量，以便限制用户的发送频率
-        if (await _redisClient.ExistsAsync(key))
-        {
-            await _redisClient.IncrByAsync(key, 1);
-        }
-        else
-        {
-            await _redisClient.IncrByAsync(key, 1);
-            await _redisClient.ExpireAsync(key, 60);
-        }
-
-        // 发送消息新增事件
-        await _eventBus.PublishAsync(createChat);
-
-        // 转发到客户端
-        _ = Clients.Groups(groupId.ToString("N")).SendAsync("ReceiveMessage", groupId, message);
-
-        // 发送智能助手订阅事件
-        await _backgroundTaskService.WriteAsync(new AssistantDto()
-        {
-            Id = groupId,
-            Value = value,
-            Group = true,
-            RevertId = message.Id,
-            UserId = userId.Value
-        });
     }
 
     /// <summary>

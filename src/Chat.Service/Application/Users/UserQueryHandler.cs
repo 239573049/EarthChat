@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Chat.Service.Application.Users.Commands;
 using Chat.Service.Domain.Users.Repositories;
 using Chat.Service.Infrastructure.Helper;
+using Microsoft.Extensions.Primitives;
 
 namespace Chat.Service.Application.Users;
 
@@ -13,11 +15,12 @@ public class UserQueryHandler
     private readonly IEmojiRepository _emojiRepository;
     private readonly IUserRepository _userRepository;
     private readonly IFriendRepository _friendRepository;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly IFriendRequestRepository _friendRequestRepository;
 
     public UserQueryHandler(IUserRepository userRepository, IMapper mapper, RedisClient redisClient,
         IEmojiRepository emojiRepository, IUserContext userContext, IFriendRepository friendRepository,
-        IEventBus eventBus, IFriendRequestRepository friendRequestRepository)
+        IEventBus eventBus, IFriendRequestRepository friendRequestRepository, IHttpContextAccessor httpContextAccessor)
     {
         _userRepository = userRepository;
         _mapper = mapper;
@@ -27,6 +30,7 @@ public class UserQueryHandler
         _friendRepository = friendRepository;
         _eventBus = eventBus;
         _friendRequestRepository = friendRequestRepository;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [EventHandler]
@@ -73,6 +77,22 @@ public class UserQueryHandler
     {
         var user = await _userRepository.FindAsync(x => x.Id == query.userId);
 
+        var ip = _httpContextAccessor.HttpContext?.Connection.RemoteIpAddress?.MapToIPv4().ToString();
+        if ((_httpContextAccessor?.HttpContext?.Request?.Headers)?.TryGetValue("X-Forwarded-For", out var header) == true)
+        {
+            ip = header.ToString();
+        }
+
+        if (user == null)
+        {
+            throw new UnauthorizedAccessException();
+        }
+
+        if (user?.Ip != ip && !ip.IsNullOrWhiteSpace())
+        {
+            await _eventBus.PublishAsync(new UpdateLocationCommand(user.Id, ip));
+        }
+
         query.Result = _mapper.Map<GetUserDto>(user);
     }
 
@@ -113,5 +133,4 @@ public class UserQueryHandler
             Total = count
         };
     }
-
 }
