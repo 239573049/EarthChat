@@ -88,11 +88,8 @@ public class UserQueryHandler
             throw new UnauthorizedAccessException();
         }
 
-        if (user?.Ip != ip && !ip.IsNullOrWhiteSpace())
-        {
-            await _eventBus.PublishAsync(new UpdateLocationCommand(user.Id, ip));
-        }
-
+        await _eventBus.PublishAsync(new UpdateLocationCommand(user.Id, ip));
+        
         query.Result = _mapper.Map<GetUserDto>(user);
     }
 
