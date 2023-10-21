@@ -72,6 +72,7 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
 });
 
 
+
 // 使用静态文件压缩。
 builder.Services.AddResponseCompression(options =>
 {
