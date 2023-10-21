@@ -4,7 +4,7 @@ using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
 
-
+// 解决GBK编码错误
 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
@@ -29,7 +29,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.Services.AddSignalR()
-    .AddMessagePackProtocol()
+    .AddMessagePackProtocol() // 使用MessagePack协议
     // .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"], // 可以根据情况是否使用横向扩展，一般单机部署不需要使用。
     //     options => { options.Configuration.ChannelPrefix = "Chat:"; })
     ;

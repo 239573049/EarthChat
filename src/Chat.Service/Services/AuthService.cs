@@ -34,6 +34,7 @@ public class AuthService : BaseService<AuthService>, IAuthService
         if (result is null) throw new Exception("Github授权失败");
 
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.access_token);
+        
         var githubUser = await http.GetFromJsonAsync<GithubUserDto>("https://api.github.com/user");
         if (githubUser is null) throw new Exception("Github授权失败");
 

@@ -15,8 +15,8 @@
 
     <ItemGroup>
         <PackageReference Include="FreeRedis" Version="1.1.6" />
-        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.0" />
-        <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.0" />
+        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.1-preview.3" />
+        <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.1-preview.3" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="0.24.230918.1-preview" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />

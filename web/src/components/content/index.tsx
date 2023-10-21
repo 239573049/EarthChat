@@ -525,7 +525,7 @@ export default class Content extends Component<IProps, IState> {
                         float: float
                     }}>
                         {revertUser && <div className='revert-item'>
-                            {revertUser?.name} 
+                            {revertUser?.name}
                             <Button theme='borderless' size='small' onClick={() => this.positioning(item.revert.id)} icon={<IconSmallTriangleTop />}></Button>
                             <div>
                                 {this.revertRender(item.revert)}
@@ -719,7 +719,7 @@ export default class Content extends Component<IProps, IState> {
                             <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingRight: '10px', float: 'right', width: "calc(100% - 50px)", textAlign: 'end' }}>
-                        <Tag color='amber'>{userItem?.location}</Tag> {userItem?.name}
+                            {userItem?.location && <Tag color='amber'>{userItem?.location}</Tag>} {userItem?.name}
                         </div>
                         {this.rendetContent(item, userItem, iscurren)}
                     </div>
@@ -735,7 +735,7 @@ export default class Content extends Component<IProps, IState> {
                             <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                            {userItem?.name} <Tag color='cyan'>{userItem?.location}</Tag> 
+                            {userItem?.name} {userItem?.location && <Tag color='cyan'>{userItem?.location}</Tag>}
                         </div>
                         {this.rendetContent(item, userItem, iscurren)}
                     </div>
@@ -782,7 +782,7 @@ export default class Content extends Component<IProps, IState> {
         if (element.scrollTop === 0 && data.length !== 0) {
 
             const { group } = this.props;
-            const { page,users } = this.state;
+            const { page, users } = this.state;
 
             this.setState({
                 loading: true,
@@ -795,7 +795,7 @@ export default class Content extends Component<IProps, IState> {
                     if (res.data.result.length === 0) {
                         return;
                     }
-                    
+
                     var userids = res.data.result.map((x: any) => x.userId)
                     var userinfos = await GetUserInfos(userids);
                     userinfos.forEach(x => {
@@ -1388,14 +1388,14 @@ export default class Content extends Component<IProps, IState> {
                                                 {user?.name}
                                             </div>
                                             {(!user?.id) && user?.id === group.creator ?
-                                                        <Tag style={{
-                                                            boxSizing: 'content-box',
-                                                            float: 'right',
-                                                        }} color='red'>频道主</Tag> :
-                                                        <Tag style={{
-                                                            boxSizing: 'content-box',
-                                                            float: 'right',
-                                                        }} color="grey">成员</Tag>}
+                                                <Tag style={{
+                                                    boxSizing: 'content-box',
+                                                    float: 'right',
+                                                }} color='red'>频道主</Tag> :
+                                                <Tag style={{
+                                                    boxSizing: 'content-box',
+                                                    float: 'right',
+                                                }} color="grey">成员</Tag>}
                                         </div>
                                     </div>)
                             })}
