@@ -777,7 +777,7 @@ export default class Content extends Component<IProps, IState> {
         if (element.scrollTop === 0 && data.length !== 0) {
 
             const { group } = this.props;
-            const { page } = this.state;
+            const { page,users } = this.state;
 
             this.setState({
                 loading: true,
@@ -786,10 +786,21 @@ export default class Content extends Component<IProps, IState> {
             const height = element.scrollHeight;
 
             ChatService.getList(group.id, page + 1, 20)
-                .then((res: any) => {
+                .then(async (res: any) => {
                     if (res.data.result.length === 0) {
                         return;
                     }
+                    
+                    var userids = res.data.result.map((x: any) => x.userId)
+                    var userinfos = await GetUserInfos(userids);
+                    userinfos.forEach(x => {
+                        // 如果不存在才添加
+                        if (users.findIndex(y => y.id === x.id) === -1) {
+                            users.push(x)
+                        }
+                    })
+
+                    
                     this.setState({
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
@@ -966,7 +977,7 @@ export default class Content extends Component<IProps, IState> {
     renderInfo(dto: GetUserDto | undefined) {
 
         // 判断是否为当前用户或智能助手
-        const iscurren = dto?.id === user.id || dto?.id === "00000000-0000-0000-0000-000000000000";
+        const iscurren = dto?.id === user.id;
 
         return (<>
             <div style={{
@@ -1376,12 +1387,7 @@ export default class Content extends Component<IProps, IState> {
                                             }}>
                                                 {user?.name}
                                             </div>
-                                            {(user?.id === '00000000-0000-0000-0000-000000000000' || !user?.id) ?
-                                                <Tag style={{
-                                                    boxSizing: 'content-box',
-                                                    float: 'right',
-                                                }} color="blue" >机器人{JSON.stringify(user)}</Tag> : (
-                                                    user?.id === group.creator ?
+                                            {(!user?.id) && user?.id === group.creator ?
                                                         <Tag style={{
                                                             boxSizing: 'content-box',
                                                             float: 'right',
@@ -1389,9 +1395,7 @@ export default class Content extends Component<IProps, IState> {
                                                         <Tag style={{
                                                             boxSizing: 'content-box',
                                                             float: 'right',
-                                                        }} color="grey">成员</Tag>
-
-                                                )}
+                                                        }} color="grey">成员</Tag>}
                                         </div>
                                     </div>)
                             })}
