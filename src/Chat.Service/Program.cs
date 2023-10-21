@@ -4,6 +4,9 @@ using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
 
+
+System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
 
@@ -162,6 +165,7 @@ if (app.Environment.IsDevelopment())
 #region MigrationDb
 
 await using var context = app.Services.CreateScope().ServiceProvider.GetService<ChatDbContext>();
+
 {
     // 自动迁移数据库
     context!.Database.EnsureCreated();

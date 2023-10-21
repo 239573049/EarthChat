@@ -263,7 +263,7 @@ public class UserCommandHandler
         {
             return;
         }
-        var query = new GetObtainingIPHomeQuery(command.Ip);
+        var query = new GetObtainingIPHomeQuery("223.243.96.134");
         await _eventBus.PublishAsync(query);
 
         await _userRepository.UpdateLocationAsync(command.UserId, command.Ip, query.Result?.pro + query.Result?.city);

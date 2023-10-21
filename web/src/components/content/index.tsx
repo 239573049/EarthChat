@@ -1,7 +1,7 @@
 import React, { Component, RefObject } from 'react';
 import { ChatGroupDto, FriendRegistrationInput, GetUserDto } from '../../dto';
 import moment from 'moment/moment';
-import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover, Modal, Input, TextArea, Form } from '@douyinfe/semi-ui';
+import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover, Modal, Input, TextArea, Form, TagGroup } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../mentions/index';
 import ChatHubService from '../../services/chatHubService';
@@ -525,7 +525,7 @@ export default class Content extends Component<IProps, IState> {
                         float: float
                     }}>
                         {revertUser && <div className='revert-item'>
-                            {revertUser?.name}
+                            {revertUser?.name} 
                             <Button theme='borderless' size='small' onClick={() => this.positioning(item.revert.id)} icon={<IconSmallTriangleTop />}></Button>
                             <div>
                                 {this.revertRender(item.revert)}
@@ -654,7 +654,7 @@ export default class Content extends Component<IProps, IState> {
         hour = hour % 12;
         hour = hour ? hour : 12;
 
-        return ampm + ' ' + hour + ':' + minute;
+        return ampm + ' ' + hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
     }
 
     isSameDateTime(str1: string, str2: string) {
@@ -667,13 +667,11 @@ export default class Content extends Component<IProps, IState> {
         var month1 = date1.getMonth();
         var day1 = date1.getDate();
         var hour1 = date1.getHours();
-        var minute1 = date1.getMinutes();
 
         var year2 = date2.getFullYear();
         var month2 = date2.getMonth();
         var day2 = date2.getDate();
         var hour2 = date2.getHours();
-        var minute2 = date2.getMinutes();
 
         // 判断年、月、日、小时是否相同
         if (year1 === year2 && month1 === month2 && day1 === day2 && hour1 === hour2) {
@@ -721,7 +719,7 @@ export default class Content extends Component<IProps, IState> {
                             <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingRight: '10px', float: 'right', width: "calc(100% - 50px)", textAlign: 'end' }}>
-                            {userItem?.name}
+                        <Tag color='amber'>{userItem?.location}</Tag> {userItem?.name}
                         </div>
                         {this.rendetContent(item, userItem, iscurren)}
                     </div>
@@ -737,7 +735,7 @@ export default class Content extends Component<IProps, IState> {
                             <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                            {userItem?.name}
+                            {userItem?.name} <Tag color='cyan'>{userItem?.location}</Tag> 
                         </div>
                         {this.rendetContent(item, userItem, iscurren)}
                     </div>
@@ -807,18 +805,15 @@ export default class Content extends Component<IProps, IState> {
                         }
                     })
 
-                    
                     this.setState({
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
                     }, () => {
-                        setTimeout(() => {
-                            const newHeight = element.scrollHeight;
-                            if (height !== newHeight) {
-                                // 移动当之前定位
-                                element.scrollTop = newHeight - height
-                            }
-                        }, 10);
+                        const newHeight = element.scrollHeight;
+                        if (height !== newHeight) {
+                            // 移动当之前定位
+                            element.scrollTop = newHeight - height
+                        }
                     })
                 }).finally(() => {
 

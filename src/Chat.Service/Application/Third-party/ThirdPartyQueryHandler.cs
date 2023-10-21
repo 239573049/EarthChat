@@ -22,7 +22,7 @@ public class ThirdPartyQueryHandler
             var http = _httpClientFactory.CreateClient(nameof(ThirdPartyQueryHandler));
             query.Result =
                 await http.GetFromJsonAsync<GetObtainingIPHomeDto>(
-                    "https://whois.pconline.com.cn/ipJson.jsp?json=true");
+                    "https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=" + query.ip);
         }
         catch (Exception e)
         {

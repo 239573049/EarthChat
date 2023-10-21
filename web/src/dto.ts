@@ -3,7 +3,7 @@ export interface GetUserDto {
     account: string;
     avatar: string;
     name: string;
-    onLine: boolean;
+    location: string;
 }
 
 export interface ChatGroupDto {
