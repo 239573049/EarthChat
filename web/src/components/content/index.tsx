@@ -445,6 +445,9 @@ export default class Content extends Component<IProps, IState> {
                         borderRadius: '8px',
                         marginLeft: '10px'
                     }}
+                    preview={{
+                        src: item.content
+                    }}
                     height={'100%'}
                     src={item.content + "?reduction=true"}
                 />
@@ -570,6 +573,9 @@ export default class Content extends Component<IProps, IState> {
                                 style={{
                                     maxHeight: '300px',
                                 }}
+                                preview={{
+                                    src: item.content
+                                }}
                                 src={item.content + "?reduction=true"}
                             />
                         </div> : <Image
@@ -584,6 +590,9 @@ export default class Content extends Component<IProps, IState> {
                                 borderRadius: '8px',
                                 marginLeft: '10px',
                                 float: float
+                            }}
+                            preview={{
+                                src: item.content
                             }}
                             height={'100%'}
                             src={item.content + "?reduction=true"}
