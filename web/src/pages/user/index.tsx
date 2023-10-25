@@ -7,7 +7,7 @@ import { ChatGroupDto } from '../../dto';
 import PubSub from 'pubsub-js';
 import friendService from '../../services/friendService';
 import { GetUserInfos } from '../../store/user-store';
-
+import { IconMailStroked1 } from '@douyinfe/semi-icons'
 
 interface IState {
     middleWidth: number;
@@ -199,13 +199,14 @@ class User extends Component<any, IState> {
 
             const users = await GetUserInfos(requestIds);
 
-            const items = result.data.result.map((x: any) => {
+            const items = result.data.result.length > 0 ? result.data.result.map((x: any) => {
                 const user = users.filter(y => y.id === x.beAppliedForId)[0];
                 return <div className='user-manager-item' style={{
                     height: "75px",
                     width: '600px',
                     backgroundColor: 'var(--setting-tong-theme-background-color)'
                 }}>
+
                     <div style={{
                         padding: '13px'
                     }}>
@@ -243,16 +244,33 @@ class User extends Component<any, IState> {
                         </> : <div>{x.state === 1 ? "已同意" : "已拒绝"}</div>}
                     </div>
                 </div>
-            })
-
-            let renderValue = <div style={{
-                height: "115px",
-                margin: 'auto',
-                width: '500px',
-                paddingTop: "50px"
+            }) : <div style={{
+                marginTop:'200px',
+                textAlign: 'center',
             }}>
-                {items}
+                <div>
+                    <IconMailStroked1 size='extra-large' />
+                </div>
+                暂无通知
             </div>
+
+            let renderValue = <>
+                <div style={{
+                    marginLeft: '25px',
+                    marginTop: '35px'
+                }}>
+                    好友通知
+                </div>
+                <div style={{
+                    height: "115px",
+                    margin: 'auto',
+                    width: '500px',
+                    paddingTop: "50px"
+                }}>
+
+                    {items}
+                </div>
+            </>
 
             this.setState({
                 renderValue
@@ -260,8 +278,8 @@ class User extends Component<any, IState> {
         }
     }
 
-    loadUserManager(){
-        
+    loadUserManager() {
+
     }
 
     selectUserManager() {

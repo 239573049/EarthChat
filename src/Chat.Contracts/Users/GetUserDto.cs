@@ -27,8 +27,8 @@ public class GetUserDto
     public string Name { get; set; }
 
     /// <summary>
-    /// 是否在线
+    /// 发送所在位置
     /// </summary>
-    [Key("onLine")]
-    public bool OnLine { get; set; }
+    public string? Location { get; set; }
+
 }

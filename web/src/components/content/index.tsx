@@ -1,7 +1,7 @@
 import React, { Component, RefObject } from 'react';
 import { ChatGroupDto, FriendRegistrationInput, GetUserDto } from '../../dto';
 import moment from 'moment/moment';
-import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover, Modal, Input, TextArea, Form } from '@douyinfe/semi-ui';
+import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover, Modal, Input, TextArea, Form, TagGroup } from '@douyinfe/semi-ui';
 import './index.scss';
 import Mention from '../mentions/index';
 import ChatHubService from '../../services/chatHubService';
@@ -445,6 +445,9 @@ export default class Content extends Component<IProps, IState> {
                         borderRadius: '8px',
                         marginLeft: '10px'
                     }}
+                    preview={{
+                        src: item.content
+                    }}
                     height={'100%'}
                     src={item.content + "?reduction=true"}
                 />
@@ -570,6 +573,9 @@ export default class Content extends Component<IProps, IState> {
                                 style={{
                                     maxHeight: '300px',
                                 }}
+                                preview={{
+                                    src: item.content
+                                }}
                                 src={item.content + "?reduction=true"}
                             />
                         </div> : <Image
@@ -584,6 +590,9 @@ export default class Content extends Component<IProps, IState> {
                                 borderRadius: '8px',
                                 marginLeft: '10px',
                                 float: float
+                            }}
+                            preview={{
+                                src: item.content
                             }}
                             height={'100%'}
                             src={item.content + "?reduction=true"}
@@ -645,7 +654,7 @@ export default class Content extends Component<IProps, IState> {
         hour = hour % 12;
         hour = hour ? hour : 12;
 
-        return ampm + ' ' + hour + ':' + minute;
+        return ampm + ' ' + hour.toString().padStart(2, '0') + ':' + minute.toString().padStart(2, '0');
     }
 
     isSameDateTime(str1: string, str2: string) {
@@ -658,13 +667,11 @@ export default class Content extends Component<IProps, IState> {
         var month1 = date1.getMonth();
         var day1 = date1.getDate();
         var hour1 = date1.getHours();
-        var minute1 = date1.getMinutes();
 
         var year2 = date2.getFullYear();
         var month2 = date2.getMonth();
         var day2 = date2.getDate();
         var hour2 = date2.getHours();
-        var minute2 = date2.getMinutes();
 
         // 判断年、月、日、小时是否相同
         if (year1 === year2 && month1 === month2 && day1 === day2 && hour1 === hour2) {
@@ -712,7 +719,7 @@ export default class Content extends Component<IProps, IState> {
                             <Avatar size='small' style={{ float: 'right' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingRight: '10px', float: 'right', width: "calc(100% - 50px)", textAlign: 'end' }}>
-                            {userItem?.name}
+                            {userItem?.location && <Tag color='amber'>{userItem?.location}</Tag>} {userItem?.name}
                         </div>
                         {this.rendetContent(item, userItem, iscurren)}
                     </div>
@@ -728,7 +735,7 @@ export default class Content extends Component<IProps, IState> {
                             <Avatar size='small' style={{ float: 'left' }} src={userItem?.avatar + "?reduction=true"} />
                         </Tooltip>
                         <div style={{ paddingLeft: '40px', width: 'calc(100% - 50px)' }}>
-                            {userItem?.name}
+                            {userItem?.name} {userItem?.location && <Tag color='cyan'>{userItem?.location}</Tag>}
                         </div>
                         {this.rendetContent(item, userItem, iscurren)}
                     </div>
@@ -775,7 +782,7 @@ export default class Content extends Component<IProps, IState> {
         if (element.scrollTop === 0 && data.length !== 0) {
 
             const { group } = this.props;
-            const { page } = this.state;
+            const { page, users } = this.state;
 
             this.setState({
                 loading: true,
@@ -784,21 +791,29 @@ export default class Content extends Component<IProps, IState> {
             const height = element.scrollHeight;
 
             ChatService.getList(group.id, page + 1, 20)
-                .then((res: any) => {
+                .then(async (res: any) => {
                     if (res.data.result.length === 0) {
                         return;
                     }
+
+                    var userids = res.data.result.map((x: any) => x.userId)
+                    var userinfos = await GetUserInfos(userids);
+                    userinfos.forEach(x => {
+                        // 如果不存在才添加
+                        if (users.findIndex(y => y.id === x.id) === -1) {
+                            users.push(x)
+                        }
+                    })
+
                     this.setState({
                         data: [...res.data.result, ...this.state.data],
                         page: page + 1,
                     }, () => {
-                        setTimeout(() => {
-                            const newHeight = element.scrollHeight;
-                            if (height !== newHeight) {
-                                // 移动当之前定位
-                                element.scrollTop = newHeight - height
-                            }
-                        }, 10);
+                        const newHeight = element.scrollHeight;
+                        if (height !== newHeight) {
+                            // 移动当之前定位
+                            element.scrollTop = newHeight - height
+                        }
                     })
                 }).finally(() => {
 
@@ -964,7 +979,7 @@ export default class Content extends Component<IProps, IState> {
     renderInfo(dto: GetUserDto | undefined) {
 
         // 判断是否为当前用户或智能助手
-        const iscurren = dto?.id === user.id || dto?.id === "00000000-0000-0000-0000-000000000000";
+        const iscurren = dto?.id === user.id;
 
         return (<>
             <div style={{
@@ -1372,22 +1387,15 @@ export default class Content extends Component<IProps, IState> {
                                             }}>
                                                 {user?.name}
                                             </div>
-                                            {(user?.id === '00000000-0000-0000-0000-000000000000' || !user?.id) ?
+                                            {(!user?.id) && user?.id === group.creator ?
                                                 <Tag style={{
                                                     boxSizing: 'content-box',
                                                     float: 'right',
-                                                }} color="blue" >机器人{JSON.stringify(user)}</Tag> : (
-                                                    user?.id === group.creator ?
-                                                        <Tag style={{
-                                                            boxSizing: 'content-box',
-                                                            float: 'right',
-                                                        }} color='red'>频道主</Tag> :
-                                                        <Tag style={{
-                                                            boxSizing: 'content-box',
-                                                            float: 'right',
-                                                        }} color="grey">成员</Tag>
-
-                                                )}
+                                                }} color='red'>频道主</Tag> :
+                                                <Tag style={{
+                                                    boxSizing: 'content-box',
+                                                    float: 'right',
+                                                }} color="grey">成员</Tag>}
                                         </div>
                                     </div>)
                             })}

@@ -7,6 +7,9 @@ using System.Text.Json.Serialization;
 // 解决GBK编码问题
 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
+// 解决GBK编码错误
+System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
 
@@ -29,7 +32,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 });
 
 builder.Services.AddSignalR()
-    .AddMessagePackProtocol()
+    .AddMessagePackProtocol() // 使用MessagePack协议
     // .AddStackExchangeRedis(builder.Configuration["ConnectionStrings:Redis"], // 可以根据情况是否使用横向扩展，一般单机部署不需要使用。
     //     options => { options.Configuration.ChannelPrefix = "Chat:"; })
     ;
@@ -70,6 +73,7 @@ builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
     c.DefaultRequestHeaders.Add("User-Agent", "Chat");
     c.DefaultRequestHeaders.Add("Authorization", "Bearer " + options.Token);
 });
+
 
 
 // 使用静态文件压缩。
@@ -175,6 +179,7 @@ if (app.Environment.IsDevelopment())
 #region MigrationDb
 
 await using var context = app.Services.CreateScope().ServiceProvider.GetService<ChatDbContext>();
+
 {
     // 自动迁移数据库
     context!.Database.EnsureCreated();

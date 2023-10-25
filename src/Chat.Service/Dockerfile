@@ -11,6 +11,7 @@ WORKDIR /src
 COPY ["Directory.Build.props", "."]
 COPY ["src/Chat.Service/Chat.Service.csproj", "src/Chat.Service/"]
 COPY ["src/Chat.Contracts/Chat.Contracts.csproj", "src/Chat.Contracts/"]
+COPY ["src/Infrastructure/Infrastructure.csproj", "src/Infrastructure/"]
 RUN dotnet restore "src/Chat.Service/Chat.Service.csproj"
 COPY . .
 WORKDIR "/src/src/Chat.Service"

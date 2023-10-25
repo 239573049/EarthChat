@@ -76,7 +76,7 @@ public class IntelligentAssistantHandle
 
     private const string WeatherTemplate =
         """
-        当前{province}的天气{weather}，平均温度{temperature_float},风向{winddirection},湿度{humidity};
+        {province}的天气{weather}，平均温度{temperature_float},风向{winddirection},湿度{humidity};
         """;
 
     /// <inheritdoc />
