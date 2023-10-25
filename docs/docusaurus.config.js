@@ -68,7 +68,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://gitee.com/hejiale010426/chat/tree/master/docs/docs',
+            'https://gitee.com/hejiale010426/chat/tree/master/docs',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
