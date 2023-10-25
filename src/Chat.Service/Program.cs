@@ -1,8 +1,11 @@
-using System.Text.Json.Serialization;
 using Chat.Service.Application.Chats;
 using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
+using System.Text.Json.Serialization;
+
+// 解决GBK编码问题
+System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
@@ -111,11 +114,21 @@ var app = builder.Services
         {
             // 解决pgsql的时间戳问题
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            opt.UseNpgsql(connectionString);
+            opt.UseNpgsql(connectionString).UseLoggerFactory(LoggerFactory.Create(builder =>
+            {
+#if DEBUG
+                builder.AddConsole();
+#endif
+            }));
         }
         else if (sqlType.IsNullOrWhiteSpace() || sqlType == "sqlite")
         {
-            opt.UseSqlite(connectionString);
+            opt.UseSqlite(connectionString).UseLoggerFactory(LoggerFactory.Create(builder =>
+            {
+#if DEBUG
+                builder.AddConsole();
+#endif
+            }));
         }
     })
     .AddCors(options =>

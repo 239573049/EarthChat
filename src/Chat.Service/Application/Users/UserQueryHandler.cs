@@ -90,7 +90,7 @@ public class UserQueryHandler
 
         if (user?.Ip != ip && !ip.IsNullOrWhiteSpace())
         {
-            await _eventBus.PublishAsync(new UpdateLocationCommand(user.Id, ip));
+            await _eventBus.PublishAsync(new UpdateLocationCommand(user.Id, "113.87.234.93"));
         }
 
         query.Result = _mapper.Map<GetUserDto>(user);

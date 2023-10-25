@@ -9,9 +9,9 @@ public class UserRepository : BaseRepository<ChatDbContext, User, Guid>, IUserRe
     {
     }
 
-    public async Task UpdateLocationAsync(Guid userId, string Ip, string Location)
+    public async Task UpdateLocationAsync(Guid userId, string Ip, string location)
     {
         await Context.Database.ExecuteSqlInterpolatedAsync(
-            $"update \"Users\" set \"Ip\"={Ip},\"Location\"={Location} where \"Id\"={userId};");
+            $"update \"Users\" set \"Ip\"={Ip},\"Location\"={location} where \"Id\"={userId};");
     }
 }
