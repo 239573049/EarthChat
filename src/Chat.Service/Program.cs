@@ -7,9 +7,6 @@ using System.Text.Json.Serialization;
 // 解决GBK编码问题
 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-// 解决GBK编码错误
-System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
 var sqlType = Environment.GetEnvironmentVariable("SQLTYPE");
 var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION_STRING");
 
