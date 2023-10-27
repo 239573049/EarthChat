@@ -200,7 +200,7 @@ public class IntelligentAssistantHandle
 
                         hourlys.AddRange(new[] { first, lastOrDefault });
                     }
-                    else if (weatherResult.hourly != null)
+                    else if (weatherResult.hourly.Count != 0)
                     {
                         var first = weatherResult.hourly.FirstOrDefault();
                         var lastOrDefault = weatherResult.hourly.LastOrDefault();
