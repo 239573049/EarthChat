@@ -71,7 +71,7 @@ public class WeatherDto
 public class Result
 {
     public Location location { get; set; }
-    public List<Hourly_History> hourly_history { get; set; } = new();
+    public List<Hourly_History> hourly { get; set; } = new();
 }
 
 public class Location

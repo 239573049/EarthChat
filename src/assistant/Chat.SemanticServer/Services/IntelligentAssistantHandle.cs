@@ -190,14 +190,18 @@ public class IntelligentAssistantHandle
 
                     var json = JsonSerializer.Deserialize<WeatherDto>(result.Result);
 
-                    var hourly = json.results.FirstOrDefault().hourly_history;
+                    var hourly = json.results.FirstOrDefault().hourly;
 
-                    var first = hourly.FirstOrDefault();
-                    var lastOrDefault = hourly.LastOrDefault();
+                    if (hourly.Count > 1)
+                    {
+                        var first = hourly.FirstOrDefault();
+                        var lastOrDefault = hourly.LastOrDefault();
 
-                    hourly.Clear();
+                        hourly.Clear();
 
-                    hourly.AddRange(new[] { first, lastOrDefault });
+                        hourly.AddRange(new[] { first, lastOrDefault });
+
+                    }
 
                     newValue = (await _kernel.RunAsync(new ContextVariables
                     {
