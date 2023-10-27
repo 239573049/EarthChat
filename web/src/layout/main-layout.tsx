@@ -18,9 +18,11 @@ const theme = localStorage.getItem('theme-mode');
 if (theme) {
     if (theme === "light") {
         body.removeAttribute('theme-mode');
-    } else if (theme === "dark") {
+    } else  {
         body.setAttribute('theme-mode', 'dark');
     }
+}else{
+    body.setAttribute('theme-mode', 'dark');
 }
 
 const Message = (color: string = '#A4A4A4') => {

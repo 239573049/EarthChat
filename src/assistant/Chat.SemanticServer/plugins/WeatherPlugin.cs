@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
+using System.Net.WebSockets;
 using System.Text.Json;
+using Chat.SemanticServer.Module;
 using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
 
@@ -10,25 +12,14 @@ namespace Chat.SemanticServer.plugins;
 /// </summary>
 public class WeatherPlugin
 {
-    private static List<AdCode>? _codes;
-
-    static WeatherPlugin()
-    {
-        var path = Path.Combine(AppContext.BaseDirectory, "adcode.json");
-        if (File.Exists(path))
-        {
-            var str = File.ReadAllText(path);
-            _codes = JsonSerializer.Deserialize<List<AdCode>>(str);
-        }
-
-        _codes ??= new List<AdCode>();
-    }
-
     private readonly IHttpClientFactory _httpClientFactory;
 
-    public WeatherPlugin(IHttpClientFactory httpClientFactory)
+    private readonly IConfiguration _configuration;
+
+    public WeatherPlugin(IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _httpClientFactory = httpClientFactory;
+        _configuration = configuration;
     }
 
     [SKFunction, Description("获取天气")]
@@ -36,22 +27,43 @@ public class WeatherPlugin
     public async Task<string> GetWeather(SKContext context)
     {
         var weatherInput = JsonSerializer.Deserialize<WeatherInput>(context.Result);
-        var value = _codes.FirstOrDefault(x => x.name.StartsWith(weatherInput.city));
-        if (value == null)
+
+        if (weatherInput.time.IsNullOrWhiteSpace() || weatherInput.time == "今天")
         {
-            return "请先描述指定城市！";
+            var url =
+                $"https://api.seniverse.com/v3/weather/now.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c";
+            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
+            var result = await http.GetAsync(url);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return await result.Content.ReadAsStringAsync();
+            }
+
+        }
+        else if (weatherInput.time == "明天")
+        {
+            var url = $"https://api.seniverse.com/v3/weather/hourly.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c&start=0&hours=24";
+            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
+            var result = await http.GetAsync(url);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return await result.Content.ReadAsStringAsync();
+            }
+        }
+        else if (weatherInput.time == "昨天")
+        {
+            var url = $"https://api.seniverse.com/v3/weather/hourly_history.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c&start=0&hours=24";
+            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
+            var result = await http.GetAsync(url);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return await result.Content.ReadAsStringAsync();
+            }
         }
 
-        var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-        var result = await http.GetAsync(
-            "https://restapi.amap.com/v3/weather/weatherInfo?key=2e92f9d6c58e20fcf2ba7e71978ecd16&extensions=base&output=JSON&city=" +
-            value.adcode);
-
-        if (result.IsSuccessStatusCode)
-        {
-            return await result.Content.ReadAsStringAsync();
-        }
-        
         return string.Empty;
     }
 }
@@ -62,11 +74,37 @@ public class WeatherInput
     public string time { get; set; }
 }
 
-public class AdCode
+
+public class WeatherDto
+{
+    public Result[] results { get; set; }
+}
+
+public class Result
+{
+    public Location location { get; set; }
+    public List<Hourly_History> hourly_history { get; set; } = new();
+}
+
+public class Location
 {
     public string name { get; set; }
+}
 
-    public string adcode { get; set; }
+public class Hourly_History
+{
+    public string text { get; set; }
 
-    public string citycode { get; set; }
+    public string temperature { get; set; }
+
+
+    public string humidity { get; set; }
+    public string visibility { get; set; }
+    public string wind_direction { get; set; }
+
+    public string wind_speed { get; set; }
+    public string wind_scale { get; set; }
+
+    public string dew_point { get; set; }
+
 }

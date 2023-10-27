@@ -21,7 +21,6 @@ builder.Services.AddHttpClient("ChatGPT", (services, c) =>
 {
     ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
 });
-;
 
 builder.Services.AddTransient<IKernel>((services) =>
 {

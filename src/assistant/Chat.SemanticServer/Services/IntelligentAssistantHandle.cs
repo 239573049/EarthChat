@@ -27,16 +27,18 @@ public class IntelligentAssistantHandle
     private readonly RedisClient _redisClient;
     private readonly ILogger<IntelligentAssistantHandle> _logger;
     private readonly OpenAIChatCompletion _chatCompletion;
+    private readonly IConfiguration _configuration;
 
     public IntelligentAssistantHandle(IKernel kernel, RedisClient redisClient,
         ILogger<IntelligentAssistantHandle> logger, IHttpClientFactory httpClientFactory,
-        OpenAIChatCompletion chatCompletion)
+        OpenAIChatCompletion chatCompletion, IConfiguration configuration)
     {
         _kernel = kernel;
         _redisClient = redisClient;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
         _chatCompletion = chatCompletion;
+        _configuration = configuration;
 
         _redisClient.Subscribe(nameof(IntelligentAssistantEto),
             ((s, o) =>
@@ -149,7 +151,7 @@ public class IntelligentAssistantHandle
             var chatPlugin = _kernel
                 .ImportSemanticSkillFromDirectory(pluginsDirectory, "ChatPlugin");
 
-            var getWeather = _kernel.ImportSkill(new WeatherPlugin(_httpClientFactory), "WeatherPlugin");
+            var getWeather = _kernel.ImportSkill(new WeatherPlugin(_httpClientFactory, _configuration), "WeatherPlugin");
 
             var getIntentVariables = new ContextVariables
             {
@@ -177,20 +179,35 @@ public class IntelligentAssistantHandle
 
                 if (!result.Result.IsNullOrWhiteSpace())
                 {
+
+                    var weatherInput = JsonSerializer.Deserialize<WeatherInput>(newValue);
+
                     if (result.Result.IsNullOrEmpty())
                     {
                         await SendMessage("获取天气失败了！", item.RevertId, item.Id);
                         return;
                     }
 
-                    var weather = JsonSerializer.Deserialize<GetWeatherModule>(result.Result);
-                    var live = weather?.lives.FirstOrDefault();
-                    await SendMessage(WeatherTemplate
-                        .Replace("{province}", live!.city)
-                        .Replace("{weather}", live?.weather)
-                        .Replace("{temperature_float}", live?.temperature_float)
-                        .Replace("{winddirection}", live?.winddirection)
-                        .Replace("{humidity}", live.humidity), item.RevertId, item.Id);
+                    var json = JsonSerializer.Deserialize<WeatherDto>(result.Result);
+
+                    var hourly = json.results.FirstOrDefault().hourly_history;
+
+                    var first = hourly.FirstOrDefault();
+                    var lastOrDefault = hourly.LastOrDefault();
+
+                    hourly.Clear();
+
+                    hourly.AddRange(new[] { first, lastOrDefault });
+
+                    newValue = (await _kernel.RunAsync(new ContextVariables
+                    {
+                        ["input"] = JsonSerializer.Serialize(hourly),
+                        ["date"] = weatherInput.time,
+                        ["city"] = json.results.FirstOrDefault().location.name,
+
+                    }, chatPlugin["ConstituteWeather"])).Result;
+
+                    await SendMessage(newValue, item.RevertId, item.Id);
                     return;
                 }
             }

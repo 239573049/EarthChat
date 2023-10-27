@@ -1,28 +1,31 @@
 ﻿namespace Chat.SemanticServer.Module;
 
-/// <summary>
-/// 高德天气Api返回模型
-/// </summary>
 public class GetWeatherModule
 {
-    public string status { get; set; }
-    public string count { get; set; }
-    public string info { get; set; }
-    public string infocode { get; set; }
-    public Lives[] lives { get; set; }
+    public Results[] results { get; set; }
 }
 
-public class Lives
+public class Results
 {
-    public string province { get; set; }
-    public string city { get; set; }
-    public string adcode { get; set; }
-    public string weather { get; set; }
-    public string temperature { get; set; }
-    public string winddirection { get; set; }
-    public string windpower { get; set; }
-    public string humidity { get; set; }
-    public string reporttime { get; set; }
-    public string temperature_float { get; set; }
-    public string humidity_float { get; set; }
+    public Location location { get; set; }
+    public Now now { get; set; }
+    public string last_update { get; set; }
 }
+
+public class Location
+{
+    public string id { get; set; }
+    public string name { get; set; }
+    public string country { get; set; }
+    public string path { get; set; }
+    public string timezone { get; set; }
+    public string timezone_offset { get; set; }
+}
+
+public class Now
+{
+    public string text { get; set; }
+    public string code { get; set; }
+    public string temperature { get; set; }
+}
+

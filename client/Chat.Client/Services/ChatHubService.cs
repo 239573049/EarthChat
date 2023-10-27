@@ -21,7 +21,7 @@ public class ChatHubService
     public async Task StartAsync()
     {
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://124.222.89.53/chathub", options =>
+            .WithUrl("https://chat.tokengo.top/api/chathHub", options =>
             {
                 options.AccessTokenProvider = async () =>
                 {
