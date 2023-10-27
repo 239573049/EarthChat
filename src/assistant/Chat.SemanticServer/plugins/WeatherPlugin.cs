@@ -2,6 +2,7 @@
 using Microsoft.SemanticKernel.SkillDefinition;
 using System.ComponentModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Chat.SemanticServer.plugins;
 
@@ -71,7 +72,12 @@ public class WeatherDto
 public class Result
 {
     public Location location { get; set; }
+
     public List<Hourly_History> hourly { get; set; } = new();
+
+    public List<Hourly_History> hourly_history { get; set; } = new();
+
+    public Hourly_History? now { get; set; }
 }
 
 public class Location

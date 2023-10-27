@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.Json;
 using Chat.Contracts;
 using Chat.Contracts.Chats;
@@ -188,26 +189,41 @@ public class IntelligentAssistantHandle
                         return;
                     }
 
-                    var json = JsonSerializer.Deserialize<WeatherDto>(result.Result);
+                    var weatherResult = JsonSerializer.Deserialize<WeatherDto>(result.Result).results.FirstOrDefault();
 
-                    var hourly = json.results.FirstOrDefault().hourly;
+                    var hourlys = new List<Hourly_History>();
 
-                    if (hourly.Count > 1)
+                    if (weatherResult.hourly_history.Count != 0)
                     {
-                        var first = hourly.FirstOrDefault();
-                        var lastOrDefault = hourly.LastOrDefault();
+                        var first = weatherResult.hourly_history.FirstOrDefault();
+                        var lastOrDefault = weatherResult.hourly_history.LastOrDefault();
 
-                        hourly.Clear();
+                        hourlys.AddRange(new[] { first, lastOrDefault });
+                    }
+                    else if (weatherResult.hourly != null)
+                    {
+                        var first = weatherResult.hourly.FirstOrDefault();
+                        var lastOrDefault = weatherResult.hourly.LastOrDefault();
 
-                        hourly.AddRange(new[] { first, lastOrDefault });
+                        hourlys.AddRange(new[] { first, lastOrDefault });
+                    }
+                    else if (weatherResult.now != null)
+                    {
 
+                        hourlys.AddRange(new[] { weatherResult.now });
+                    }
+                    else
+                    {
+
+                        await SendMessage("天气解析错误了：" + result.Result, item.RevertId, item.Id);
+                        return;
                     }
 
                     newValue = (await _kernel.RunAsync(new ContextVariables
                     {
-                        ["input"] = JsonSerializer.Serialize(hourly),
-                        ["date"] = weatherInput.time,
-                        ["city"] = json.results.FirstOrDefault().location.name,
+                        ["input"] = JsonSerializer.Serialize(hourlys),
+                        ["date"] = weatherInput?.time,
+                        ["city"] = weatherResult.location.name,
 
                     }, chatPlugin["ConstituteWeather"])).Result;
 
