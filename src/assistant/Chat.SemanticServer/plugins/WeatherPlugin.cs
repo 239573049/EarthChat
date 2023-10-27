@@ -1,9 +1,7 @@
-﻿using System.ComponentModel;
-using System.Net.WebSockets;
-using System.Text.Json;
-using Chat.SemanticServer.Module;
-using Microsoft.SemanticKernel.Orchestration;
+﻿using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.SkillDefinition;
+using System.ComponentModel;
+using System.Text.Json;
 
 namespace Chat.SemanticServer.plugins;
 
@@ -28,42 +26,32 @@ public class WeatherPlugin
     {
         var weatherInput = JsonSerializer.Deserialize<WeatherInput>(context.Result);
 
+        string url = $"https://api.seniverse.com/v3/weather/$time.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c";
+
         if (weatherInput.time.IsNullOrWhiteSpace() || weatherInput.time == "今天")
         {
-            var url =
-                $"https://api.seniverse.com/v3/weather/now.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c";
-            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-            var result = await http.GetAsync(url);
-
-            if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadAsStringAsync();
-            }
-
+            url = url.Replace("$time", "now");
         }
         else if (weatherInput.time == "明天")
         {
-            var url = $"https://api.seniverse.com/v3/weather/hourly.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c&start=0&hours=24";
-            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-            var result = await http.GetAsync(url);
+            url = url.Replace("$time", "hourly");
 
-            if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadAsStringAsync();
-            }
         }
         else if (weatherInput.time == "昨天")
         {
-            var url = $"https://api.seniverse.com/v3/weather/hourly_history.json?key={_configuration["SeniverseKey"]}&location={weatherInput.city}&language=zh-Hans&unit=c&start=0&hours=24";
-            var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
-            var result = await http.GetAsync(url);
-
-            if (result.IsSuccessStatusCode)
-            {
-                return await result.Content.ReadAsStringAsync();
-            }
+            url = url.Replace("$time", "hourly_history");
         }
+        else
+        {
+            url = url.Replace("$time", "now");
+        }
+        var http = _httpClientFactory.CreateClient(nameof(WeatherPlugin));
+        var result = await http.GetAsync(url);
 
+        if (result.IsSuccessStatusCode)
+        {
+            return await result.Content.ReadAsStringAsync();
+        }
         return string.Empty;
     }
 }
