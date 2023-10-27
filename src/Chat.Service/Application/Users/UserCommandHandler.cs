@@ -266,6 +266,8 @@ public class UserCommandHandler
         var query = new GetObtainingIPHomeQuery(command.Ip);
         await _eventBus.PublishAsync(query);
 
-        await _userRepository.UpdateLocationAsync(command.UserId, command.Ip, query.Result?.pro + query.Result?.city);
+        var city = query.Result?.pro + query.Result?.city;
+
+        await _userRepository.UpdateLocationAsync(command.UserId, command.Ip, city);
     }
 }

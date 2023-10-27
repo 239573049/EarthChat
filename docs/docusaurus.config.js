@@ -39,7 +39,15 @@ const config = {
         <script src="<%= it.baseUrl %><%= script %>"></script>
       <% }); %>
       <%~ it.postBodyTags %>  
-      
+      <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?088296cbc238ca3da8304aa043685d4e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
     </body>
   </html>`,
   // GitHub pages deployment config.
@@ -68,14 +76,7 @@ const config = {
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        },
-        blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://gitee.com/hejiale010426/chat/tree/master/docs',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -166,7 +167,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ['powershell','csharp','javascript','json'],
+        additionalLanguages: ['powershell', 'csharp', 'javascript', 'json'],
       },
     }),
 };
