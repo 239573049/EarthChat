@@ -1260,33 +1260,33 @@ export default class Content extends Component<IProps, IState> {
         let { functionContent } = this.state;
 
         if (functionContent === undefined) {
-            functionContent = <>
-                <div style={{
-                    textAlign: 'center',
-                    marginTop: '5%'
-                }}>
-                    {!transcribe.value ? <Button onClick={() => this.onTranscribe()} size='large' icon={
-                        <Icon svg={<svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M801.728 364.8a32 32 0 0 0-32 32v91.392c0 129.28-115.648 234.432-257.728 234.432S254.272 617.408 254.272 488.192v-94.976a32 32 0 0 0-64 0v94.976c0 157.888 133.248 286.208 300.672 296.448v111.488H357.632c-16.128 0-29.184 14.336-29.184 32.064 0 17.664 13.056 31.936 29.184 31.936h319.04c16.064 0 29.184-14.272 29.184-31.936 0-17.728-13.12-32.064-29.184-32.064H554.944V782.656c156.992-19.776 278.784-143.488 278.784-294.464V396.8c0-17.728-14.272-32-32-32z" fill="#3d74e3" p-id="1706"></path><path d="M552.32 502.016a49.856 49.856 0 1 0 99.712 0 49.856 49.856 0 1 0-99.712 0z" fill="#3d74e3" p-id="1707"></path><path d="M517.12 69.888a199.04 199.04 0 0 0-198.784 198.848v211.072A199.04 199.04 0 0 0 517.12 678.656a199.104 199.104 0 0 0 198.912-198.848V268.736A199.04 199.04 0 0 0 517.12 69.888z m134.912 227.328H382.336v-28.48c0-74.368 60.48-134.848 134.784-134.848a135.04 135.04 0 0 1 134.912 134.848v28.48z" fill="#3d74e3" p-id="1708"></path></svg>}></Icon>
-                    }></Button> : <Button onClick={()=>this.stopTranscribe()}>停止录制</Button>}
-                </div>
-            </>
             // functionContent = <>
-            //     <Mention onCloseRevert={() => this.setState({
-            //         revertValue: undefined
-            //     })} revertValue={revertValue} ref={this.mentionRef} style={{
-            //         height: revertValue ? 'calc(100% - 238px)' : 'calc(100% - 160px)',
-            //     }} onSubmit={async () => await this.sendMessage()} />
             //     <div style={{
-            //         float: 'right',
+            //         textAlign: 'center',
+            //         marginTop: '5%'
             //     }}>
-            //         <Button onClick={async () => await this.sendMessage()} style={{
-            //             backgroundColor: '#1472D0',
-            //             color: 'var(--semi-color-text-0)',
-            //             borderRadius: '4px',
-            //             marginRight: '20px',
-            //         }}>发送</Button>
+            //         {!transcribe.value ? <Button onClick={() => this.onTranscribe()} size='large' icon={
+            //             <Icon svg={<svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M801.728 364.8a32 32 0 0 0-32 32v91.392c0 129.28-115.648 234.432-257.728 234.432S254.272 617.408 254.272 488.192v-94.976a32 32 0 0 0-64 0v94.976c0 157.888 133.248 286.208 300.672 296.448v111.488H357.632c-16.128 0-29.184 14.336-29.184 32.064 0 17.664 13.056 31.936 29.184 31.936h319.04c16.064 0 29.184-14.272 29.184-31.936 0-17.728-13.12-32.064-29.184-32.064H554.944V782.656c156.992-19.776 278.784-143.488 278.784-294.464V396.8c0-17.728-14.272-32-32-32z" fill="#3d74e3" p-id="1706"></path><path d="M552.32 502.016a49.856 49.856 0 1 0 99.712 0 49.856 49.856 0 1 0-99.712 0z" fill="#3d74e3" p-id="1707"></path><path d="M517.12 69.888a199.04 199.04 0 0 0-198.784 198.848v211.072A199.04 199.04 0 0 0 517.12 678.656a199.104 199.104 0 0 0 198.912-198.848V268.736A199.04 199.04 0 0 0 517.12 69.888z m134.912 227.328H382.336v-28.48c0-74.368 60.48-134.848 134.784-134.848a135.04 135.04 0 0 1 134.912 134.848v28.48z" fill="#3d74e3" p-id="1708"></path></svg>}></Icon>
+            //         }></Button> : <Button onClick={()=>this.stopTranscribe()}></Button>}
             //     </div>
-            // </>;
+            // </>
+            functionContent = <>
+                <Mention onCloseRevert={() => this.setState({
+                    revertValue: undefined
+                })} revertValue={revertValue} ref={this.mentionRef} style={{
+                    height: revertValue ? 'calc(100% - 238px)' : 'calc(100% - 160px)',
+                }} onSubmit={async () => await this.sendMessage()} />
+                <div style={{
+                    float: 'right',
+                }}>
+                    <Button onClick={async () => await this.sendMessage()} style={{
+                        backgroundColor: '#1472D0',
+                        color: 'var(--semi-color-text-0)',
+                        borderRadius: '4px',
+                        marginRight: '20px',
+                    }}>发送</Button>
+                </div>
+            </>;
         }
 
         return (
