@@ -57,14 +57,23 @@ class User extends Component<any, IState> {
     };
 
     selectUser() {
-        this.setState({
-            slidingBlock: 0,
-            data: []
-        })
+        
+        chatService.getUserGroup(false)
+            .then((res: ChatGroupDto[]) => {
+                res.forEach(x => {
+                    x.type = 'group';
+                })
+
+                this.setState({
+                    slidingBlock: 0,
+                    data: res
+                })
+            })
+
     }
 
     selectGroup() {
-        chatService.getUserGroup()
+        chatService.getUserGroup(true)
             .then((res: ChatGroupDto[]) => {
                 res.forEach(x => {
                     x.type = 'group';
@@ -204,6 +213,8 @@ class User extends Component<any, IState> {
                 return <div className='user-manager-item' style={{
                     height: "75px",
                     width: '600px',
+                    margin: '8px',
+
                     backgroundColor: 'var(--setting-tong-theme-background-color)'
                 }}>
 

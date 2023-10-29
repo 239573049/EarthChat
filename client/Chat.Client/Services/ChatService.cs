@@ -19,7 +19,7 @@ public class ChatService : IChatService
                 $"Chats/List?groupId={groupId}&page={page}&pageSize={pageSize}");
     }
 
-    public Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync()
+    public Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool group)
     {
         return Caller.GetHttpClient().GetFromJsonAsync<IReadOnlyList<ChatGroupDto>>("Chats/UserGroup");
     }

@@ -18,8 +18,9 @@ public interface IChatService
     /// <summary>
     /// 获取当前用户的所有群组。
     /// </summary>
+    /// <param name="group"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync();
+    Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool group);
 
     /// <summary>
     /// 创建群组。

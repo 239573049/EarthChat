@@ -16,10 +16,10 @@ public class ChatService : BaseService<ChatService>, IChatService
     }
 
     [Authorize]
-    public async Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync()
+    public async Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool group)
     {
         var userContext = GetRequiredService<IUserContext>();
-        var query = new GetUserGroupQuery(userContext.GetUserId<Guid>());
+        var query = new GetUserGroupQuery(userContext.GetUserId<Guid>(),group);
         await PublishAsync(query);
         return query.Result;
     }

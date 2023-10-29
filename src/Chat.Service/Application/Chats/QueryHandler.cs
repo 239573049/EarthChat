@@ -40,45 +40,56 @@ public class QueryHandler
     [EventHandler]
     public async Task GetUserGroupAsync(GetUserGroupQuery query)
     {
-        var groups = await _chatGroupInUserRepository.GetUserChatGroupAsync(query.userId);
-        var friends = await _friendRepository.GetUserInFriendAsync(query.userId);
-
-        var chatGroups = new List<ChatGroupDto>(groups.Count + friends.Count);
-        chatGroups.AddRange(groups.Select(chatGroup => new ChatGroupDto()
+        if (query.group)
         {
-            Avatar = chatGroup.Avatar,
-            Id = chatGroup.Id,
-            CreationTime = chatGroup.CreationTime,
-            Creator = chatGroup.Creator,
-            Default = chatGroup.Default,
-            Description = chatGroup.Description,
-            Name = chatGroup.Name,
-            Group = true
-        }));
+            var groups = await _chatGroupInUserRepository.GetUserChatGroupAsync(query.userId);
 
-        chatGroups.AddRange(friends.Select(friend => new ChatGroupDto()
+            var chatGroups = new List<ChatGroupDto>(groups.Count);
+            chatGroups.AddRange(groups.Select(chatGroup => new ChatGroupDto()
+            {
+                Avatar = chatGroup.Avatar,
+                Id = chatGroup.Id,
+                CreationTime = chatGroup.CreationTime,
+                Creator = chatGroup.Creator,
+                Default = chatGroup.Default,
+                Description = chatGroup.Description,
+                Name = chatGroup.Name,
+                Group = true
+            }));
+
+            query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
+        }
+        else
         {
-            Avatar = friend.Avatar,
-            Id = friend.Id,
-            CreationTime = friend.CreationTime,
-            Creator = friend.Creator,
-            Default = friend.Default,
-            Description = friend.Description,
-            Name = friend.Name,
-            Group = false
-        }));
+            var friends = await _friendRepository.GetUserInFriendAsync(query.userId);
 
-        query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
+            var chatGroups = new List<ChatGroupDto>(friends.Count);
+
+            chatGroups.AddRange(friends.Select(friend => new ChatGroupDto()
+            {
+                Avatar = friend.Avatar,
+                Id = friend.Id,
+                CreationTime = friend.CreationTime,
+                Creator = friend.Creator,
+                Default = friend.Default,
+                Description = friend.Description,
+                Name = friend.Name,
+                Group = false
+            }));
+
+            query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
+        }
     }
 
     [EventHandler]
     public async Task GetGroupInUserAsync(GetGroupInUserQuery query)
     {
-        var result = await _chatGroupInUserRepository.GetGroupInUserAsync(query.GroupId,query.Page,query.PageSize,query.UserIds);
+        var result =
+            await _chatGroupInUserRepository.GetGroupInUserAsync(query.GroupId, query.Page, query.PageSize,
+                query.UserIds);
 
         query.Result =
             _mapper.Map<List<UserDto>>(result);
-
     }
 
     [EventHandler]

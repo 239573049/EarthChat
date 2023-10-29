@@ -7,8 +7,12 @@ const baseURL = "v1/Chats"
 
 class ChatService {
 
-    getUserGroup() {
-        return Request.get(`${baseURL}/UserGroup`)
+    getUserGroup(group:boolean) {
+        return Request.get(`${baseURL}/UserGroup`,{
+            params:{
+                group
+            }
+        })
     }
 
     createGroup(value: CreateGroupDto) {

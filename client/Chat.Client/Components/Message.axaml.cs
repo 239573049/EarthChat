@@ -22,7 +22,7 @@ public partial class Message : UserControl
             if (!MainAppHelper.GetItem<IReadOnlyList<ChatGroupDto>>(Constant.GetUserGroup, out var groups))
             {
                 // 从服务端获取，并且缓存。
-                groups = await chatService.GetUserGroupAsync();
+                groups = await chatService.GetUserGroupAsync(false);
                 MainAppHelper.AddItem(nameof(ChatGroupDto), groups);
             }
 
