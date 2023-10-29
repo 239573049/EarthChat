@@ -10,7 +10,7 @@ import PubSub from 'pubsub-js';
 import copy from 'copy-to-clipboard';
 import ChatService from '../../services/chatService';
 import emojiService from '../../services/emojiService';
-import { IconPlus, IconSmallTriangleTop } from '@douyinfe/semi-icons';
+import { IconPlus, IconSmallTriangleTop, IconPlay, IconSignal, IconPause } from '@douyinfe/semi-icons';
 import { GetUserInfos } from '../../store/user-store'
 import { emoji } from '../../store/emoji';
 import FriendService from '../../services/friendService'
@@ -18,6 +18,7 @@ import VideoPlayer from '../video';
 import chatService from '../../services/chatService';
 import RenderText from '../render-text';
 import FlipMove from 'react-flip-move';
+import WaveAnimation from '../wave-animation';
 
 interface IProps {
     group: ChatGroupDto;
@@ -42,6 +43,7 @@ interface IState {
     groupLoading: boolean,
     emojiKey: number,
     updateState: boolean,
+    voiceVisible: boolean,
     addFriend: {
         visible: boolean,
         id: string;
@@ -78,6 +80,11 @@ const Emoji = ({ symbol, label, onClick }: any) => (
 );
 
 var positioningSize = 0;
+
+
+// 全局音频对象
+let mediaRecorder: MediaRecorder;
+let chunks = [] as any[];
 
 export default class Content extends Component<IProps, IState> {
     private resizableRef: RefObject<HTMLDivElement>;
@@ -132,7 +139,8 @@ export default class Content extends Component<IProps, IState> {
         functionContent: undefined,
         transcribe: {
             value: false
-        }
+        },
+        voiceVisible: false
     }
 
 
@@ -477,6 +485,10 @@ export default class Content extends Component<IProps, IState> {
             </Card>
         } else if (item.type === "Video" || item.type === 3) {
             return <VideoPlayer float={null} url={item.content} />
+        } else if (item.type === 'Audio' || item.type === 4) {
+            return <div>
+                <IconPlay />
+            </div>
         }
     }
 
@@ -644,7 +656,74 @@ export default class Content extends Component<IProps, IState> {
                     <VideoPlayer float={float} url={item.content} />
                 </Tooltip>
             )
+        } else if (item.type === 'Audio' || item.type === 4) {
+
+            return <Tooltip style={{
+                backgroundColor: 'var(--message-item-content-background-color)'
+            }} content={<div className='image-menu'>
+                <div className='image-menu-item' onClick={() => this.revert(item)}>回复</div>
+                {iscurren && <div className='image-menu-item' onClick={() => this.countermand(item)}>撤回</div>}
+            </div>} position='rightTop' trigger="contextMenu" >
+                <div onClick={() => this.playBack("Audio" + item.id, item)} className={'message-item-content ' + className} style={{
+                    display: 'inline-block', marginBottom: '20px', marginLeft: '10px', whiteSpace: 'pre-wrap',
+                    float: float
+                }}>
+                    {revertUser && <div className='revert-item'>
+                        {revertUser?.name}
+                        <Button theme='borderless' size='small' onClick={() => this.positioning(item.revert.id)} icon={<IconSmallTriangleTop />}></Button>
+                        <div>
+                            {this.revertRender(item.revert)}
+                        </div>
+                    </div>}{item.play ? <IconPause /> :
+                        <IconPlay />}
+                    {item.play ? <WaveAnimation></WaveAnimation> : <></>}
+                    <audio id={"Audio" + item.id} src={item.content}></audio>
+                </div>
+            </Tooltip>
         }
+    }
+
+
+    playBack(id: string, item: any) {
+        const { data } = this.state;
+
+        var audio = document.getElementById(id) as any;
+
+        if (audio) {
+            if (audio.paused) {
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        audio.addEventListener('ended', () => {
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id == item.id) {
+                    data[i].play = false;
+                    break;
+                }
+            }
+
+            this.setState({
+                data: [...data]
+            })
+        });
+
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].id == item.id) {
+                if (item.play) {
+                    data[i].play = false;
+                } else {
+                    data[i].play = true;
+                }
+                break;
+            }
+        }
+
+        this.setState({
+            data: [...data]
+        })
     }
 
     formatTime(dateStr: string) {
@@ -899,6 +978,23 @@ export default class Content extends Component<IProps, IState> {
                     }
                 })
 
+        }
+    }
+
+    selectVoice() {
+
+        const { voiceVisible, transcribe } = this.state;
+
+        if (voiceVisible) {
+
+            this.setState({
+                voiceVisible: false,
+                functionContent: undefined
+            })
+        } else {
+            this.setState({
+                voiceVisible: true
+            })
         }
     }
 
@@ -1240,36 +1336,67 @@ export default class Content extends Component<IProps, IState> {
     onTranscribe() {
         const { transcribe } = this.state;
         transcribe.value = true;
+
+        chunks = [];
+
+        const This = this;
+
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function (stream) {
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.addEventListener('dataavailable', function (e) {
+                    chunks.push(e.data);
+                });
+
+                mediaRecorder.addEventListener('stop', function () {
+                    debugger;
+                    const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+                    chunks = [];
+                    var formData = new FormData();
+                    formData.append('file', audioBlob, "audio.webm");
+
+                    fileService.upload(formData)
+                        .then(res => {
+                            if (res.code === '200') {
+                                ChatHubService.send('SendMessage', res.data, This.props.group.id, 4, null);
+                            } else {
+                                Notification.error(res.message)
+                            }
+                        })
+
+                });
+
+                mediaRecorder.start();
+
+            })
+            .catch(function (err) {
+                console.error('无法访问麦克风：', err);
+            });
+
+
         this.setState({
             transcribe
         })
     }
 
-    stopTranscribe(){
-        
+    stopTranscribe() {
+
         const { transcribe } = this.state;
         transcribe.value = false;
         this.setState({
             transcribe
         })
+
+        mediaRecorder.stop();
     }
     render() {
-        const { groupinUsers, users, addFriend, data, height, revertValue, transcribe } = this.state;
+        const { groupinUsers, users, addFriend, data, height, revertValue, transcribe, voiceVisible } = this.state;
         const { group } = this.props;
 
         let { functionContent } = this.state;
 
-        if (functionContent === undefined) {
-            // functionContent = <>
-            //     <div style={{
-            //         textAlign: 'center',
-            //         marginTop: '5%'
-            //     }}>
-            //         {!transcribe.value ? <Button onClick={() => this.onTranscribe()} size='large' icon={
-            //             <Icon svg={<svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M801.728 364.8a32 32 0 0 0-32 32v91.392c0 129.28-115.648 234.432-257.728 234.432S254.272 617.408 254.272 488.192v-94.976a32 32 0 0 0-64 0v94.976c0 157.888 133.248 286.208 300.672 296.448v111.488H357.632c-16.128 0-29.184 14.336-29.184 32.064 0 17.664 13.056 31.936 29.184 31.936h319.04c16.064 0 29.184-14.272 29.184-31.936 0-17.728-13.12-32.064-29.184-32.064H554.944V782.656c156.992-19.776 278.784-143.488 278.784-294.464V396.8c0-17.728-14.272-32-32-32z" fill="#3d74e3" p-id="1706"></path><path d="M552.32 502.016a49.856 49.856 0 1 0 99.712 0 49.856 49.856 0 1 0-99.712 0z" fill="#3d74e3" p-id="1707"></path><path d="M517.12 69.888a199.04 199.04 0 0 0-198.784 198.848v211.072A199.04 199.04 0 0 0 517.12 678.656a199.104 199.104 0 0 0 198.912-198.848V268.736A199.04 199.04 0 0 0 517.12 69.888z m134.912 227.328H382.336v-28.48c0-74.368 60.48-134.848 134.784-134.848a135.04 135.04 0 0 1 134.912 134.848v28.48z" fill="#3d74e3" p-id="1708"></path></svg>}></Icon>
-            //         }></Button> : <Button onClick={()=>this.stopTranscribe()}></Button>}
-            //     </div>
-            // </>
+        if (functionContent === undefined && voiceVisible === false) {
             functionContent = <>
                 <Mention onCloseRevert={() => this.setState({
                     revertValue: undefined
@@ -1287,6 +1414,18 @@ export default class Content extends Component<IProps, IState> {
                     }}>发送</Button>
                 </div>
             </>;
+        } else if (voiceVisible) {
+            functionContent = <>
+                <div style={{
+                    textAlign: 'center',
+                    marginTop: '5%'
+                }}>
+                    {!transcribe.value ?
+                        <Button onClick={() => this.onTranscribe()} size='large' icon={
+                            <Icon svg={<svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M801.728 364.8a32 32 0 0 0-32 32v91.392c0 129.28-115.648 234.432-257.728 234.432S254.272 617.408 254.272 488.192v-94.976a32 32 0 0 0-64 0v94.976c0 157.888 133.248 286.208 300.672 296.448v111.488H357.632c-16.128 0-29.184 14.336-29.184 32.064 0 17.664 13.056 31.936 29.184 31.936h319.04c16.064 0 29.184-14.272 29.184-31.936 0-17.728-13.12-32.064-29.184-32.064H554.944V782.656c156.992-19.776 278.784-143.488 278.784-294.464V396.8c0-17.728-14.272-32-32-32z" fill="#3d74e3" p-id="1706"></path><path d="M552.32 502.016a49.856 49.856 0 1 0 99.712 0 49.856 49.856 0 1 0-99.712 0z" fill="#3d74e3" p-id="1707"></path><path d="M517.12 69.888a199.04 199.04 0 0 0-198.784 198.848v211.072A199.04 199.04 0 0 0 517.12 678.656a199.104 199.104 0 0 0 198.912-198.848V268.736A199.04 199.04 0 0 0 517.12 69.888z m134.912 227.328H382.336v-28.48c0-74.368 60.48-134.848 134.784-134.848a135.04 135.04 0 0 1 134.912 134.848v28.48z" fill="#3d74e3" p-id="1708"></path></svg>}></Icon>
+                        }></Button> : <Button onClick={() => this.stopTranscribe()}>停止录制</Button>}
+                </div>
+            </>
         }
 
         return (
@@ -1364,7 +1503,7 @@ export default class Content extends Component<IProps, IState> {
                             }} svg={
                                 <svg className='icon-function' viewBox="0 0 1025 1024" width="20" height="20"><path d="M938.666667 553.92V768c0 64.8-52.533333 117.333333-117.333334 117.333333H202.666667c-64.8 0-117.333333-52.533333-117.333334-117.333333V256c0-64.8 52.533333-117.333333 117.333334-117.333333h618.666666c64.8 0 117.333333 52.533333 117.333334 117.333333v297.92z m-64-74.624V256a53.333333 53.333333 0 0 0-53.333334-53.333333H202.666667a53.333333 53.333333 0 0 0-53.333334 53.333333v344.48A290.090667 290.090667 0 0 1 192 597.333333a286.88 286.88 0 0 1 183.296 65.845334C427.029333 528.384 556.906667 437.333333 704 437.333333c65.706667 0 126.997333 16.778667 170.666667 41.962667z m0 82.24c-5.333333-8.32-21.130667-21.653333-43.648-32.917333C796.768 511.488 753.045333 501.333333 704 501.333333c-121.770667 0-229.130667 76.266667-270.432 188.693334-2.730667 7.445333-7.402667 20.32-13.994667 38.581333-7.68 21.301333-34.453333 28.106667-51.370666 13.056-16.437333-14.634667-28.554667-25.066667-36.138667-31.146667A222.890667 222.890667 0 0 0 192 661.333333c-14.464 0-28.725333 1.365333-42.666667 4.053334V768a53.333333 53.333333 0 0 0 53.333334 53.333333h618.666666a53.333333 53.333333 0 0 0 53.333334-53.333333V561.525333zM320 480a96 96 0 1 1 0-192 96 96 0 0 1 0 192z m0-64a32 32 0 1 0 0-64 32 32 0 0 0 0 64z" p-id="5947"></path></svg>
                             } />
-                            <Icon onClick={() => this.selectPicture()} style={{
+                            <Icon onClick={() => this.selectVoice()} style={{
                                 float: 'left',
                                 marginLeft: '15px',
                             }} svg={
