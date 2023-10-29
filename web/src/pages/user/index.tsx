@@ -195,12 +195,12 @@ class User extends Component<any, IState> {
         const result = await friendService.List(page, pageSize);
 
         if (result.code === "200") {
-            const requestIds = result.data.result.map((item: any) => item.beAppliedForId);
+            const requestIds = result.data.result.map((item: any) => item.requestId);
 
             const users = await GetUserInfos(requestIds);
 
             const items = result.data.result.length > 0 ? result.data.result.map((x: any) => {
-                const user = users.filter(y => y.id === x.beAppliedForId)[0];
+                const user = users.filter(y => y.id === x.requestId)[0];
                 return <div className='user-manager-item' style={{
                     height: "75px",
                     width: '600px',
