@@ -24,7 +24,6 @@ builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.WriteIndented = true;
     options.SerializerOptions.IncludeFields = true;
     options.SerializerOptions.Converters.Add(new DateTimeConverter());
-    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
     options.SerializerOptions.Converters.Add(new DateTimeNullableConvert());
 });
 

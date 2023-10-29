@@ -12,14 +12,17 @@ public class CommandHandler
     private readonly IEventBus _eventBus;
     private readonly IUserContext _userContext;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public CommandHandler(IEventBus eventBus, IUserContext userContext,
-        ILogger<CommandHandler> logger, IWebHostEnvironment webHostEnvironment)
+        ILogger<CommandHandler> logger, IWebHostEnvironment webHostEnvironment,
+        IHttpContextAccessor httpContextAccessor)
     {
         _eventBus = eventBus;
         _userContext = userContext;
         _logger = logger;
         _webHostEnvironment = webHostEnvironment;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [EventHandler]
@@ -28,7 +31,7 @@ public class CommandHandler
         // 生成一个唯一的文件名
         var fileName =
             $"files/{DateTime.Now:yyyyMMdd}/{StringHelper.RandomString(12)}/{command.FileName}";
-        
+
         // 在这里使用webroot的目录
         var filePath = Path.Combine(_webHostEnvironment.WebRootPath, fileName);
         var info = new FileInfo(filePath);
@@ -52,7 +55,7 @@ public class CommandHandler
             await using var stream = new FileStream(filePath, FileMode.Create);
             // 直接copy Stream性能更好
             await command.Stream.CopyToAsync(stream);
-            
+
             // 关闭stream，防止压缩图片出现文件被占用
             stream.Close();
 
@@ -65,7 +68,10 @@ public class CommandHandler
                 ImageHelper.FitImage(filePath, filePath.Replace(ext, "") + ".compress" + ext, 256, 256);
             }
 
-            command.Result = $"/{fileName}";
+            var host =
+                $"{(_httpContextAccessor.HttpContext.Request.IsHttps ? ("https") : ("http"))}://{_httpContextAccessor.HttpContext.Request.Host}";
+
+            command.Result = $"{host}/{fileName}";
             var createFileSystemCommand =
                 new CreateFileSystemCommand(info.Name, info.FullName, $"/{fileName}", info.Length);
 
