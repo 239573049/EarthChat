@@ -16,7 +16,7 @@ public class ChatService : BaseService<ChatService>, IChatService
     }
 
     [Authorize]
-    public async Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool group)
+    public async Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool? group)
     {
         var userContext = GetRequiredService<IUserContext>();
         var query = new GetUserGroupQuery(userContext.GetUserId<Guid>(),group);

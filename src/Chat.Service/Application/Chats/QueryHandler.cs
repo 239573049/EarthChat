@@ -40,11 +40,12 @@ public class QueryHandler
     [EventHandler]
     public async Task GetUserGroupAsync(GetUserGroupQuery query)
     {
-        if (query.group)
+        var chatGroups = new List<ChatGroupDto>();
+
+        if (query.group is true or null)
         {
             var groups = await _chatGroupInUserRepository.GetUserChatGroupAsync(query.userId);
 
-            var chatGroups = new List<ChatGroupDto>(groups.Count);
             chatGroups.AddRange(groups.Select(chatGroup => new ChatGroupDto()
             {
                 Avatar = chatGroup.Avatar,
@@ -57,28 +58,30 @@ public class QueryHandler
                 Group = true
             }));
 
-            query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
-        }
-        else
-        {
-            var friends = await _friendRepository.GetUserInFriendAsync(query.userId);
-
-            var chatGroups = new List<ChatGroupDto>(friends.Count);
-
-            chatGroups.AddRange(friends.Select(friend => new ChatGroupDto()
+            if (query.group == true)
             {
-                Avatar = friend.Avatar,
-                Id = friend.Id,
-                CreationTime = friend.CreationTime,
-                Creator = friend.Creator,
-                Default = friend.Default,
-                Description = friend.Description,
-                Name = friend.Name,
-                Group = false
-            }));
+                query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
 
-            query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
+                return;
+            }
         }
+
+        var friends = await _friendRepository.GetUserInFriendAsync(query.userId);
+
+        chatGroups.AddRange(friends.Select(friend => new ChatGroupDto()
+        {
+            Avatar = friend.Avatar,
+            Id = friend.Id,
+            CreationTime = friend.CreationTime,
+            Creator = friend.Creator,
+            Default = friend.Default,
+            Description = friend.Description,
+            Name = friend.Name,
+            Group = false
+        }));
+
+
+        query.Result = _mapper.Map<List<ChatGroupDto>>(chatGroups);
     }
 
     [EventHandler]

@@ -58,7 +58,7 @@ class User extends Component<any, IState> {
 
     selectUser() {
         
-        chatService.getUserGroup(false)
+        chatService.getUserGroup(null)
             .then((res: ChatGroupDto[]) => {
                 res.forEach(x => {
                     x.type = 'group';

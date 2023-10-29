@@ -20,7 +20,7 @@ public interface IChatService
     /// </summary>
     /// <param name="group"></param>
     /// <returns></returns>
-    Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool group);
+    Task<IReadOnlyList<ChatGroupDto>> GetUserGroupAsync(bool? group);
 
     /// <summary>
     /// 创建群组。

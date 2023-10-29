@@ -34,7 +34,7 @@ public class ChatHub : Hub
         await _redisClient.LPushAsync("Connections:" + userId.Value, Context.ConnectionId);
 
         // 通过事件获取到用户所有的群组
-        var groupsQuery = new GetUserGroupQuery(userId.Value);
+        var groupsQuery = new GetUserGroupQuery(userId.Value,null);
         await _eventBus.PublishAsync(groupsQuery);
 
         // 在这里将当前的SignalR的链接id加入到获取的groupId中，这样就只有这个group的成员才能相互发送消息。
@@ -74,7 +74,7 @@ public class ChatHub : Hub
                 await _redisClient.DelAsync(Constant.OnLineKey + userId.Value.ToString("N"));
 
                 // 获取当前用户所在的链接群
-                var groupsQuery = new GetUserGroupQuery(userId.Value);
+                var groupsQuery = new GetUserGroupQuery(userId.Value,null);
                 await _eventBus.PublishAsync(groupsQuery);
 
                 // 退出所有链接

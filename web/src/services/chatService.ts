@@ -7,9 +7,9 @@ const baseURL = "v1/Chats"
 
 class ChatService {
 
-    getUserGroup(group:boolean) {
-        return Request.get(`${baseURL}/UserGroup`,{
-            params:{
+    getUserGroup(group: boolean | null = null) {
+        return Request.get(`${baseURL}/UserGroup`, {
+            params: {
                 group
             }
         })
@@ -19,7 +19,7 @@ class ChatService {
         return Request.post(`${baseURL}/Group?connections=` + connection.connectionId, value)
     }
 
-    getGroupInUser(groupId: string,page:number,pageSize:number) {
+    getGroupInUser(groupId: string, page: number, pageSize: number) {
         return Request.get(`${baseURL}/GroupInUser`, {
             params: {
                 groupId,
@@ -73,8 +73,8 @@ class ChatService {
      * @param id 
      * @returns 
      */
-    countermandMessage(id:string){
-        return Request.post(`${baseURL}/CountermandMessage/`+id)
+    countermandMessage(id: string) {
+        return Request.post(`${baseURL}/CountermandMessage/` + id)
     }
 }
 
