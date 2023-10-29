@@ -42,6 +42,8 @@ class User extends Component<any, IState> {
         const startX = e.clientX;
         const startWidth = this.state.middleWidth;
 
+        this.selectUser();
+        
         const onMouseMove = (e: any) => {
             const newWidth = Math.max(200, Math.min(350, startWidth + (e.clientX - startX)));
             this.setState({ middleWidth: newWidth });
@@ -58,7 +60,7 @@ class User extends Component<any, IState> {
 
     selectUser() {
         
-        chatService.getUserGroup(null)
+        chatService.getUserGroup(false)
             .then((res: ChatGroupDto[]) => {
                 res.forEach(x => {
                     x.type = 'group';
