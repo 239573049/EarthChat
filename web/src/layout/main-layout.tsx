@@ -147,7 +147,7 @@ class App extends Component<any, state> {
 
     }
 
-    selectGroup(name: string, value: any) {
+    selectGroup(_: string, value: any) {
 
         if (value) {
             const { menu } = this.state;

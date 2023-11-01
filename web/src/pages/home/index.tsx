@@ -6,7 +6,6 @@ import UserService from '../../services/userService';
 import ChatService from '../../services/chatService';
 
 import { IconSearch, IconPlus, IconCamera } from '@douyinfe/semi-icons';
-import Content from '../../components/content';
 import ChatHubService from '../../services/chatHubService';
 import FileService from '../../services/fileService';
 import Modal from '../../components/modal';
@@ -277,28 +276,6 @@ class Home extends Component<{}, AppState> {
     render() {
         const { middleWidth, createGroupAvatar, selectGroup, groups, createGroupVisible } = this.state;
         const rightWidth = `calc(100% - 60px - ${middleWidth}px)`;
-        console.log('middleWidth', middleWidth);
-
-        const renderContent = () => {
-            if (selectGroup?.avatar) {
-                return <Content group={selectGroup} />
-            } else {
-                return <div>
-                    {/* 居中显示图片 */}
-                    <div style={{
-                        margin: '0 auto',
-                        width: '100%',
-                        textAlign: 'center',
-                        marginTop: '300px',
-                    }}>
-                        <img style={{
-                            width: '200px',
-                            height: '200px',
-                        }} src="/favicon.png" alt="" />
-                    </div>
-                </div>
-            }
-        }
 
         return (
             <>

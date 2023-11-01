@@ -162,7 +162,7 @@ export default class Content extends Component<IProps, IState> {
     componentDidMount() {
         PubSub.subscribe('changeGroup', this.onMessage)
         PubSub.subscribe('Notification', this.onNotification)
-        PubSub.subscribe('navigate', (_: any, url: string) => {
+        PubSub.subscribe('navigate', (_: any) => {
             const searchParams = new URLSearchParams(window.location.search);
             const id = searchParams.get('id');
             this.setState({
