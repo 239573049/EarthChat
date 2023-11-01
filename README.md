@@ -64,4 +64,4 @@
 
 ## 交流群
 
-![交流群](docs/static/img/ed1d8637a5ea540308d85523bd2a9f4.jpg)
+![交流群](docs/static/img/ed1d8637a5ea540308d85523bd2a9f4.png)
