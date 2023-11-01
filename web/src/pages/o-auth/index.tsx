@@ -46,7 +46,7 @@ export default class OAuth extends Component {
 
     render() {
         return (
-            <div>OAuth</div>
+            <div>请稍等正在登录中。。。</div>
         )
     }
 }

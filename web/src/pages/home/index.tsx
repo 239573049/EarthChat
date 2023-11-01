@@ -76,7 +76,6 @@ class Home extends Component<{}, AppState> {
     componentWillUnmount() {
         PubSub.unsubscribe('selectGroupInfo')
         PubSub.unsubscribe('changeGroup')
-        console.log('componentWillUnmount');
     }
 
     async componentDidMount() {
@@ -208,7 +207,7 @@ class Home extends Component<{}, AppState> {
 
     loadingGroups() {
 
-        ChatService.getUserGroup(false)
+        ChatService.getUserGroup(null)
             .then((res: ChatGroupDto[]) => {
 
                 res.forEach(x => {

@@ -14,14 +14,13 @@ public class ChatGroupInUserRepository : BaseRepository<ChatDbContext, ChatGroup
 
     public async Task<List<ChatGroup>> GetUserChatGroupAsync(Guid userId)
     {
-        var query = await
-            Context.ChatGroupInUsers
-                .Where(x => x.UserId == userId)
-                .Include(x => x.ChatGroup)
-                .Select(x => x.ChatGroup)
-                .ToListAsync();
+        var query = 
+            from cu in Context.ChatGroupInUsers
+            join cg in Context.ChatGroups on cu.ChatGroupId equals cg.Id
+            where cu.UserId == userId
+            select cg;
 
-        return query;
+        return await query.ToListAsync();
     }
 
     public async Task<List<User>> GetGroupInUserAsync(Guid groupId, int page, int pageSize, Guid[] queryUserIds)
