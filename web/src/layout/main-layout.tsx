@@ -4,7 +4,7 @@ import { Avatar, Badge, Button, Divider, Input, Modal, Popover, Toast, Tooltip, 
 import { ChatGroupDto, GetUserDto } from '../dto';
 import UserService from '../services/userService';
 import ChatHubService from '../services/chatHubService';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { NOutlet, Outlet, useNavigate } from 'react-router-dom';
 import { IconEdit, IconCamera, IconGithubLogo } from '@douyinfe/semi-icons';
 import config from '../config';
 import userService from '../services/userService';
@@ -459,9 +459,16 @@ class App extends Component<any, state> {
 }
 
 function Main() {
-    const navigation = useNavigate();
+    const navigate = useNavigate();
+    PubSub.subscribe('navigate',(_:any,url:string)=>{
+         
+        navigate(url,{
+            replace:true,
+            relative:'path',
+        })
+    });
     return (
-        <App key={'Main_App'} navigation={navigation} />
+        <App key={'Main_App'} navigation={navigate} />
     )
 }
 

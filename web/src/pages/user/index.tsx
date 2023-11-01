@@ -38,11 +38,14 @@ class User extends Component<any, IState> {
         pageSize: 10
     }
 
+    componentDidMount(): void {
+        
+        this.selectUser();
+    }
+
     handleMouseDown = (e: React.MouseEvent) => {
         const startX = e.clientX;
         const startWidth = this.state.middleWidth;
-
-        this.selectUser();
         
         const onMouseMove = (e: any) => {
             const newWidth = Math.max(200, Math.min(350, startWidth + (e.clientX - startX)));
@@ -59,7 +62,6 @@ class User extends Component<any, IState> {
     };
 
     selectUser() {
-        
         chatService.getUserGroup(false)
             .then((res: ChatGroupDto[]) => {
                 res.forEach(x => {

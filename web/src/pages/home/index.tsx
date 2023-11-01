@@ -11,9 +11,11 @@ import ChatHubService from '../../services/chatHubService';
 import FileService from '../../services/fileService';
 import Modal from '../../components/modal';
 import config from '../../config';
-import { GetUserInfos } from '../../store/user-store'
+import { GetUserInfos,setGroup } from '../../store/user-store'
 import chatService from '../../services/chatService';
+import { Outlet } from 'react-router-dom';
 
+import PubSub from 'pubsub-js';
 interface AppState {
     middleWidth: number;
     selectid: number;
@@ -206,24 +208,31 @@ class Home extends Component<{}, AppState> {
     }
 
     loadingGroups() {
-        ChatService.getUserGroup()
+
+        ChatService.getUserGroup(false)
             .then((res: ChatGroupDto[]) => {
 
                 res.forEach(x => {
                     x.lastMessage = '';
                 })
+
                 this.setState({
                     groups: res,
                     selectGroup: res[0]
-                })
+                },()=>{
+                    this.selectChat(res[0]) 
+                });
             })
-
     }
 
     selectChat(dto: ChatGroupDto) {
+
+        setGroup(dto);
+        PubSub.publish("navigate",'/?id='+dto.id);
         this.setState({
             selectGroup: dto
         })
+        
     }
 
     getFormApi(v: any) {
@@ -364,7 +373,7 @@ class Home extends Component<{}, AppState> {
                 </div>
                 <div className="resizer " onMouseDown={this.handleMouseDown}></div>
                 <div className="right " style={{ width: rightWidth }}>
-                    {renderContent()}
+                    <Outlet />
                 </div>
 
                 <Modal width={300} title='添加群聊' isOpen={createGroupVisible} onClose={() => this.createGroupClose()}>

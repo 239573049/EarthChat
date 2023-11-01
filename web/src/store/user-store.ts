@@ -32,7 +32,18 @@ async function GetUserInfos(userIds: string[]) {
     return userInfos.filter((user) =>userIds.includes(user.id));
 }
 
+var group ={} as any;
+
+function setGroup(value:any){
+    group = value;
+}
+
+function getGroup(){
+    return group;
+}
 
 export {
-    GetUserInfos
+    GetUserInfos,
+    setGroup,
+    getGroup,
 }

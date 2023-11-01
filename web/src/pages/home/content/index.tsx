@@ -1,27 +1,27 @@
 import React, { Component, RefObject } from 'react';
-import { ChatGroupDto, FriendRegistrationInput, GetUserDto } from '../../dto';
+import { FriendRegistrationInput, GetUserDto } from '../../../dto';
 import moment from 'moment/moment';
 import { Avatar, Button, Card, Icon, Image, Tag, Notification, Toast, Badge, Tooltip, Spin, List, Popover, Modal, Input, TextArea, Form, TagGroup } from '@douyinfe/semi-ui';
 import './index.scss';
-import Mention from '../mentions/index';
-import ChatHubService from '../../services/chatHubService';
-import fileService from '../../services/fileService';
+import Mention from '../../../components/mentions/index';
+import ChatHubService from '../../../services/chatHubService';
+import fileService from '../../../services/fileService';
 import PubSub from 'pubsub-js';
 import copy from 'copy-to-clipboard';
-import ChatService from '../../services/chatService';
-import emojiService from '../../services/emojiService';
+import ChatService from '../../../services/chatService';
+import emojiService from '../../../services/emojiService';
 import { IconPlus, IconSmallTriangleTop, IconPlay, IconSignal, IconPause } from '@douyinfe/semi-icons';
-import { GetUserInfos } from '../../store/user-store'
-import { emoji } from '../../store/emoji';
-import FriendService from '../../services/friendService'
-import VideoPlayer from '../video';
-import chatService from '../../services/chatService';
-import RenderText from '../render-text';
+import { GetUserInfos } from '../../../store/user-store'
+import { emoji } from '../../../store/emoji';
+import FriendService from '../../../services/friendService'
+import VideoPlayer from '../../../components/video';
+import chatService from '../../../services/chatService';
+import RenderText from '../../../components/render-text';
 import FlipMove from 'react-flip-move';
-import WaveAnimation from '../wave-animation';
+import { getGroup } from '../../../store/user-store';
+import WaveAnimation from '../../../components/wave-animation';
 
 interface IProps {
-    group: ChatGroupDto;
 }
 
 interface IState {
@@ -54,7 +54,8 @@ interface IState {
         pageSize: number,
         loading: boolean,
     },
-    revertValue: any
+    revertValue: any,
+    id: string,
 }
 
 const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -80,7 +81,6 @@ const Emoji = ({ symbol, label, onClick }: any) => (
 );
 
 var positioningSize = 0;
-
 
 // 全局音频对象
 let mediaRecorder: MediaRecorder;
@@ -140,7 +140,8 @@ export default class Content extends Component<IProps, IState> {
         transcribe: {
             value: false
         },
-        voiceVisible: false
+        voiceVisible: false,
+        id: ''
     }
 
 
@@ -156,34 +157,26 @@ export default class Content extends Component<IProps, IState> {
         this.onNotification = this.onNotification.bind(this);
         this.resizableRef = React.createRef();
         this.loadingCustom()
-
     }
 
     componentDidMount() {
         PubSub.subscribe('changeGroup', this.onMessage)
         PubSub.subscribe('Notification', this.onNotification)
-        this.loadingGroupUser();
-    }
-
-    // 监听props变化
-    componentWillReceiveProps(nextProps: any) {
-        const { group } = nextProps;
-        if (group.id !== this.props.group.id) {
+        PubSub.subscribe('navigate', (_: any, url: string) => {
+            const searchParams = new URLSearchParams(window.location.search);
+            const id = searchParams.get('id');
             this.setState({
-                data: [],
-                groupinUser: {
-                    page: 1,
-                    pageSize: 50,
-                    loading: false,
-                },
-                groupinUsers: [],
-                page: 1,
-                users: [],
-                groudUserPage: 1,
-            }, () => {
-                this.loadingGroupUser();
-            });
-        }
+                id: id ?? ''
+            })
+            this.loadingGroupUser();
+        });
+        const searchParams = new URLSearchParams(window.location.search);
+        const id = searchParams.get('id');
+        this.setState({
+            id: id ?? ''
+        })
+        this.loadingGroupUser();
+
 
     }
 
@@ -232,9 +225,8 @@ export default class Content extends Component<IProps, IState> {
     }
 
     loadingGroupUser() {
-        const { group } = this.props;
-        const { groupinUser } = this.state;
-
+        const { groupinUser, id } = this.state;
+        const group = getGroup();
         if (group.group) {
             this.getGroupInUser(group.id, groupinUser.page, groupinUser.pageSize)
             this.loadingMessage();
@@ -259,6 +251,7 @@ export default class Content extends Component<IProps, IState> {
     componentWillUnmount() {
         PubSub.unsubscribe('changeGroup');
         PubSub.unsubscribe('Notification');
+        PubSub.unsubscribe('navigate');
 
         this.setState({
             updateState: false
@@ -318,7 +311,6 @@ export default class Content extends Component<IProps, IState> {
         } else if (messageData.type === "GroupAppendUser") {
             this.loadingGroupUser();
         } else if (messageData.type === "Countermand") {
-            debugger;
             const { data } = this.state;
 
             data.forEach(x => {
@@ -333,9 +325,13 @@ export default class Content extends Component<IProps, IState> {
         }
     }
 
-    onMessage = (_: any, data: any) => {
-        const { group } = this.props;
+    onMessage = async (_: any, data: any) => {
+        const group = getGroup();
         if (group.id === data.groupId) {
+
+            // 防止未获取到用户信息显示空
+            await GetUserInfos([data.userId]);
+
             this.setState({
                 data: [...this.state.data, data]
             }, () => {
@@ -366,7 +362,7 @@ export default class Content extends Component<IProps, IState> {
     };
 
     async sendMessage() {
-        const { group } = this.props
+        const group = getGroup();
         const { revertValue } = this.state;
         const value = this.mentionRef.current?.getValue();
 
@@ -838,7 +834,7 @@ export default class Content extends Component<IProps, IState> {
      * 加载记录
      */
     loadingMessage() {
-        const { group } = this.props;
+        const group = getGroup();
         const { page, users } = this.state;
         ChatService.getList(group.id, page, 20)
             .then(async (res: any) => {
@@ -869,7 +865,7 @@ export default class Content extends Component<IProps, IState> {
         const { data } = this.state;
         if (element.scrollTop === 0 && data.length !== 0) {
 
-            const { group } = this.props;
+            const group = getGroup();
             const { page, users } = this.state;
 
             this.setState({
@@ -974,7 +970,7 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.props.group.id, 1, null);
+                        ChatHubService.send('SendMessage', res.data, this.state.id, 1, null);
                     }
                 })
 
@@ -1023,7 +1019,7 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.props.group.id, type, null);
+                        ChatHubService.send('SendMessage', res.data, this.state.id, type, null);
                     }
                 })
 
@@ -1044,7 +1040,7 @@ export default class Content extends Component<IProps, IState> {
      * 邀请点击
      */
     invitation() {
-        const { group } = this.props;
+        const group = getGroup();
         if (group.group) {
             const url = window.location.origin + "/invitation-group?code=" + group.id;
             copy(url)
@@ -1142,12 +1138,12 @@ export default class Content extends Component<IProps, IState> {
                     loading: true
                 }
             })
-            this.getGroupInUser(this.props.group.id, groupinUser.page, groupinUser.pageSize)
+            this.getGroupInUser(this.state.id, groupinUser.page, groupinUser.pageSize)
         }
     }
 
     async emojiClick(v: any) {
-        const { group } = this.props
+        const group = getGroup();
         await ChatHubService.send('SendMessage', v, group.id, 0, null);
     }
 
@@ -1213,13 +1209,13 @@ export default class Content extends Component<IProps, IState> {
     }
 
     async sendEmoji(item: any) {
-        const { group } = this.props
+        const group = getGroup();
         await ChatHubService.send('SendMessage', item.path, group.id, 1, null);
     }
 
     removeEmoji(item: string) {
         emojiService.delete(item)
-            .then((res) => {
+            .then((res: any) => {
                 if (res.code === '200') {
                     Toast.success("删除成功")
                     this.loadingCustom();
@@ -1350,7 +1346,6 @@ export default class Content extends Component<IProps, IState> {
                 });
 
                 mediaRecorder.addEventListener('stop', function () {
-                    debugger;
                     const audioBlob = new Blob(chunks, { type: 'audio/webm' });
                     chunks = [];
                     var formData = new FormData();
@@ -1359,7 +1354,7 @@ export default class Content extends Component<IProps, IState> {
                     fileService.upload(formData)
                         .then(res => {
                             if (res.code === '200') {
-                                ChatHubService.send('SendMessage', res.data, This.props.group.id, 4, null);
+                                ChatHubService.send('SendMessage', res.data, This.state.id, 4, null);
                             } else {
                                 Notification.error(res.message)
                             }
@@ -1392,7 +1387,8 @@ export default class Content extends Component<IProps, IState> {
     }
     render() {
         const { groupinUsers, users, addFriend, data, height, revertValue, transcribe, voiceVisible } = this.state;
-        const { group } = this.props;
+
+        const group = getGroup();
 
         let { functionContent } = this.state;
 
@@ -1440,7 +1436,7 @@ export default class Content extends Component<IProps, IState> {
                             paddingLeft: '10px',
                         }}
                     >
-                        {this.props.group.name}
+                        {group.name}
                     </div>
                     <div style={{
                         float: 'right',
@@ -1455,7 +1451,7 @@ export default class Content extends Component<IProps, IState> {
                 </div>
                 <div className="main-content" style={{
                     float: 'left',
-                    width: 'calc(100% - 180px)',
+                    width: group.group ? 'calc(100% - 180px)' : '100%',
                 }}>
                     <div className="content-box " style={{ flexBasis: `calc(100% - ${height}px - 10px)`, }}>
                         <div onScroll={this.onScroll} id='message-list' style={{
@@ -1521,75 +1517,79 @@ export default class Content extends Component<IProps, IState> {
                         {functionContent}
                     </div>
                 </div>
-                <div style={{
-                    float: 'left',
-                    width: '1px',
-                    height: '100%',
-                    backgroundColor: 'var(--verticle-division-color)',
-                }} className='verticle-division'></div>
-                <div style={{
-                    float: 'left',
-                    width: '179px',
-                    height: '100%'
-                }}>
-                    <div style={{
-                        flexBasis: '100%',
-                        flexShrink: 0,
-                        height: 'calc(100% - 67px)',
-                        borderBottom: '1px solid var(--semi-color-border)',
-                        overflow: 'auto',
-                    }}
-                        id='group-in-user'
-                        onScroll={this.onScrollGroupInUser}
-                        className='user-group'>
-                        <FlipMove
-                            staggerDurationBy="30"
-                            enterAnimation='accordionHorizontal'
-                            appearAnimation='accordionHorizontal'
-                            duration={500}>
+                {group.group && <>
 
-                            {groupinUsers.map((item, index) => {
-                                const user = users.find(x => x.id == item.userId)
-                                return (
-                                    <div key={"test" + index} className='grou-user-item  '>
-                                        <div className='grou-user-item-content'>
-                                            <div style={{
-                                                float: 'left'
-                                            }}>
-                                                <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
-                                                    {item?.onLine ? <Badge dot >
-                                                        <Avatar size='extra-small' src={user?.avatar + "?reduction=true"} />
-                                                    </Badge> :
-                                                        <Avatar size='extra-small' src={user?.avatar + "?reduction=true"} />}
-                                                </Tooltip>
+                    <div style={{
+                        float: 'left',
+                        width: '1px',
+                        height: '100%',
+                        backgroundColor: 'var(--verticle-division-color)',
+                    }} className='verticle-division'></div>
+                    <div style={{
+                        float: 'left',
+                        width: '179px',
+                        height: '100%'
+                    }}>
+                        <div style={{
+                            flexBasis: '100%',
+                            flexShrink: 0,
+                            height: 'calc(100% - 67px)',
+                            borderBottom: '1px solid var(--semi-color-border)',
+                            overflow: 'auto',
+                        }}
+                            id='group-in-user'
+                            onScroll={this.onScrollGroupInUser}
+                            className='user-group'>
+                            <FlipMove
+                                staggerDurationBy="30"
+                                enterAnimation='accordionHorizontal'
+                                appearAnimation='accordionHorizontal'
+                                duration={500}>
+
+                                {groupinUsers.map((item, index) => {
+                                    const user = users.find(x => x.id == item.userId)
+                                    return (
+                                        <div key={"test" + index} className='grou-user-item  '>
+                                            <div className='grou-user-item-content'>
+                                                <div style={{
+                                                    float: 'left'
+                                                }}>
+                                                    <Tooltip position='leftTop' content={() => this.renderInfo(user)} trigger="click" >
+                                                        {item?.onLine ? <Badge dot >
+                                                            <Avatar size='extra-small' src={user?.avatar + "?reduction=true"} />
+                                                        </Badge> :
+                                                            <Avatar size='extra-small' src={user?.avatar + "?reduction=true"} />}
+                                                    </Tooltip>
+                                                </div>
+                                                <div style={{
+                                                    marginLeft: '10px',
+                                                    userSelect: 'none',
+                                                    fontSize: '14px',
+                                                    width: "70px",
+                                                    float: 'left',
+                                                    whiteSpace: 'nowrap',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis'
+                                                }}>
+                                                    {user?.name}
+                                                </div>
+                                                {(!user?.id) && user?.id === group.creator ?
+                                                    <Tag style={{
+                                                        boxSizing: 'content-box',
+                                                        float: 'right',
+                                                    }} color='red'>频道主</Tag> :
+                                                    <Tag style={{
+                                                        boxSizing: 'content-box',
+                                                        float: 'right',
+                                                    }} color="grey">成员</Tag>}
                                             </div>
-                                            <div style={{
-                                                marginLeft: '10px',
-                                                userSelect: 'none',
-                                                fontSize: '14px',
-                                                width: "70px",
-                                                float: 'left',
-                                                whiteSpace: 'nowrap',
-                                                overflow: 'hidden',
-                                                textOverflow: 'ellipsis'
-                                            }}>
-                                                {user?.name}
-                                            </div>
-                                            {(!user?.id) && user?.id === group.creator ?
-                                                <Tag style={{
-                                                    boxSizing: 'content-box',
-                                                    float: 'right',
-                                                }} color='red'>频道主</Tag> :
-                                                <Tag style={{
-                                                    boxSizing: 'content-box',
-                                                    float: 'right',
-                                                }} color="grey">成员</Tag>}
-                                        </div>
-                                    </div>)
-                            })}
-                        </FlipMove>
+                                        </div>)
+                                })}
+                            </FlipMove>
+                        </div>
                     </div>
-                </div>
+                </>}
+
                 <Modal
                     title="添加好友"
                     visible={addFriend.visible}
@@ -1607,6 +1607,7 @@ export default class Content extends Component<IProps, IState> {
                             user: {} as GetUserDto
                         }
                     })}
+                    footer={[]}
                     closeOnEsc={true}
                 >
                     <Form onSubmit={(v) => this.addFriends(v)}>
@@ -1620,12 +1621,8 @@ export default class Content extends Component<IProps, IState> {
                             {addFriend.user.name}
                         </div>
                         <div>
-                            <Form.TextArea field='description' label='描述' placeholder='描述' style={{
-                                margin: '8px'
-                            }} />
-                            <Button style={{
-                                margin: '8px'
-                            }} htmlType='submit' type='secondary' block>添加好友</Button>
+                            <Form.TextArea field='description' label='描述' placeholder='描述' />
+                            <Button htmlType='submit' type='secondary' block>添加好友</Button>
                         </div>
                     </Form>
 
