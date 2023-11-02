@@ -165,10 +165,21 @@ export default class Content extends Component<IProps, IState> {
         PubSub.subscribe('navigate', (_: any) => {
             const searchParams = new URLSearchParams(window.location.search);
             const id = searchParams.get('id');
-            this.setState({
+             this.setState({
+                data: [],
+                groupinUser: {
+                    page: 1,
+                    pageSize: 50,
+                    loading: false,
+                },
+                groupinUsers: [],
+                page: 1,
+                users: [],
+                groudUserPage: 1,
                 id: id ?? ''
-            })
-            this.loadingGroupUser();
+            }, () => {
+                this.loadingGroupUser();
+            });
         });
         const searchParams = new URLSearchParams(window.location.search);
         const id = searchParams.get('id');
