@@ -30,6 +30,15 @@ public class IntelligentAssistantHandle
     private readonly OpenAIChatCompletion _chatCompletion;
     private readonly IConfiguration _configuration;
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="kernel"></param>
+    /// <param name="redisClient"></param>
+    /// <param name="logger"></param>
+    /// <param name="httpClientFactory"></param>
+    /// <param name="chatCompletion"></param>
+    /// <param name="configuration"></param>
     public IntelligentAssistantHandle(IKernel kernel, RedisClient redisClient,
         ILogger<IntelligentAssistantHandle> logger, IHttpClientFactory httpClientFactory,
         OpenAIChatCompletion chatCompletion, IConfiguration configuration)
@@ -64,28 +73,25 @@ public class IntelligentAssistantHandle
             ai help - 获取帮助信息
             ai status - 检查服务器状态
             ai 提问信息 - 提问并获取回答
+            ai 询问天气  - 提问并且得到天气信息
         使用方法：
             输入 "ai help" 获取帮助信息
             输入 "ai status" 检查服务器状态
             输入 "ai 提问信息" 提问并获取回答
+            输入 "ai 需要知道的城市" 提问并且得到天气信息
         示例：
             输入 "ai help"，将显示命令行帮助手册
             输入 "ai status"，将检查服务器状态并返回结果
             输入 "ai 你好吗？"，将提问并获取回答
+            输入 "ai 深圳天气怎么样" 提问并且得到天气信息
         注意事项：
             确保在命令行中正确输入命令和参数
             请确保服务器正常运行以获取准确的状态信息和回答
         """;
 
-    private const string WeatherTemplate =
-        """
-        {province}的天气{weather}，平均温度{temperature_float},风向{winddirection},湿度{humidity};
-        """;
-
-    /// <inheritdoc />
     public async Task HandleAsync(IntelligentAssistantEto item)
     {
-        string value = item.Value;
+        string value = item.Value.ToLower();
 
         if (value.IsNullOrWhiteSpace())
         {
@@ -94,13 +100,13 @@ public class IntelligentAssistantHandle
 
         try
         {
-            if (item.Value.StartsWith("ai help") || item.Value.StartsWith("ai -h"))
+            if (value.StartsWith("ai help") || value.StartsWith("ai -h"))
             {
                 await SendMessage(CommandTemplate, item.RevertId, item.Id);
                 return;
             }
 
-            if (item.Value.StartsWith("ai status"))
+            if (value.StartsWith("ai status"))
             {
                 // 获获取当前进程的内存占用，和cpu占用
                 var process = Process.GetCurrentProcess();
@@ -125,7 +131,7 @@ public class IntelligentAssistantHandle
                     {
                         Content = "您今天的额度已经用完！",
                         Type = ChatType.Text,
-                        UserId = Guid.Empty,
+                        UserId = Constant.Group.AssistantId,
                         CreationTime = DateTime.Now,
                         RevertId = item.RevertId,
                         GroupId = item.Id,
@@ -160,8 +166,8 @@ public class IntelligentAssistantHandle
                 ["options"] = "Weather,Attractions,Delicacy,Traffic" //给GPT的意图，通过Prompt限定选用这些里面的
             };
             string intent = (await _kernel.RunAsync(getIntentVariables, intentPlugin["GetIntent"])).Result.Trim();
-            ISKFunction MathFunction = null;
-            SKContext? result = null;
+            ISKFunction? MathFunction;
+            SKContext? result;
 
             //获取意图后动态调用Fun
             if (intent is "Attractions" or "Delicacy" or "Traffic")
