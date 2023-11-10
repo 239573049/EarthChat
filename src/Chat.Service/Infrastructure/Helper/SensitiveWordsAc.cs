@@ -56,6 +56,7 @@ public sealed class SensitiveWordsAc
             }
         }
 
+        _whitelist = new HashSet<string>(words.Whitelist.Length);
         AddToWhitelist(words.Whitelist);
     }
 
