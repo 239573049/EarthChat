@@ -1,0 +1,12 @@
+{
+  "SensitiveWords": [
+    {
+      "Value": "Ãô¸Ð´Ê"
+    }
+  ],
+  "Whitelist": [
+    {
+      "Value": "°×Ãûµ¥"
+    } 
+  ]
+}

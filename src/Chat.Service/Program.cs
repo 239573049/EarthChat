@@ -1,4 +1,5 @@
 using Chat.Service.Application.Chats;
+using Chat.Service.Infrastructure.Helper;
 using Chat.Service.Infrastructure.Middlewares;
 using Infrastructure.JsonConverters;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -146,6 +147,15 @@ var app = builder.Services
     })
     .AddAutoInject()
     .AddServices(builder, option => option.MapHttpMethodsForUnmatched = new[] { "Post" });
+
+
+if (File.Exists("./sensitive.Words.json"))
+{
+    var sensitiveWordsList =
+        JsonSerializer.Deserialize<SensitiveWord>(File.ReadAllText("sensitive.Words.json")) ??
+        new SensitiveWord();
+    SensitiveWordsAc.Instance.Build(sensitiveWordsList);
+}
 
 
 app.UseMiddleware<ReductionMiddleware>();

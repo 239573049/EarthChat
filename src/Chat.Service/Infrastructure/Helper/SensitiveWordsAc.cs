@@ -9,17 +9,19 @@ public sealed class SensitiveWordsAc
     private TrieNode _root;
     private Dictionary<TrieNode, TrieNode> _failureLinks;
 
+    private HashSet<string> _whitelist; // 白名单集合
+
     public static SensitiveWordsAc Instance => _instance.Value;
 
     /// <summary>
     /// 构建AC自动机
     /// </summary>
     /// <param name="words"></param>
-    public void Build(List<SensitiveWords> words)
+    public void Build(SensitiveWord words)
     {
         // 构建AC-Trie树
         _root = new TrieNode();
-        foreach (var word in words)
+        foreach (var word in words.SensitiveWords)
         {
             _root.Insert(word.Value);
         }
@@ -53,10 +55,24 @@ public sealed class SensitiveWordsAc
                 queue.Enqueue(child);
             }
         }
+
+        AddToWhitelist(words.Whitelist);
     }
 
     /// <summary>
-    /// 寻找敏感词
+    /// 添加白名单词汇
+    /// </summary>
+    /// <param name="word"></param>
+    public void AddToWhitelist(Whitelist[] word)
+    {
+        foreach (var whitelist in word)
+        {
+            _whitelist.Add(whitelist.Value);
+        }
+    }
+
+    /// <summary>
+    /// 寻找敏感词，跳过白名单中的词汇
     /// </summary>
     /// <param name="text"></param>
     /// <returns></returns>
@@ -80,13 +96,16 @@ public sealed class SensitiveWordsAc
                 word.Append(c);
                 if (cur.IsEndOfWord)
                 {
-                    matches.Add(word.ToString());
+                    var foundWord = word.ToString();
+                    if (!_whitelist.Contains(foundWord)) // 检查是否在白名单中
+                    {
+                        matches.Add(foundWord);
+                    }
                     word.Clear();
                 }
             }
             else
             {
-                // 在遇到无法匹配的字符时，将当前节点回溯到Trie根节点；
                 cur = _root;
                 word.Clear();
             }
@@ -113,7 +132,7 @@ public sealed class SensitiveWordsAc
 
         return sb.ToString();
     }
-    
+
     private class TrieNode
     {
         public char Value { get; set; }
@@ -144,6 +163,21 @@ public sealed class SensitiveWordsAc
 }
 
 public class SensitiveWords
+{
+    public string Value { get; set; }
+}
+
+
+
+
+public class SensitiveWord
+{
+    public SensitiveWords[] SensitiveWords { get; set; }
+
+    public Whitelist[] Whitelist { get; set; }
+}
+
+public class Whitelist
 {
     public string Value { get; set; }
 }

@@ -3,6 +3,7 @@ using Chat.Contracts.Hubs;
 using Chat.Service.Application.Chats.Commands;
 using Chat.Service.Application.Chats.Queries;
 using Chat.Service.Application.Hubs.Commands;
+using Chat.Service.Infrastructure.Helper;
 using Chat.Service.Services;
 using Masa.Contrib.Authentication.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -126,6 +127,8 @@ public class ChatHub : Hub
             {
                 throw new UnauthorizedAccessException();
             }
+
+            value = SensitiveWordsAc.Instance.TakeOutSensitive(value);
 
             string key = $"user:{userId}:count";
 

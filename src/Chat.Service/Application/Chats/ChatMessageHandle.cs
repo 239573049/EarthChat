@@ -34,8 +34,6 @@ public class ChatMessageHandle  : IDisposable
 
     public async Task HandleAsync(ChatMessageEto eto)
     {
-        eto.Content = SensitiveWordsAc.Instance.TakeOutSensitive(eto.Content);
-            
         if (eto.RevertId != null && eto.RevertId != Guid.Empty && eto.Revert == null)
         {
             var messageQuery = new GetMessageQuery((Guid)eto.RevertId);
@@ -43,7 +41,6 @@ public class ChatMessageHandle  : IDisposable
             eto.Revert = messageQuery.Result;
         }
 
-        eto.Content = SensitiveWordsAc.Instance.TakeOutSensitive(eto.Content);
 
         await _hubContext.Clients.Group(eto.GroupId.ToString("N"))
             .SendAsync("ReceiveMessage", eto.Id, eto);
