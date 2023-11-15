@@ -11,7 +11,7 @@
     <ItemGroup>
         <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
-        <PackageReference Include="FreeRedis" Version="1.2.2" />
+        <PackageReference Include="FreeRedis" Version="1.2.3" />
         <PackageReference Include="Masa.Contrib.Authentication.Identity" Version="1.0.1-preview.6" />
         <PackageReference Include="Masa.Contrib.Data.EFCore.PostgreSql" Version="1.0.1-preview.6" />
         <PackageReference Include="Masa.Contrib.Data.EFCore.Sqlite" Version="1.0.1-preview.6" />
@@ -44,6 +44,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\Chat.ServiceDefaults\Chat.ServiceDefaults.csproj" />
         <ProjectReference Include="..\Chat.Contracts\Chat.Contracts.csproj" />
         <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>

@@ -62,6 +62,7 @@ public static class EncryptHelper
         using var cs = new CryptoStream(ms, des.CreateDecryptor(), CryptoStreamMode.Write);
         cs.Write(inputByteArray, 0, inputByteArray.Length);
         cs.FlushFinalBlock();
-        return Encoding.Default.GetString(ms.ToArray());
+        var result = Encoding.UTF8.GetString(ms.ToArray());
+        return result;
     }
 }

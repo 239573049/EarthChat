@@ -29,6 +29,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "assistant", "assistant", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.SemanticServer", "src\assistant\Chat.SemanticServer\Chat.SemanticServer.csproj", "{4D255C41-417C-42D5-B569-9B2B1B03E9D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chat.AppHost", "Chat.AppHost\Chat.AppHost.csproj", "{5AD34704-C082-4294-816A-4E8FB3A1B041}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Chat.ServiceDefaults", "Chat.ServiceDefaults\Chat.ServiceDefaults.csproj", "{CD6C57BE-430E-464C-B7E1-252F1AC24B05}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +59,14 @@ Global
 		{4D255C41-417C-42D5-B569-9B2B1B03E9D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D255C41-417C-42D5-B569-9B2B1B03E9D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D255C41-417C-42D5-B569-9B2B1B03E9D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AD34704-C082-4294-816A-4E8FB3A1B041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AD34704-C082-4294-816A-4E8FB3A1B041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AD34704-C082-4294-816A-4E8FB3A1B041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AD34704-C082-4294-816A-4E8FB3A1B041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD6C57BE-430E-464C-B7E1-252F1AC24B05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD6C57BE-430E-464C-B7E1-252F1AC24B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD6C57BE-430E-464C-B7E1-252F1AC24B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD6C57BE-430E-464C-B7E1-252F1AC24B05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
