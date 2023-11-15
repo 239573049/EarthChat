@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>5fe37f57-2027-43f7-a9a4-a818d6b816ab</UserSecretsId>
@@ -14,10 +14,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FreeRedis" Version="1.1.6" />
-        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.1-preview.3" />
-        <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.1-preview.3" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
+        <PackageReference Include="FreeRedis" Version="1.2.2" />
+        <PackageReference Include="Masa.Contrib.Data.UoW.EFCore" Version="1.0.1-preview.6" />
+        <PackageReference Include="Masa.Contrib.Service.MinimalAPIs" Version="1.0.1-preview.6" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
         <PackageReference Include="Microsoft.SemanticKernel" Version="0.24.230918.1-preview" />
         <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.5" />
     </ItemGroup>
