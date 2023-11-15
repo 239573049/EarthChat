@@ -6,6 +6,8 @@
         <UserSecretsId>8bfcd97a-e866-42d4-a3a6-31f02975d75c</UserSecretsId>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <DockerfileContext>..\..</DockerfileContext>
+        <RuntimeIdentifiers>linux-x64</RuntimeIdentifiers>
+        <EnableSdkContainerDebugging>True</EnableSdkContainerDebugging>
     </PropertyGroup>
 
     <ItemGroup>
@@ -68,5 +70,11 @@
       <None Update="run.bat">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ContainerEnvironmentVariable Include="ASPNETCORE_HTTPS_PORTS">
+        <Value>8081</Value>
+      </ContainerEnvironmentVariable>
     </ItemGroup>
 </Project>
