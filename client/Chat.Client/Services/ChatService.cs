@@ -1,11 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using Chat.Contracts.Core;
+using Masa.Utils.Models;
+using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using Chat.Contracts.Core;
-using Chat.Contracts.Users;
-using LiteDB;
-using Masa.Utils.Models;
 
 namespace Chat.Client.Services;
 

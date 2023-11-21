@@ -8,8 +8,9 @@ namespace Chat.Service.Services;
 public class FileService : BaseService<FileService>, IFileService
 {
     [Authorize]
-    public async Task<ResultDto<string>> UploadAsync(IFormFile file)
+    public async Task<ResultDto<string>> UploadAsync()
     {
+        var file = GetService<IHttpContextAccessor>()?.HttpContext.Request.Form.Files.FirstOrDefault();
         // 判断当前文件大小
         if (file.Length > 1024 * 1024 * 10)
         {

@@ -62,6 +62,7 @@ builder.Services.AddSingleton<IRateLimitConfiguration,
 
 builder.Services.AddMemoryCache();
 builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddHttpClient(Constant.ChatGPT, (services, c) =>
 {
