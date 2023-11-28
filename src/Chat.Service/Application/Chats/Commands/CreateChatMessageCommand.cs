@@ -6,4 +6,4 @@ namespace Chat.Service.Application.Chats.Commands;
 /// 创建聊天消息
 /// </summary>
 /// <param name="Dto"></param>
-public record CreateChatMessageCommand(CreateChatMessageDto Dto) : Command;
+public record CreateChatMessageCommand(CreateChatMessageDto Dto,bool Group) : Command;

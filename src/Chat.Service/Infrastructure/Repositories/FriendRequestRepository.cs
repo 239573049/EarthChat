@@ -3,7 +3,7 @@ using Chat.Service.Domain.Users.Repositories;
 
 namespace Chat.Service.Infrastructure.Repositories;
 
-public class FriendRequestRepository : BaseRepository<ChatDbContext, FriendRequest,Guid>, IFriendRequestRepository
+public class FriendRequestRepository : BaseRepository<ChatDbContext, FriendRequest, Guid>, IFriendRequestRepository
 {
     public FriendRequestRepository(ChatDbContext context, IUnitOfWork unitOfWork) : base(context, unitOfWork)
     {

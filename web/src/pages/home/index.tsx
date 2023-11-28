@@ -209,11 +209,6 @@ class Home extends Component<{}, AppState> {
 
         ChatService.getUserGroup(null)
             .then((res: ChatGroupDto[]) => {
-
-                res.forEach(x => {
-                    x.lastMessage = '';
-                })
-
                 this.setState({
                     groups: res,
                     selectGroup: res[0]
@@ -309,6 +304,7 @@ class Home extends Component<{}, AppState> {
                             style={{
                                 width: '100%',
                             }}
+                            
                             renderItem={item =>
                                 <div onClick={() => { this.selectChat(item) }} className={'chat-item ' + (selectGroup === item ? "chat-item-select" : "")}>
                                     <div style={{

@@ -7,4 +7,5 @@ public interface IFriendRequestRepository : IBaseRepository<FriendRequest,Guid>
     Task<List<FriendRequest>> GetListAsync(Guid userId, int page, int pageSize);
 
     Task<int> GetCountAsync(Guid userId);
+
 }

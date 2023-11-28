@@ -21,6 +21,11 @@ public class ChatGroupDto
     public bool Default { get; set; }
 
     /// <summary>
+    /// 新消息
+    /// </summary>
+    public string LastMessage { get; set; }
+    
+    /// <summary>
     /// 群组创建者
     /// </summary>
     public Guid Creator { get; set; }

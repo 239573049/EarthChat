@@ -53,6 +53,7 @@ public class QueryHandler
                 CreationTime = chatGroup.CreationTime,
                 Creator = chatGroup.Creator,
                 Default = chatGroup.Default,
+                LastMessage = chatGroup.NewMessage,
                 Description = chatGroup.Description,
                 Name = chatGroup.Name,
                 Group = true

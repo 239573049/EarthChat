@@ -12,6 +12,9 @@ const userInfos = [] as GetUserDto[]
 async function GetUserInfos(userIds: string[]) {
     const nonExistentUserIds = [] as string[];
 
+    // 过滤掉userIds中的null
+    userIds = userIds.filter((userId) => userId);
+
     userIds.forEach(userId => {
         const userInfo = userInfos.find(info => info.id === userId);
         if (!userInfo) {

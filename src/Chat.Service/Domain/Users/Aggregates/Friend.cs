@@ -21,6 +21,11 @@ public class Friend : Entity<Guid>
     public string Remark { get; set; }
 
     /// <summary>
+    /// 新消息
+    /// </summary>
+    public string? NewMessage { get; set; }
+    
+    /// <summary>
     /// 关联群聊id
     /// </summary>
     public Guid GroupId { get; set; }

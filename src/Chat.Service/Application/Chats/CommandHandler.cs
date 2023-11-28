@@ -13,39 +13,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Chat.Service.Application.Chats;
 
-public class CommandHandler
+public class CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,
+    IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus,
+    ILogger<CommandHandler> logger, IChatGroupRepository chatGroupRepository, IUnitOfWork unitOfWork,
+    IChatGroupInUserRepository chatGroupInUserRepository, IFriendRepository friendRepository,
+    IFriendRequestRepository friendRequestRepository)
 {
-    private readonly IChatMessageRepository _chatMessageRepository;
-    private readonly IChatGroupRepository _chatGroupRepository;
-    private readonly IChatGroupInUserRepository _chatGroupInUserRepository;
-    private readonly IUserContext _userContext;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IFriendRepository _friendRepository;
-    private readonly IEventBus _eventBus;
-    private readonly IHubContext<ChatHub> _hubContext;
-    private readonly ILogger<CommandHandler> _logger;
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IFriendRequestRepository _friendRequestRepository;
-
-    public CommandHandler(IChatMessageRepository chatMessageRepository, IUserContext userContext,
-        IHttpClientFactory httpClientFactory, IHubContext<ChatHub> hubContext, IEventBus eventBus,
-        ILogger<CommandHandler> logger, IChatGroupRepository chatGroupRepository, IUnitOfWork unitOfWork,
-        IChatGroupInUserRepository chatGroupInUserRepository, IFriendRepository friendRepository,
-        IFriendRequestRepository friendRequestRepository)
-    {
-        _chatMessageRepository = chatMessageRepository;
-        _userContext = userContext;
-        _httpClientFactory = httpClientFactory;
-        _hubContext = hubContext;
-        _eventBus = eventBus;
-        _logger = logger;
-        _chatGroupRepository = chatGroupRepository;
-        _unitOfWork = unitOfWork;
-        _chatGroupInUserRepository = chatGroupInUserRepository;
-        _friendRepository = friendRepository;
-        _friendRequestRepository = friendRequestRepository;
-    }
-
     [EventHandler]
     public async Task CreateAsync(CreateChatMessageCommand command)
     {
@@ -58,14 +31,28 @@ public class CommandHandler
             UserId = command.Dto.UserId
         };
 
-        await _chatMessageRepository.AddAsync(chatMessage);
-        await _unitOfWork.SaveChangesAsync();
+        await chatMessageRepository.AddAsync(chatMessage);
+        await unitOfWork.SaveChangesAsync();
+    }
+
+    [EventHandler(1)]
+    public async Task UpdateNewMessage(CreateChatMessageCommand command)
+    {
+        if (command.Group)
+        {
+
+            await chatGroupRepository.UpdateNewMessage(command.Dto.ChatGroupId, command.Dto.Content);
+        }
+        else
+        {
+            await friendRepository.UpdateNewMessage(command.Dto.ChatGroupId, command.Dto.Content);
+        }
     }
 
     [EventHandler]
     public async Task CreateGroupAsync(CreateGroupCommand command)
     {
-        if (await _chatGroupRepository.GetCountAsync(x => x.Creator == _userContext.GetUserId<Guid>()) > 10)
+        if (await chatGroupRepository.GetCountAsync(x => x.Creator == userContext.GetUserId<Guid>()) > 10)
             throw new UserFriendlyException("最多只能创建10个群组");
 
         var chatGroup = new ChatGroup(Guid.NewGuid())
@@ -76,51 +63,51 @@ public class CommandHandler
             Name = command.Dto.Name,
         };
 
-        await _chatGroupRepository.AddAsync(chatGroup);
+        await chatGroupRepository.AddAsync(chatGroup);
 
         var chatGroupInUser = new ChatGroupInUser()
         {
             ChatGroupId = chatGroup.Id,
-            UserId = _userContext.GetUserId<Guid>()
+            UserId = userContext.GetUserId<Guid>()
         };
 
-        await _chatGroupInUserRepository.AddAsync(chatGroupInUser);
+        await chatGroupInUserRepository.AddAsync(chatGroupInUser);
 
         // 新建群聊的时候想要将当前链接加入群聊。
-        await _hubContext.Groups.AddToGroupAsync(command.connections, chatGroup.Id.ToString("N"));
+        await hubContext.Groups.AddToGroupAsync(command.connections, chatGroup.Id.ToString("N"));
     }
 
     [EventHandler]
     public async Task InvitationGroupAsync(InvitationGroupCommand command)
     {
-        if (await _chatGroupInUserRepository.GetCountAsync(x =>
-                x.ChatGroupId == command.id && x.UserId == _userContext.GetUserId<Guid>()) > 0)
+        if (await chatGroupInUserRepository.GetCountAsync(x =>
+                x.ChatGroupId == command.id && x.UserId == userContext.GetUserId<Guid>()) > 0)
         {
             throw new UserFriendlyException("您已经加入群聊");
         }
 
-        if (await _chatGroupRepository.GetCountAsync(x => x.Id == command.id) <= 0)
+        if (await chatGroupRepository.GetCountAsync(x => x.Id == command.id) <= 0)
         {
             throw new UserFriendlyException("群聊不存在");
         }
 
-        await _chatGroupInUserRepository.AddAsync(new ChatGroupInUser()
+        await chatGroupInUserRepository.AddAsync(new ChatGroupInUser()
         {
             ChatGroupId = command.id,
-            UserId = _userContext.GetUserId<Guid>()
+            UserId = userContext.GetUserId<Guid>()
         });
     }
 
     [EventHandler]
     public async Task ApplyForFriendAsync(ApplyForFriendCommand command)
     {
-        if (await _friendRepository.GetCountAsync(x => x.FriendId == command.Dto.BeAppliedForId) > 0)
+        if (await friendRepository.GetCountAsync(x => x.FriendId == command.Dto.BeAppliedForId) > 0)
         {
             throw new UserFriendlyException("已经存在好友关系");
         }
 
-        if (await _friendRequestRepository.GetCountAsync(x =>
-                x.RequestId == _userContext.GetUserId<Guid>() && x.State == FriendState.ApplyFor) > 0)
+        if (await friendRequestRepository.GetCountAsync(x =>
+                x.RequestId == userContext.GetUserId<Guid>() && x.State == FriendState.ApplyFor) > 0)
         {
             throw new UserFriendlyException("已经存在申请");
         }
@@ -128,13 +115,13 @@ public class CommandHandler
         var value = new FriendRequest()
         {
             ApplicationDate = DateTime.Now,
-            RequestId = _userContext.GetUserId<Guid>(),
+            RequestId = userContext.GetUserId<Guid>(),
             BeAppliedForId = command.Dto.BeAppliedForId,
             Description = command.Dto.Description,
             State = FriendState.ApplyFor
         };
 
-        await _friendRequestRepository.AddAsync(value);
+        await friendRequestRepository.AddAsync(value);
 
         var systemCommand = new SystemCommand(new Notification()
         {
@@ -142,28 +129,28 @@ public class CommandHandler
             type = NotificationType.FriendRequest,
             content = "发起新的好友申请",
         }, new[] { command.Dto.BeAppliedForId }, false);
-        await _eventBus.PublishAsync(systemCommand);
+        await eventBus.PublishAsync(systemCommand);
     }
 
     [EventHandler]
     public async Task ApplicationProcessingAsync(ApplicationProcessingCommand command)
     {
-        var value = await _friendRequestRepository.FindAsync(x => x.Id == command.Id);
+        var value = await friendRequestRepository.FindAsync(x => x.Id == command.Id);
 
         if (value?.State == FriendState.ApplyFor)
         {
             if (command.State == FriendState.Consent)
             {
-                await _friendRepository.AddAsync(new Friend()
+                await friendRepository.AddAsync(new Friend()
                 {
-                    SelfId = _userContext.GetUserId<Guid>(),
+                    SelfId = userContext.GetUserId<Guid>(),
                     FriendId = value.RequestId
                 });
 
-                await _friendRepository.AddAsync(new Friend()
+                await friendRepository.AddAsync(new Friend()
                 {
                     SelfId = value.RequestId,
-                    FriendId = _userContext.GetUserId<Guid>()
+                    FriendId = userContext.GetUserId<Guid>()
                 });
 
                 var systemCommand = new SystemCommand(new Notification()
@@ -172,20 +159,20 @@ public class CommandHandler
                     type = NotificationType.FriendRequest,
                     content = "同意了好友申请",
                 }, new[] { value.RequestId }, false);
-                await _eventBus.PublishAsync(systemCommand);
+                await eventBus.PublishAsync(systemCommand);
             }
 
             value.State = command.State;
 
-            await _friendRequestRepository.UpdateAsync(value);
+            await friendRequestRepository.UpdateAsync(value);
         }
     }
 
     [EventHandler]
     public async Task CountermandAsync(CountermandCommand command)
     {
-        var value = await _chatMessageRepository.FindAsync(x =>
-            x.Id == command.Id && x.Creator == _userContext.GetUserId<Guid>());
+        var value = await chatMessageRepository.FindAsync(x =>
+            x.Id == command.Id && x.Creator == userContext.GetUserId<Guid>());
 
         if (value == null)
         {
@@ -198,23 +185,23 @@ public class CommandHandler
             throw new UserFriendlyException("消息超过5分钟不能撤回");
         }
 
-        if (await _chatMessageRepository.UpdateCountermand(value.Id, _userContext.GetUserId<Guid>(), true))
+        if (await chatMessageRepository.UpdateCountermand(value.Id, userContext.GetUserId<Guid>(), true))
         {
             var systemCommand = new SystemCommand(new Notification()
-                {
-                    createdTime = DateTime.Now,
-                    content = "撤回消息",
-                    data = value.Id,
-                    type = NotificationType.Countermand
-                }, new[] { value.ChatGroupId },
+            {
+                createdTime = DateTime.Now,
+                content = "撤回消息",
+                data = value.Id,
+                type = NotificationType.Countermand
+            }, new[] { value.ChatGroupId },
                 true);
 
-            await _eventBus.PublishAsync(systemCommand);
+            await eventBus.PublishAsync(systemCommand);
 
             if (value.Type is ChatType.File or ChatType.Audio or ChatType.Image or ChatType.Video)
             {
                 var deleteFile = new DeleteFileSystemCommand(value.Content);
-                await _eventBus.PublishAsync(deleteFile);
+                await eventBus.PublishAsync(deleteFile);
             }
         }
         else

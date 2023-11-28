@@ -387,14 +387,14 @@ export default class Content extends Component<IProps, IState> {
         })
 
         if (value && value.content.length > 0) {
-            await ChatHubService.send('SendMessage', value.content, group.id, 0, revertId);
+            await ChatHubService.send('SendMessage', value.content, group.id, 0, revertId,group.group);
 
             this.mentionRef.current?.setValue('')
             for (let i = 0; i < value.base64.length; i++) {
                 fileService.uploadBase64(value.base64[i], 'image.png')
                     .then((res: any) => {
                         if (res.code === '200') {
-                            ChatHubService.send('SendMessage', res.data, group.id, 1, revertId);
+                            ChatHubService.send('SendMessage', res.data, group.id, 1, revertId,group.group);
                         }
                     })
             }

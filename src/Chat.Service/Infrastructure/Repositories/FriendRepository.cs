@@ -20,9 +20,17 @@ public class FriendRepository : BaseRepository<ChatDbContext, Friend, Guid>, IFr
                 {
                     Avatar = user.Avatar,
                     Default = false,
+                    NewMessage = friend.NewMessage,
                     Name = user.Name
                 });
 
         return await query.ToListAsync();
     }
+
+    public Task UpdateNewMessage(Guid id, string newMessage)
+    {
+        return Context.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE  \"Friends\" SET \"NewMessage\"={newMessage} where \"Id\"={id}");
+    }
+
 }

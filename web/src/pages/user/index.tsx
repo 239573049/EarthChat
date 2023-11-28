@@ -277,10 +277,12 @@ class User extends Component<any, IState> {
                     好友通知
                 </div>
                 <div style={{
-                    height: "115px",
                     margin: 'auto',
+                    height:'calc(100vh - 20px)',
                     width: '500px',
-                    paddingTop: "50px"
+                    paddingTop: "50px",
+                    overflowY: 'auto',
+                    overflowX: 'hidden',
                 }}>
 
                     {items}
