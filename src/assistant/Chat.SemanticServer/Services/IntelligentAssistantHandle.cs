@@ -29,6 +29,10 @@ public class IntelligentAssistantHandle
     private readonly ILogger<IntelligentAssistantHandle> _logger;
     private readonly OpenAIChatCompletion _chatCompletion;
     private readonly IConfiguration _configuration;
+    private readonly IDictionary<string, ISKFunction> intentPlugin;
+    private readonly IDictionary<string, ISKFunction> travelPlugin;
+    private readonly IDictionary<string, ISKFunction> chatPlugin;
+    private readonly IDictionary<string, ISKFunction> getWeather;
 
     /// <summary>
     /// 
@@ -62,6 +66,24 @@ public class IntelligentAssistantHandle
                     _logger.LogError("{e}", e);
                 }
             }));
+
+
+
+        //对话摘要  SK.Skills.Core 核心技能
+        _kernel.ImportSkill(new ConversationSummarySkill(_kernel), "ConversationSummarySkill");
+
+        var pluginsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
+
+        intentPlugin = _kernel
+            .ImportSemanticSkillFromDirectory(pluginsDirectory, "BasePlugin");
+        travelPlugin = _kernel
+            .ImportSemanticSkillFromDirectory(pluginsDirectory, "Travel");
+
+        chatPlugin = _kernel
+            .ImportSemanticSkillFromDirectory(pluginsDirectory, "ChatPlugin");
+
+        getWeather = _kernel.ImportSkill(new WeatherPlugin(_httpClientFactory, _configuration), "WeatherPlugin");
+
     }
 
     /// <summary>
@@ -144,21 +166,6 @@ public class IntelligentAssistantHandle
                     return;
                 }
             }
-
-            //对话摘要  SK.Skills.Core 核心技能
-            _kernel.ImportSkill(new ConversationSummarySkill(_kernel), "ConversationSummarySkill");
-
-            var pluginsDirectory = Path.Combine(Directory.GetCurrentDirectory(), "plugins");
-
-            var intentPlugin = _kernel
-                .ImportSemanticSkillFromDirectory(pluginsDirectory, "BasePlugin");
-            var travelPlugin = _kernel
-                .ImportSemanticSkillFromDirectory(pluginsDirectory, "Travel");
-
-            var chatPlugin = _kernel
-                .ImportSemanticSkillFromDirectory(pluginsDirectory, "ChatPlugin");
-
-            var getWeather = _kernel.ImportSkill(new WeatherPlugin(_httpClientFactory, _configuration), "WeatherPlugin");
 
             var getIntentVariables = new ContextVariables
             {
