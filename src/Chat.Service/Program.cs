@@ -13,8 +13,6 @@ var redisConnectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.AddServiceDefaults();
-
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration) // 从配置文件中读取Serilog配置
     .CreateLogger();
@@ -159,9 +157,6 @@ if (File.Exists("./sensitive.Words.json"))
         new SensitiveWord();
     SensitiveWordsAc.Instance.Build(sensitiveWordsList);
 }
-
-app.MapDefaultEndpoints();
-
 
 app.UseMiddleware<ReductionMiddleware>();
 var cacheMaxAgeOneWeek = (60 * 60 * 24 * 7).ToString();

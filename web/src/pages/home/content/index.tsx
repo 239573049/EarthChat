@@ -404,7 +404,8 @@ export default class Content extends Component<IProps, IState> {
                 fileService.uploadBase64(value.base64[i], 'image.png')
                     .then((res: any) => {
                         if (res.code === '200') {
-                            ChatHubService.send('SendMessage', res.data, group.id, 1, revertId);
+                            const group = getGroup();
+                            ChatHubService.send('SendMessage', res.data, group.id, 1, revertId,group.group);
                         }
                     })
             }
@@ -981,7 +982,8 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.state.id, 1, null);
+                        const group = getGroup();
+                        ChatHubService.send('SendMessage', res.data, this.state.id, 1, null,group.group);
                     }
                 })
 
@@ -1030,7 +1032,8 @@ export default class Content extends Component<IProps, IState> {
             fileService.upload(formData)
                 .then((res: any) => {
                     if (res.code === '200') {
-                        ChatHubService.send('SendMessage', res.data, this.state.id, type, null);
+                        const group = getGroup();
+                        ChatHubService.send('SendMessage', res.data, this.state.id, type, null,group.group);
                     }
                 })
 
@@ -1155,7 +1158,7 @@ export default class Content extends Component<IProps, IState> {
 
     async emojiClick(v: any) {
         const group = getGroup();
-        await ChatHubService.send('SendMessage', v, group.id, 0, null);
+        await ChatHubService.send('SendMessage', v, group.id, 0, null,group.group);
     }
 
     renderDefault() {
@@ -1221,7 +1224,7 @@ export default class Content extends Component<IProps, IState> {
 
     async sendEmoji(item: any) {
         const group = getGroup();
-        await ChatHubService.send('SendMessage', item.path, group.id, 1, null);
+        await ChatHubService.send('SendMessage', item.path, group.id, 1, null,group.group);
     }
 
     removeEmoji(item: string) {
@@ -1365,7 +1368,8 @@ export default class Content extends Component<IProps, IState> {
                     fileService.upload(formData)
                         .then(res => {
                             if (res.code === '200') {
-                                ChatHubService.send('SendMessage', res.data, This.state.id, 4, null);
+                                const group = getGroup();
+                                ChatHubService.send('SendMessage', res.data, This.state.id, 4, null,group.group);
                             } else {
                                 Notification.error(res.message)
                             }

@@ -34,6 +34,7 @@ public class ChatService : BaseService<ChatService>, IChatService
         return new ResultDto();
     }
 
+    [Authorize]
     public async Task<List<GroupUserDto>> GetGroupInUserAsync(Guid groupId, int page, int pageSize)
     {
         var userIds =
@@ -64,6 +65,7 @@ public class ChatService : BaseService<ChatService>, IChatService
     }
 
     /// <inheritdoc />
+    [Authorize]
     public async Task<ResultDto> CountermandMessage(Guid id)
     {
         var command = new CountermandCommand(id);

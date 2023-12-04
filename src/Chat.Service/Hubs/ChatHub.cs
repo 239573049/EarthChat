@@ -116,8 +116,12 @@ public class ChatHub(RedisClient redisClient, IEventBus eventBus, BackgroundTask
                 throw new UnauthorizedAccessException();
             }
 
-            value = SensitiveWordsAc.Instance.TakeOutSensitive(value);
-
+            // 只有文本消息才需要过滤敏感词
+            if (type == (int)ChatType.Text)
+            {
+                value = SensitiveWordsAc.Instance.TakeOutSensitive(value);
+            }
+            
             string key = $"user:{userId}:count";
 
             // 限制用户发送消息频率
