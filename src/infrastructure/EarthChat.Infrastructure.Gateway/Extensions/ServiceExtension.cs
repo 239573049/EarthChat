@@ -9,6 +9,14 @@ public static class ServiceExtensions
     {
         services.AddHttpForwarder();
 
+        services.AddHttpClient()
+            .ConfigureHttpClientDefaults((builder =>
+            {
+                builder.ConfigureHttpClient(((provider, client) =>
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "EarthChat-Gateway");
+                }));
+            }));
         services.AddSingleton<NodeClientManager>();
         services.AddSingleton<GatewayMiddleware>();
 

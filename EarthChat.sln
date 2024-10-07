@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35309.182
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D77433BB-94DE-4380-BDD4-1544323A90C8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "framework", "framework", "{FD6393C5-ACC7-487D-8DBD-8632606ECEFB}"
@@ -14,8 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Ga
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{803F048C-CBC4-4920-A489-45E62095AECA}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
 		Directory.Build.props = Directory.Build.props
+		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Core", "framework\EarthChat.Core\EarthChat.Core.csproj", "{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178}"
@@ -24,22 +27,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Ga
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "instant-message", "instant-message", "{4CB0DE8E-2472-4960-95A6-95DB32420A17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.InstantMessage.Service", "src\instant-message\EarthChat.InstantMessage.Service\EarthChat.InstantMessage.Service.csproj", "{596E7DE0-A628-4713-838E-4C456290D705}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.InstantMessage.Service", "src\instant-message\EarthChat.InstantMessage.Service\EarthChat.InstantMessage.Service.csproj", "{A99204D4-FD15-417A-A3F3-6991F59FC551}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{68762AEF-C576-4EBA-8603-533CA60AAB73} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
-		{90B73C32-64E7-499F-ABDF-5C0B624AE992} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
-		{B7305B3D-A837-4CB0-A272-1B229E934578} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
-		{01328578-AE90-4A0B-99A8-9BCA76DB7D84} = {B7305B3D-A837-4CB0-A272-1B229E934578}
-		{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
-		{4FC05B34-3299-41AF-A764-6D2211B643E9} = {B7305B3D-A837-4CB0-A272-1B229E934578}
-		{4CB0DE8E-2472-4960-95A6-95DB32420A17} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
-		{596E7DE0-A628-4713-838E-4C456290D705} = {4CB0DE8E-2472-4960-95A6-95DB32420A17}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{90B73C32-64E7-499F-ABDF-5C0B624AE992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -58,9 +51,22 @@ Global
 		{4FC05B34-3299-41AF-A764-6D2211B643E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FC05B34-3299-41AF-A764-6D2211B643E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FC05B34-3299-41AF-A764-6D2211B643E9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{596E7DE0-A628-4713-838E-4C456290D705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{596E7DE0-A628-4713-838E-4C456290D705}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{596E7DE0-A628-4713-838E-4C456290D705}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{596E7DE0-A628-4713-838E-4C456290D705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{68762AEF-C576-4EBA-8603-533CA60AAB73} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{90B73C32-64E7-499F-ABDF-5C0B624AE992} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
+		{B7305B3D-A837-4CB0-A272-1B229E934578} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
+		{01328578-AE90-4A0B-99A8-9BCA76DB7D84} = {B7305B3D-A837-4CB0-A272-1B229E934578}
+		{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
+		{4FC05B34-3299-41AF-A764-6D2211B643E9} = {B7305B3D-A837-4CB0-A272-1B229E934578}
+		{4CB0DE8E-2472-4960-95A6-95DB32420A17} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{A99204D4-FD15-417A-A3F3-6991F59FC551} = {4CB0DE8E-2472-4960-95A6-95DB32420A17}
 	EndGlobalSection
 EndGlobal

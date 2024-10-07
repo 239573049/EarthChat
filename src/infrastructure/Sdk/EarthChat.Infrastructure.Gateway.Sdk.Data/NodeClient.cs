@@ -34,4 +34,11 @@ public sealed class NodeClient
     /// 请求地址
     /// </summary>
     public string Address => $"http://{Ip}:{Port}";
+    
+    
+    /// <summary>
+    /// 健康检查地址
+    /// </summary>
+    public string HealthCheck { get; set; } = "/health";
+
 }

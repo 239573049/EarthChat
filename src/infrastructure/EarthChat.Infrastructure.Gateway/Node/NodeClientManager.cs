@@ -26,14 +26,13 @@ public class NodeClientManager
 
     public void Remove(string service, string key)
     {
-        if (_nodeClients.TryGetValue(service.ToLower(), out var nodeClients))
-        {
-            nodeClients.TryRemove(key.ToLower(), out _);
+        if (!_nodeClients.TryGetValue(service.ToLower(), out var nodeClients)) return;
+        
+        nodeClients.TryRemove(key.ToLower(), out _);
 
-            if (nodeClients.IsEmpty)
-            {
-                _nodeClients.TryRemove(service.ToLower(), out _);
-            }
+        if (nodeClients.IsEmpty)
+        {
+            _nodeClients.TryRemove(service.ToLower(), out _);
         }
     }
 

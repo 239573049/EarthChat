@@ -1,0 +1,10 @@
+﻿<Project>
+    <PropertyGroup>
+        <Authors>Token</Authors>
+        <Company>Token</Company>
+        <PackageId>$(AssemblyName)</PackageId>
+        <Copyright>© Token Corporation. All rights reserved.</Copyright>
+        <MicrosoftAspNetCorePackageVersion Condition="'$(TargetFramework)' == 'net7.0'">7.0.0</MicrosoftAspNetCorePackageVersion>
+        <MicrosoftAspNetCorePackageVersion Condition="'$(TargetFramework)' == 'net8.0'">8.0.0</MicrosoftAspNetCorePackageVersion>
+    </PropertyGroup>
+</Project>

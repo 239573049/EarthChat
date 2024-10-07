@@ -1,5 +1,6 @@
 ﻿using EarthChat.Core.Models;
 using EarthChat.Infrastructure.Gateway.Node;
+using EarthChat.Infrastructure.Gateway.ServiceInspection;
 
 namespace EarthChat.Infrastructure.Gateway.Services;
 
@@ -26,6 +27,21 @@ public class NodeService
     }
 
     /// <summary>
+    /// 如果节点不存在则注册
+    /// </summary>
+    /// <param name="nodeClient"></param>
+    /// <returns></returns>
+    public async Task<ResultDto<bool>> InspectAsync(NodeClient nodeClient)
+    {
+        if(!_nodeClientManager.Contains(nodeClient.Key))
+        {
+            _nodeClientManager.Add(nodeClient);
+        }
+
+        return await Task.FromResult(ResultDto<bool>.SuccessResult(true));
+    }
+    
+    /// <summary>
     /// 注销节点
     /// </summary>
     /// <param name="key"></param>
@@ -41,6 +57,7 @@ public static class NodeExtensions
     public static IServiceCollection AddNodeService(this IServiceCollection services)
     {
         services.AddSingleton<NodeService>();
+        services.AddHostedService<ServiceInspectionBackgroundTask>();
 
         return services;
     }
@@ -54,6 +71,9 @@ public static class NodeExtensions
 
         node.MapPost("register",
             async (NodeService nodeService, NodeClient nodeClient) => await nodeService.RegisterAsync(nodeClient));
+        
+        node.MapPost("inspect",
+            async (NodeService nodeService, NodeClient nodeClient) => await nodeService.InspectAsync(nodeClient));
 
         node.MapDelete("deregister",
             async (NodeService nodeService, string key) => await nodeService.DeregisterAsync(key));

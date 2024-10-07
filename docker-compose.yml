@@ -1,0 +1,7 @@
+﻿services:
+  infrastructure-gateway:
+    image: registry.token-ai.cn/earth-chat/infrastructure-gateway
+    build:
+      context: .
+      dockerfile: src/infrastructure/EarthChat.Infrastructure.Gateway/Dockerfile
+

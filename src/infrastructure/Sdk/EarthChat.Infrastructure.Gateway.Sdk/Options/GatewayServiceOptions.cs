@@ -50,11 +50,6 @@ public class GatewayServiceOptions
             throw new ArgumentNullException(nameof(Token));
         }
 
-        if (string.IsNullOrWhiteSpace(Ip))
-        {
-            throw new ArgumentNullException(nameof(Ip));
-        }
-
         if (Port <= 0)
         {
             throw new ArgumentNullException(nameof(Port));
