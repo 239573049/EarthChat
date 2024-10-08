@@ -68,7 +68,6 @@ public sealed class ServiceInspectionBackgroundTask(
 
         var clientService = httpClientFactory.CreateClient(clientName);
 
-        clientService.Timeout = TimeSpan.FromSeconds(5);
         int retryCount = 0;
         const int maxRetryAttempts = 3;
 
@@ -76,7 +75,6 @@ public sealed class ServiceInspectionBackgroundTask(
         {
             try
             {
-                clientService.Timeout = TimeSpan.FromSeconds(5);
                 var url = new Uri(client.Address + client.HealthCheck);
                 var response = await clientService.GetAsync(url, CancellationToken.None);
 

@@ -54,18 +54,14 @@ public class GatewayClient : IGatewayClient
 
         _id = result.Data ?? throw new Exception("注册失败 id 为空");
 
-
-        await Task.Factory.StartNew(async () =>
+        try
         {
-            try
-            {
-                await InspectService(cancellationToken);
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, "服务检查失败");
-            }
-        }, cancellationToken);
+            await InspectService(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "服务检查失败");
+        }
     }
 
     private async Task InspectService(CancellationToken cancellationToken)

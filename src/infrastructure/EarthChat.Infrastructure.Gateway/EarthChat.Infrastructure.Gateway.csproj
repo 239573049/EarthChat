@@ -1,17 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <NoDefaultLaunchSettingsFile>True</NoDefaultLaunchSettingsFile>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2"/>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
         <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
     </ItemGroup>
 
@@ -22,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
       <ProjectReference Include="..\..\..\framework\EarthChat.Core\EarthChat.Core.csproj" />
       <ProjectReference Include="..\Sdk\EarthChat.Infrastructure.Gateway.Sdk.Data\EarthChat.Infrastructure.Gateway.Sdk.Data.csproj" />
     </ItemGroup>

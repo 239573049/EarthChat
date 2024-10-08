@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk\EarthChat.Infrastructure.Gateway.Sdk.csproj" />
   </ItemGroup>
 

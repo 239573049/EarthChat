@@ -2,7 +2,7 @@
 
 namespace EarthChat.Infrastructure.Gateway.Sdk.Internal;
 
-public class GatewayRegistrationHostedService : IHostedService
+public class GatewayRegistrationHostedService : BackgroundService
 {
     private readonly IGatewayClient _gatewayClient;
 
@@ -11,13 +11,8 @@ public class GatewayRegistrationHostedService : IHostedService
         _gatewayClient = gatewayClient;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        return _gatewayClient.RegisterAsync(cancellationToken);
-    }
-
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return _gatewayClient.ServiceDeregisterAsync(cancellationToken);
+        await _gatewayClient.RegisterAsync(stoppingToken);
     }
 }

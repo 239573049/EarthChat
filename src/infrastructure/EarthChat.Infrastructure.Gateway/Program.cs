@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 builder.WebHost.UseKestrel((options =>
 {
     // 使用http2
@@ -16,6 +18,8 @@ builder.Services.AddNodeService();
 builder.Services.AddGateway(builder.Configuration);
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {

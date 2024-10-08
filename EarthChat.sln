@@ -9,26 +9,30 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "framework", "framework", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{68762AEF-C576-4EBA-8603-533CA60AAB73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Gateway", "src\infrastructure\EarthChat.Infrastructure.Gateway\EarthChat.Infrastructure.Gateway.csproj", "{90B73C32-64E7-499F-ABDF-5C0B624AE992}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Infrastructure.Gateway", "src\infrastructure\EarthChat.Infrastructure.Gateway\EarthChat.Infrastructure.Gateway.csproj", "{90B73C32-64E7-499F-ABDF-5C0B624AE992}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sdk", "Sdk", "{B7305B3D-A837-4CB0-A272-1B229E934578}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Gateway.Sdk", "src\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk\EarthChat.Infrastructure.Gateway.Sdk.csproj", "{01328578-AE90-4A0B-99A8-9BCA76DB7D84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Infrastructure.Gateway.Sdk", "src\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk\EarthChat.Infrastructure.Gateway.Sdk.csproj", "{01328578-AE90-4A0B-99A8-9BCA76DB7D84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{803F048C-CBC4-4920-A489-45E62095AECA}"
 	ProjectSection(SolutionItems) = preProject
+		design.xmind = design.xmind
 		Directory.Build.props = Directory.Build.props
 		docker-compose.yml = docker-compose.yml
-		design.xmind = design.xmind
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Core", "framework\EarthChat.Core\EarthChat.Core.csproj", "{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Core", "framework\EarthChat.Core\EarthChat.Core.csproj", "{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Gateway.Sdk.Data", "src\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk.Data\EarthChat.Infrastructure.Gateway.Sdk.Data.csproj", "{4FC05B34-3299-41AF-A764-6D2211B643E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Infrastructure.Gateway.Sdk.Data", "src\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk.Data\EarthChat.Infrastructure.Gateway.Sdk.Data.csproj", "{4FC05B34-3299-41AF-A764-6D2211B643E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "instant-message", "instant-message", "{4CB0DE8E-2472-4960-95A6-95DB32420A17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.InstantMessage.Service", "src\instant-message\EarthChat.InstantMessage.Service\EarthChat.InstantMessage.Service.csproj", "{A99204D4-FD15-417A-A3F3-6991F59FC551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.InstantMessage.Service", "src\instant-message\EarthChat.InstantMessage.Service\EarthChat.InstantMessage.Service.csproj", "{A99204D4-FD15-417A-A3F3-6991F59FC551}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.AppHost", "EarthChat.AppHost\EarthChat.AppHost.csproj", "{B9A65939-C8BF-4EE4-9AB2-F2D1511FCCFC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.ServiceDefaults", "EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj", "{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +60,14 @@ Global
 		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A99204D4-FD15-417A-A3F3-6991F59FC551}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9A65939-C8BF-4EE4-9AB2-F2D1511FCCFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9A65939-C8BF-4EE4-9AB2-F2D1511FCCFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9A65939-C8BF-4EE4-9AB2-F2D1511FCCFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9A65939-C8BF-4EE4-9AB2-F2D1511FCCFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

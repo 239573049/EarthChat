@@ -15,6 +15,8 @@ public static class ServiceExtensions
                 builder.ConfigureHttpClient(((provider, client) =>
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "EarthChat-Gateway");
+                    
+                    client.Timeout = TimeSpan.FromSeconds(10);
                 }));
             }));
         services.AddSingleton<NodeClientManager>();
