@@ -3,7 +3,7 @@
 namespace EarthChat.Infrastructure.Gateway.ServiceInspection;
 
 /// <summary>
-/// 服务发现扫描
+/// 服务监控检查
 /// </summary>
 /// <param name="logger"></param>
 /// <param name="nodeClientManager"></param>
@@ -37,7 +37,8 @@ public sealed class ServiceInspectionBackgroundTask(
             {
                 var scope = serviceProvider.CreateAsyncScope();
 
-                var tasks = client.Select(c => CheckService(c, scope.ServiceProvider));
+                var tasks = client.Where(x => !string.IsNullOrEmpty(x.HealthCheck))
+                    .Select(c => CheckService(c, scope.ServiceProvider));
 
                 await Task.WhenAll(tasks);
 
@@ -88,6 +89,10 @@ public sealed class ServiceInspectionBackgroundTask(
                     logger.LogInformation("服务检查失败 {clientName} {clientKey}", clientName, clientKey);
                 }
 
+                nodeClientManager.Update(client.Service, client.Key, response.IsSuccessStatusCode
+                    ? NodeClientStats.Healthy
+                    : NodeClientStats.Exception);
+
                 return; // 成功后退出循环
             }
             catch (Exception e)
@@ -103,6 +108,6 @@ public sealed class ServiceInspectionBackgroundTask(
         }
 
         logger.LogError("服务检查失败超过最大重试次数，移除客户端 {clientName} {clientKey}", clientName, clientKey);
-        nodeClientManager.Remove(client.Service, client.Key);
+        nodeClientManager.Update(client.Service, client.Key, NodeClientStats.Unhealthy);
     }
 }

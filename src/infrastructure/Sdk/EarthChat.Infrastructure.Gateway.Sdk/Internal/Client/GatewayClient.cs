@@ -57,7 +57,14 @@ public class GatewayClient : IGatewayClient
 
         await Task.Factory.StartNew(async () =>
         {
-            await InspectService(cancellationToken);
+            try
+            {
+                await InspectService(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "服务检查失败");
+            }
         }, cancellationToken);
     }
 
@@ -83,7 +90,10 @@ public class GatewayClient : IGatewayClient
             {
                 _logger.LogError(e, "服务检查失败");
             }
-            await Task.Delay(5000, cancellationToken);
+            finally
+            {
+                await Task.Delay(15000, cancellationToken);
+            }
         }
     }
 

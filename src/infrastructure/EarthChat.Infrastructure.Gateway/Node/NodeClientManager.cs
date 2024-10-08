@@ -2,6 +2,9 @@
 
 namespace EarthChat.Infrastructure.Gateway.Node;
 
+/// <summary>
+/// 节点服务管理
+/// </summary>
 public class NodeClientManager
 {
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, NodeClient>> _nodeClients = new();
@@ -35,6 +38,19 @@ public class NodeClientManager
             _nodeClients.TryRemove(service.ToLower(), out _);
         }
     }
+    
+    /// <summary>
+    /// 更新指定的节点的状态
+    /// </summary>
+    public void Update(string service, string key, NodeClientStats status)
+    {
+        if (!_nodeClients.TryGetValue(service.ToLower(), out var nodeClients)) return;
+        
+        if (nodeClients.TryGetValue(key.ToLower(), out var nodeClient))
+        {
+            nodeClient.Stats = status;
+        }
+    }
 
     public IEnumerable<List<NodeClient>> GetAll()
     {
@@ -51,8 +67,4 @@ public class NodeClientManager
         return _nodeClients.ContainsKey(key.ToLower());
     }
 
-    public bool Contains(NodeClient nodeClient)
-    {
-        return _nodeClients.ContainsKey(nodeClient.Key.ToLower());
-    }
 }
