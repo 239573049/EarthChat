@@ -9,4 +9,9 @@ public  class GatewayOptions
     /// 服务注册token
     /// </summary>
     public string Token { get; set; } = null!;
+    
+    /// <summary>
+    /// 服务前缀
+    /// </summary>
+    public string ServicePrefix { get; set; } = null!;
 }

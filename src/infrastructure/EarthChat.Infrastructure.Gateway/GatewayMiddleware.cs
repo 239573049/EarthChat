@@ -1,4 +1,6 @@
 ﻿using EarthChat.Infrastructure.Gateway.Node;
+using EarthChat.Infrastructure.Gateway.Options;
+using Microsoft.Extensions.Options;
 using Yarp.ReverseProxy.Forwarder;
 
 namespace EarthChat.Infrastructure.Gateway;
@@ -8,24 +10,33 @@ namespace EarthChat.Infrastructure.Gateway;
 /// </summary>
 /// <param name="nodeClientManager"></param>
 /// <param name="httpForwarder"></param>
-public sealed class GatewayMiddleware(NodeClientManager nodeClientManager, IHttpForwarder httpForwarder) : IMiddleware
+public sealed class GatewayMiddleware(
+    NodeClientManager nodeClientManager,
+    IHttpForwarder httpForwarder,
+    IOptions<GatewayOptions> options) : IMiddleware
 {
     private readonly HttpMessageInvoker _httpMessageInvoker = new(new SocketsHttpHandler
     {
-        UseProxy = false,
-        UseCookies = false,
+        UseProxy = true,
         EnableMultipleHttp2Connections = true,
         PooledConnectionIdleTimeout = TimeSpan.FromSeconds(60),
         ConnectTimeout = TimeSpan.FromSeconds(60)
     });
 
+    private readonly string _servicePrefix = options.Value.ServicePrefix.TrimEnd('/').TrimStart('/');
+
     private readonly ForwarderRequestConfig _forwarderRequestConfig = new()
     {
-        ActivityTimeout = TimeSpan.FromSeconds(100)
+        ActivityTimeout = TimeSpan.FromSeconds(100),
     };
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        // 去掉前缀
+        if (!string.IsNullOrEmpty(_servicePrefix) && context.Request.Path.StartsWithSegments($"/{_servicePrefix}"))
+        {
+            context.Request.Path = context.Request.Path.Value?.Substring(_servicePrefix.Length+1);
+        }
         // 截取路由第一个
         var service = context.Request.Path.Value?.Split('/').Skip(1).FirstOrDefault();
         if (string.IsNullOrWhiteSpace(service))
@@ -38,7 +49,7 @@ public sealed class GatewayMiddleware(NodeClientManager nodeClientManager, IHttp
         var nodeClient = nodeClientManager.Get(service)
             .Where(x => x.Stats is NodeClientStats.Healthy or NodeClientStats.Exception)
             .MinBy(x => Guid.NewGuid());
-        
+
         if (nodeClient == null)
         {
             await next(context);
@@ -47,6 +58,7 @@ public sealed class GatewayMiddleware(NodeClientManager nodeClientManager, IHttp
 
         // 增加请求头
         context.Request.Headers["Gateway-Node-Id"] = nodeClient.Key;
+
         // 删除路由第一个
         context.Request.Path = context.Request.Path.Value?[(service.Length + 1)..];
 
