@@ -15,6 +15,7 @@ public sealed class GatewayMiddleware(NodeClientManager nodeClientManager, IHttp
         UseProxy = false,
         UseCookies = false,
         EnableMultipleHttp2Connections = true,
+        PooledConnectionIdleTimeout = TimeSpan.FromSeconds(60),
         ConnectTimeout = TimeSpan.FromSeconds(60)
     });
 
@@ -34,7 +35,10 @@ public sealed class GatewayMiddleware(NodeClientManager nodeClientManager, IHttp
         }
 
         // 获取节点
-        var nodeClient = nodeClientManager.Get(service).OrderBy(x => Guid.NewGuid()).FirstOrDefault();
+        var nodeClient = nodeClientManager.Get(service)
+            .Where(x => x.Stats is NodeClientStats.Healthy or NodeClientStats.Exception)
+            .MinBy(x => Guid.NewGuid());
+        
         if (nodeClient == null)
         {
             await next(context);

@@ -7,10 +7,12 @@ namespace EarthChat.Infrastructure.Gateway.Services;
 public class NodeService
 {
     private readonly NodeClientManager _nodeClientManager;
+    private readonly ILogger<NodeService> _logger;
 
-    public NodeService(NodeClientManager nodeClientManager)
+    public NodeService(NodeClientManager nodeClientManager, ILogger<NodeService> logger)
     {
         _nodeClientManager = nodeClientManager;
+        _logger = logger;
     }
 
     /// <summary>
@@ -23,6 +25,9 @@ public class NodeService
         nodeClient.Key = Guid.NewGuid().ToString("N");
         _nodeClientManager.Add(nodeClient);
 
+        _logger.LogInformation("节点注册成功 key:{key} Service:{service} Ip:{ip} Port:{port} HealthCheck:{healthCheck}",
+            nodeClient.Key, nodeClient.Service, nodeClient.Ip, nodeClient.Port, nodeClient.HealthCheck);
+
         return await Task.FromResult(ResultDto<string>.SuccessResult(nodeClient.Key));
     }
 
@@ -33,14 +38,14 @@ public class NodeService
     /// <returns></returns>
     public async Task<ResultDto<bool>> InspectAsync(NodeClient nodeClient)
     {
-        if(!_nodeClientManager.Contains(nodeClient.Key))
+        if (!_nodeClientManager.Contains(nodeClient.Key))
         {
             _nodeClientManager.Add(nodeClient);
         }
 
         return await Task.FromResult(ResultDto<bool>.SuccessResult(true));
     }
-    
+
     /// <summary>
     /// 注销节点
     /// </summary>
@@ -71,7 +76,7 @@ public static class NodeExtensions
 
         node.MapPost("register",
             async (NodeService nodeService, NodeClient nodeClient) => await nodeService.RegisterAsync(nodeClient));
-        
+
         node.MapPost("inspect",
             async (NodeService nodeService, NodeClient nodeClient) => await nodeService.InspectAsync(nodeClient));
 

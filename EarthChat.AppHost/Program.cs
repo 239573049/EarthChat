@@ -8,5 +8,4 @@ var gateway = builder.AddProject<Projects.EarthChat_Infrastructure_Gateway>("ear
 instantMessage
     .WithReference(gateway);
 
-
 builder.Build().Run();
