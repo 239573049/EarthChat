@@ -5,29 +5,23 @@ namespace EarthChat.Core.System.Extensions;
 public static class ByteExtensions
 {
     /// <summary>
-    /// 将字节数组转换为十六进制字符串
+    ///     将字节数组转换为十六进制字符串
     /// </summary>
     /// <param name="bytes"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static string ToHexString(this byte[] bytes)
     {
-        if (bytes == null)
-        {
-            throw new ArgumentNullException(nameof(bytes));
-        }
+        if (bytes == null) throw new ArgumentNullException(nameof(bytes));
 
         var hex = new StringBuilder(bytes.Length * 2);
-        foreach (var b in bytes)
-        {
-            hex.AppendFormat("{0:x2}", b);
-        }
+        foreach (var b in bytes) hex.AppendFormat("{0:x2}", b);
 
         return hex.ToString();
     }
 
     /// <summary>
-    /// 将字节数组转换为 Base64 字符串
+    ///     将字节数组转换为 Base64 字符串
     /// </summary>
     /// <param name="bytes"></param>
     /// <returns></returns>
@@ -37,7 +31,7 @@ public static class ByteExtensions
     }
 
     /// <summary>
-    /// 将字节数组的一部分复制到另一个字节数组
+    ///     将字节数组的一部分复制到另一个字节数组
     /// </summary>
     /// <param name="source"></param>
     /// <param name="destination"></param>
@@ -48,7 +42,7 @@ public static class ByteExtensions
     }
 
     /// <summary>
-    /// 将字节数组的一部分复制到另一个字节数组的指定位置
+    ///     将字节数组的一部分复制到另一个字节数组的指定位置
     /// </summary>
     /// <param name="source"></param>
     /// <param name="destination"></param>
@@ -62,7 +56,7 @@ public static class ByteExtensions
     }
 
     /// <summary>
-    /// 反转字节数组
+    ///     反转字节数组
     /// </summary>
     /// <param name="array"></param>
     public static void Reverse(this byte[] array)

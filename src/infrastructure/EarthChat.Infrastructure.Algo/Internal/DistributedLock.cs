@@ -2,15 +2,14 @@
 
 namespace EarthChat.Infrastructure.Algo.Internal;
 
-
 /// <summary>
-/// 分布式锁
+///     分布式锁
 /// </summary>
 public sealed class DistributedLock : IAsyncDisposable
 {
     private readonly IDatabase _database;
-    private readonly string _lockKey;
     private readonly TimeSpan _expiry;
+    private readonly string _lockKey;
     private readonly string _lockValue;
     private bool _isLocked;
 
@@ -22,10 +21,15 @@ public sealed class DistributedLock : IAsyncDisposable
         _lockValue = Guid.NewGuid().ToString();
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        await ReleaseAsync();
+    }
+
     public async Task<bool> AcquireAsync(TimeSpan timeout, bool isThrow = false)
     {
         var endTime = DateTime.UtcNow.Add(timeout);
-        int retryCount = 0;
+        var retryCount = 0;
 
         while (DateTime.UtcNow < endTime)
         {
@@ -39,19 +43,14 @@ public sealed class DistributedLock : IAsyncDisposable
             // 使用指数退避策略进行等待
             var waitTime = TimeSpan.FromMilliseconds(Math.Pow(2, retryCount) * 10);
             if (waitTime > TimeSpan.FromMilliseconds(100)) // 可设置最大等待时间
-            {
                 waitTime = TimeSpan.FromMilliseconds(100);
-            }
 
             await Task.Delay(waitTime).ConfigureAwait(false);
 
             retryCount++;
         }
 
-        if (isThrow)
-        {
-            throw new IdempotentException("获取锁超时");
-        }
+        if (isThrow) throw new IdempotentException("获取锁超时");
 
         return false; // 超时未获取到锁
     }
@@ -71,10 +70,5 @@ public sealed class DistributedLock : IAsyncDisposable
             await _database.ScriptEvaluateAsync(script, [_lockKey], [_lockValue]);
             _isLocked = false;
         }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await ReleaseAsync();
     }
 }

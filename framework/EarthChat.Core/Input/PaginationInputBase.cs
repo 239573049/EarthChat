@@ -1,18 +1,13 @@
 ﻿namespace EarthChat.Core.Input;
 
 /// <summary>
-/// 分页请求基类
+///     分页请求基类
 /// </summary>
 public abstract class PaginationInputBase
 {
-    private int _page = 1;
     private int _pageSize = 10;
 
-    public int Page
-    {
-        get => _page;
-        set => _page = value;
-    }
+    public int Page { get; set; } = 1;
 
     public int PageSize
     {

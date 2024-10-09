@@ -1,21 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsAspireHost>true</IsAspireHost>
-    <UserSecretsId>e09fc64e-beb1-4478-98eb-93e7b01e076c</UserSecretsId>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsAspireHost>true</IsAspireHost>
+        <UserSecretsId>e09fc64e-beb1-4478-98eb-93e7b01e076c</UserSecretsId>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="8.1.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Aspire.Hosting.AppHost" Version="8.1.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\src\infrastructure\EarthChat.Infrastructure.Gateway\EarthChat.Infrastructure.Gateway.csproj" />
-    <ProjectReference Include="..\src\instant-message\EarthChat.InstantMessage.Service\EarthChat.InstantMessage.Service.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\src\auth\EarthChat.AuthServer\EarthChat.AuthServer.csproj"/>
+        <ProjectReference Include="..\src\gateway\EarthChat.Gateway\EarthChat.Gateway.csproj" />
+        <ProjectReference Include="..\src\instant-message\EarthChat.InstantMessage.Service\EarthChat.InstantMessage.Service.csproj"/>
+    </ItemGroup>
 
 </Project>

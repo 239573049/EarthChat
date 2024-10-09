@@ -1,7 +1,7 @@
 ﻿namespace EarthChat.Core.Models;
 
 /// <summary>
-/// 分页模型
+///     分页模型
 /// </summary>
 /// <typeparam name="TResult"></typeparam>
 public class PaginationDto<TResult> where TResult : class

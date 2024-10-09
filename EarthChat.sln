@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "framework", "framework", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infrastructure", "infrastructure", "{68762AEF-C576-4EBA-8603-533CA60AAB73}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Infrastructure.Gateway", "src\infrastructure\EarthChat.Infrastructure.Gateway\EarthChat.Infrastructure.Gateway.csproj", "{90B73C32-64E7-499F-ABDF-5C0B624AE992}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Gateway", "src\gateway\EarthChat.Gateway\EarthChat.Gateway.csproj", "{90B73C32-64E7-499F-ABDF-5C0B624AE992}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sdk", "Sdk", "{B7305B3D-A837-4CB0-A272-1B229E934578}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Infrastructure.Gateway.Sdk", "src\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk\EarthChat.Infrastructure.Gateway.Sdk.csproj", "{01328578-AE90-4A0B-99A8-9BCA76DB7D84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Gateway.Sdk", "src\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj", "{01328578-AE90-4A0B-99A8-9BCA76DB7D84}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{803F048C-CBC4-4920-A489-45E62095AECA}"
 	ProjectSection(SolutionItems) = preProject
@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Core", "framework\EarthChat.Core\EarthChat.Core.csproj", "{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Infrastructure.Gateway.Sdk.Data", "src\infrastructure\Sdk\EarthChat.Infrastructure.Gateway.Sdk.Data\EarthChat.Infrastructure.Gateway.Sdk.Data.csproj", "{4FC05B34-3299-41AF-A764-6D2211B643E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Gateway.Sdk.Data", "src\gateway\Sdk\EarthChat.Gateway.Sdk.Data\EarthChat.Gateway.Sdk.Data.csproj", "{4FC05B34-3299-41AF-A764-6D2211B643E9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "instant-message", "instant-message", "{4CB0DE8E-2472-4960-95A6-95DB32420A17}"
 EndProject
@@ -35,6 +35,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.ServiceDefaults", "EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj", "{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Algo", "src\infrastructure\EarthChat.Infrastructure.Algo\EarthChat.Infrastructure.Algo.csproj", "{F3A47858-7955-46AA-ABF0-47496310F2E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "auth", "auth", "{2545391C-0A7A-48F8-943E-CBA3905CF043}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.AuthServer", "src\auth\EarthChat.AuthServer\EarthChat.AuthServer.csproj", "{E04B9888-18DF-4DCF-95D1-E8EBB49D3423}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gateway", "gateway", "{3C0931EE-E64A-42ED-A1C1-F1DB2E290B4F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,19 +80,26 @@ Global
 		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E04B9888-18DF-4DCF-95D1-E8EBB49D3423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E04B9888-18DF-4DCF-95D1-E8EBB49D3423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E04B9888-18DF-4DCF-95D1-E8EBB49D3423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E04B9888-18DF-4DCF-95D1-E8EBB49D3423}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{68762AEF-C576-4EBA-8603-533CA60AAB73} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
-		{90B73C32-64E7-499F-ABDF-5C0B624AE992} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
-		{B7305B3D-A837-4CB0-A272-1B229E934578} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
 		{01328578-AE90-4A0B-99A8-9BCA76DB7D84} = {B7305B3D-A837-4CB0-A272-1B229E934578}
 		{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 		{4FC05B34-3299-41AF-A764-6D2211B643E9} = {B7305B3D-A837-4CB0-A272-1B229E934578}
 		{4CB0DE8E-2472-4960-95A6-95DB32420A17} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 		{A99204D4-FD15-417A-A3F3-6991F59FC551} = {4CB0DE8E-2472-4960-95A6-95DB32420A17}
 		{F3A47858-7955-46AA-ABF0-47496310F2E6} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
+		{2545391C-0A7A-48F8-943E-CBA3905CF043} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{E04B9888-18DF-4DCF-95D1-E8EBB49D3423} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
+		{3C0931EE-E64A-42ED-A1C1-F1DB2E290B4F} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{90B73C32-64E7-499F-ABDF-5C0B624AE992} = {3C0931EE-E64A-42ED-A1C1-F1DB2E290B4F}
+		{B7305B3D-A837-4CB0-A272-1B229E934578} = {3C0931EE-E64A-42ED-A1C1-F1DB2E290B4F}
 	EndGlobalSection
 EndGlobal

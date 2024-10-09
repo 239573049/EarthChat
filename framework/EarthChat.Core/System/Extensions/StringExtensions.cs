@@ -103,7 +103,7 @@ public static class StringExtensions
     }
 
     /// <summary>
-    /// Convert a string to a byte array
+    ///     Convert a string to a byte array
     /// </summary>
     /// <param name="hex"></param>
     /// <returns></returns>
@@ -111,28 +111,19 @@ public static class StringExtensions
     /// <exception cref="ArgumentException"></exception>
     public static byte[] FromHexString(this string hex)
     {
-        if (hex == null)
-        {
-            throw new ArgumentNullException(nameof(hex));
-        }
+        if (hex == null) throw new ArgumentNullException(nameof(hex));
 
-        if (hex.Length % 2 != 0)
-        {
-            throw new ArgumentException("Hex string must have an even number of characters");
-        }
+        if (hex.Length % 2 != 0) throw new ArgumentException("Hex string must have an even number of characters");
 
         var bytes = new byte[hex.Length / 2];
-        for (int i = 0; i < hex.Length; i += 2)
-        {
-            bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-        }
+        for (var i = 0; i < hex.Length; i += 2) bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
 
         return bytes;
     }
 
 
     /// <summary>
-    /// 将 Base64 字符串转换为字节数组
+    ///     将 Base64 字符串转换为字节数组
     /// </summary>
     /// <param name="base64"></param>
     /// <returns></returns>

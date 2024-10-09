@@ -1,5 +1,4 @@
-using EarthChat.Infrastructure.Gateway.Sdk;
-using EarthChat.Infrastructure.Gateway.Sdk.Options;
+using EarthChat.Gateway.Sdk;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,16 +7,7 @@ builder.AddServiceDefaults();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var gatewayServiceOptions = builder.Configuration.GetSection("Gateway").Get<GatewayServiceOptions>();
-
-builder.Services.AddGatewayService(options =>
-{
-    options.Service = gatewayServiceOptions.Service;
-    options.Address = gatewayServiceOptions.Address;
-    options.Port = gatewayServiceOptions.Port;
-    options.Ip = gatewayServiceOptions.Ip;
-    options.Token = gatewayServiceOptions.Token;
-});
+builder.Services.AddGatewayService(builder.Configuration);
 
 var app = builder.Build();
 
@@ -51,7 +41,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }

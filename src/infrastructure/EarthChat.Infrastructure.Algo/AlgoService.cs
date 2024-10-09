@@ -6,8 +6,8 @@ using StackExchange.Redis;
 namespace EarthChat.Infrastructure.Algo;
 
 /// <summary>
-/// 算法服务
-/// 提供需要算法解决的基础组件
+///     算法服务
+///     提供需要算法解决的基础组件
 /// </summary>
 public sealed class AlgoService : IAlgoService
 {
@@ -87,9 +87,9 @@ public sealed class AlgoService : IAlgoService
         var db = Db;
 
         var distributedLock = new DistributedLock(db, key, waitExpire);
-        
+
         await distributedLock.AcquireAsync(waitExpire, isThrow).ConfigureAwait(false);
-        
+
         return distributedLock;
     }
 }
