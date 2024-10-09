@@ -34,6 +34,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.AppHost", "EarthC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.ServiceDefaults", "EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj", "{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Infrastructure.Algo", "src\infrastructure\EarthChat.Infrastructure.Algo\EarthChat.Infrastructure.Algo.csproj", "{F3A47858-7955-46AA-ABF0-47496310F2E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9B95AA3-E885-43DB-A4F6-17B5A5D2A5D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3A47858-7955-46AA-ABF0-47496310F2E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,5 +87,6 @@ Global
 		{4FC05B34-3299-41AF-A764-6D2211B643E9} = {B7305B3D-A837-4CB0-A272-1B229E934578}
 		{4CB0DE8E-2472-4960-95A6-95DB32420A17} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 		{A99204D4-FD15-417A-A3F3-6991F59FC551} = {4CB0DE8E-2472-4960-95A6-95DB32420A17}
+		{F3A47858-7955-46AA-ABF0-47496310F2E6} = {68762AEF-C576-4EBA-8603-533CA60AAB73}
 	EndGlobalSection
 EndGlobal
