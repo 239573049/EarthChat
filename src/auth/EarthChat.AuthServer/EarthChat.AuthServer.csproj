@@ -9,6 +9,9 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.10"/>
+        <PackageReference Include="OpenIddict.AspNetCore" Version="5.8.0" />
+        <PackageReference Include="OpenIddict.Quartz" Version="5.8.0" />
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1"/>
     </ItemGroup>
 
@@ -21,6 +24,8 @@
     <ItemGroup>
         <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj"/>
         <ProjectReference Include="..\..\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj" />
+        <ProjectReference Include="..\EarthChat.Auth.Application\EarthChat.Auth.Application.csproj" />
+        <ProjectReference Include="..\EarthChat.Auth.EntityFrameworkCore\EarthChat.Auth.EntityFrameworkCore.csproj" />
     </ItemGroup>
 
 </Project>
