@@ -1,4 +1,4 @@
-﻿using EarthChat.Identity.Data;
+﻿using EarthChat.Identity.Abstractions;
 using EarthChat.Identity.Options;
 using Microsoft.Extensions.DependencyInjection;
 

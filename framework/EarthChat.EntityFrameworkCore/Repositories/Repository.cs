@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace EarthChat.EntityFrameworkCore.Repositories;
 
-public abstract class Repository<IDbContext, TEntity>(IDbContext dbContext) : IRepository<TEntity>
-    where IDbContext : DbContext
+public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : IRepository<TEntity>
+    where TDbContext : DbContext
     where TEntity : class
 {
-    protected readonly IDbContext DbContext = dbContext;
+    protected readonly TDbContext DbContext = dbContext;
 
     protected readonly DbSet<TEntity> DbSet = dbContext.Set<TEntity>();
 
@@ -24,14 +24,6 @@ public abstract class Repository<IDbContext, TEntity>(IDbContext dbContext) : IR
         DbSet.Update(entity);
 
         return await Task.FromResult(entity);
-    }
-
-    public async Task<int> UpdateAsync(Expression<Func<TEntity, bool>> predicate,
-        Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyCalls,
-        CancellationToken cancellationToken = default)
-    {
-        return await DbSet.Where(predicate)
-            .ExecuteUpdateAsync(setPropertyCalls, cancellationToken);
     }
 
     public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)

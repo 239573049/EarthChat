@@ -10,11 +10,16 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="8.0.10" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.10" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\EarthChat.Ddd\EarthChat.Ddd.csproj" />
-      <ProjectReference Include="..\EarthChat.Identity.Data\EarthChat.Identity.Data.csproj" />
+      <ProjectReference Include="..\EarthChat.EntityFrameworkCore.Abstractions\EarthChat.EntityFrameworkCore.Abstractions.csproj" />
+      <ProjectReference Include="..\EarthChat.Identity.Abstractions\EarthChat.Identity.Abstractions.csproj" />
     </ItemGroup>
 
 </Project>

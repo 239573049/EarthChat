@@ -10,4 +10,8 @@
       <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="8.0.10" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\framework\EarthChat.EntityFrameworkCore.Abstractions\EarthChat.EntityFrameworkCore.Abstractions.csproj" />
+    </ItemGroup>
+
 </Project>

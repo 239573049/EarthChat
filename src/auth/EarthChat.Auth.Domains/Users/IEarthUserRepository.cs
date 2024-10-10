@@ -1,6 +1,8 @@
-﻿namespace EarthChat.Auth.Domains;
+﻿using EarthChat.EntityFrameworkCore.Repositories;
 
-public interface IEarthUserRepository
+namespace EarthChat.Auth.Domains;
+
+public interface IEarthUserRepository: IRepository<EarthUser>
 {
     
 }

@@ -1,4 +1,5 @@
 ﻿using EarthChat.Auth.Domains;
+using EarthChat.Auth.EntityFrameworkCore.Users.Repositories;
 using EarthChat.EntityFrameworkCore.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,14 +22,15 @@ public static class ServiceExtensions
         {
             options.UseNpgsql(configuration.GetConnectionString("Default"))
                 .EnableDetailedErrors();
-            
+
             options.UseOpenIddict();
-            
         });
-        
+
         services.AddIdentity<EarthUser, IdentityRole>()
             .AddEntityFrameworkStores<AuthDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddScoped<IEarthUserRepository, EarthUserRepository>();
 
         return services;
     }

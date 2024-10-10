@@ -48,13 +48,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.EntityFrameworkCo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Identity", "framework\EarthChat.Identity\EarthChat.Identity.csproj", "{AECDA44F-096E-4323-8AFB-D13C33D538D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Identity.Data", "framework\EarthChat.Identity.Data\EarthChat.Identity.Data.csproj", "{D3FEF8F2-7B52-4DD0-9C12-38C754A7ED9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Identity.Abstractions", "framework\EarthChat.Identity.Abstractions\EarthChat.Identity.Abstractions.csproj", "{D3FEF8F2-7B52-4DD0-9C12-38C754A7ED9F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Ddd", "framework\EarthChat.Ddd\EarthChat.Ddd.csproj", "{58CF4E29-F7F1-43D2-8C18-B5A4C45EA4D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Auth.EntityFrameworkCore", "src\auth\EarthChat.Auth.EntityFrameworkCore\EarthChat.Auth.EntityFrameworkCore.csproj", "{8E72B734-45BC-4EEA-B107-AC27C644BF2C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Auth.Application", "src\auth\EarthChat.Auth.Application\EarthChat.Auth.Application.csproj", "{5141CED3-F983-43C8-A177-897EC57892EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.EntityFrameworkCore.Abstractions", "framework\EarthChat.EntityFrameworkCore.Abstractions\EarthChat.EntityFrameworkCore.Abstractions.csproj", "{522EF29C-4D10-4DA7-94DE-15A14761CAE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.DbMigrator", "src\EarthChat.DbMigrator\EarthChat.DbMigrator.csproj", "{F357B4E5-F400-4B7B-8BA4-5EEA9A550996}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,6 +130,14 @@ Global
 		{5141CED3-F983-43C8-A177-897EC57892EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5141CED3-F983-43C8-A177-897EC57892EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5141CED3-F983-43C8-A177-897EC57892EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{522EF29C-4D10-4DA7-94DE-15A14761CAE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{522EF29C-4D10-4DA7-94DE-15A14761CAE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{522EF29C-4D10-4DA7-94DE-15A14761CAE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{522EF29C-4D10-4DA7-94DE-15A14761CAE3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F357B4E5-F400-4B7B-8BA4-5EEA9A550996}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F357B4E5-F400-4B7B-8BA4-5EEA9A550996}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F357B4E5-F400-4B7B-8BA4-5EEA9A550996}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F357B4E5-F400-4B7B-8BA4-5EEA9A550996}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -150,5 +162,7 @@ Global
 		{58CF4E29-F7F1-43D2-8C18-B5A4C45EA4D9} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 		{8E72B734-45BC-4EEA-B107-AC27C644BF2C} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
 		{5141CED3-F983-43C8-A177-897EC57892EA} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
+		{522EF29C-4D10-4DA7-94DE-15A14761CAE3} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
+		{F357B4E5-F400-4B7B-8BA4-5EEA9A550996} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 	EndGlobalSection
 EndGlobal

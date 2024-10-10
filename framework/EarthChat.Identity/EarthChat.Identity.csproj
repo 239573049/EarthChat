@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\EarthChat.Identity.Data\EarthChat.Identity.Data.csproj"/>
+        <ProjectReference Include="..\EarthChat.Identity.Abstractions\EarthChat.Identity.Abstractions.csproj" />
     </ItemGroup>
 
     <ItemGroup>

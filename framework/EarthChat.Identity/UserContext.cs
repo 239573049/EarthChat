@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-using EarthChat.Identity.Data;
+using EarthChat.Identity.Abstractions;
 using EarthChat.Identity.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;

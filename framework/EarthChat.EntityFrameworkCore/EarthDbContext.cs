@@ -3,7 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using EarthChat.Ddd;
 using EarthChat.EntityFrameworkCore.Options;
-using EarthChat.Identity.Data;
+using EarthChat.Identity.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +17,7 @@ namespace EarthChat.EntityFrameworkCore;
 /// <param name="options"></param>
 /// <typeparam name="TDbContext"></typeparam>
 public abstract class EarthDbContext<TDbContext>(
-    DbContextOptions<TDbContext> options,
+    DbContextOptions options,
     IServiceProvider serviceProvider)
     : DbContext(options) where TDbContext : DbContext
 {

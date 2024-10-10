@@ -1,4 +1,4 @@
-﻿namespace EarthChat.Identity.Data;
+﻿namespace EarthChat.Identity.Abstractions;
 
 public interface IUserContext
 {
