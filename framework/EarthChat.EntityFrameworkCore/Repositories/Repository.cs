@@ -10,59 +10,62 @@ public abstract class Repository<TDbContext, TEntity>(TDbContext dbContext) : IR
 {
     protected readonly TDbContext DbContext = dbContext;
 
-    protected readonly DbSet<TEntity> DbSet = dbContext.Set<TEntity>();
+    protected readonly DbSet<TEntity?> DbSet = dbContext.Set<TEntity>();
 
-    public async Task<TEntity> InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async Task<TEntity> InsertAsync(TEntity? entity, CancellationToken cancellationToken = default)
     {
         var entityEntry = await DbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
 
         return entityEntry.Entity;
     }
 
-    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async Task<TEntity?> UpdateAsync(TEntity? entity, CancellationToken cancellationToken = default)
     {
         DbSet.Update(entity);
 
         return await Task.FromResult(entity);
     }
 
-    public Task DeleteAsync(TEntity entity, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(TEntity? entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        DbSet.Remove(entity);
+
+        await Task.CompletedTask;
     }
 
-    public Task<int> DeleteAsync(Expression<Func<TEntity, bool>> predicate,
+    public async Task<int> DeleteAsync(Expression<Func<TEntity?, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await DbSet.Where(predicate)
+            .ExecuteDeleteAsync(cancellationToken: cancellationToken);
     }
 
-    public Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> predicate,
+    public async Task<TEntity?> FindAsync(Expression<Func<TEntity?, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await DbSet.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 
-    public Task<List<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> predicate,
+    public async Task<List<TEntity?>> GetListAsync(Expression<Func<TEntity?, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await DbSet.Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate,
+    public async Task<int> CountAsync(Expression<Func<TEntity?, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await DbSet.CountAsync(predicate, cancellationToken);
     }
 
-    public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken = default)
+    public async Task<bool> AnyAsync(Expression<Func<TEntity?, bool>> predicate, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await DbSet.AnyAsync(predicate, cancellationToken);
     }
 
-    public Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate,
+    public async Task<TEntity> FirstOrDefaultAsync(Expression<Func<TEntity?, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await DbSet.FirstOrDefaultAsync(predicate, cancellationToken);
     }
 }

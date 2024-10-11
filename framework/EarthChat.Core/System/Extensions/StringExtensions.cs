@@ -1,4 +1,7 @@
-﻿namespace EarthChat.Core.System.Extensions;
+﻿using System.Security.Cryptography;
+using System.Text;
+
+namespace EarthChat.Core.System.Extensions;
 
 public static class StringExtensions
 {
@@ -130,5 +133,21 @@ public static class StringExtensions
     public static byte[] FromBase64String(this string base64)
     {
         return Convert.FromBase64String(base64);
+    }
+    
+    /// <summary>
+    /// MD5加密
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="salt"></param>
+    /// <returns></returns>
+    public static string ToMd5(this string value, string salt = "")
+    {
+        using var md5 = MD5.Create();
+        var inputBytes = Encoding.UTF8.GetBytes(value + salt);
+        var hashBytes = md5.ComputeHash(inputBytes);
+        var sb = new StringBuilder();
+        foreach (var t in hashBytes) sb.Append(t.ToString("X2"));
+        return sb.ToString();
     }
 }

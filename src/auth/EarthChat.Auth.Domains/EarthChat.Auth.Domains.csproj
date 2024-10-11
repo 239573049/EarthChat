@@ -11,6 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\..\framework\EarthChat.Core\EarthChat.Core.csproj" />
       <ProjectReference Include="..\..\..\framework\EarthChat.EntityFrameworkCore.Abstractions\EarthChat.EntityFrameworkCore.Abstractions.csproj" />
     </ItemGroup>
 

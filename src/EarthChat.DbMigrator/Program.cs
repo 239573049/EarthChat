@@ -16,13 +16,19 @@ Log.Logger = new LoggerConfiguration()
 #endif
     .Enrich.FromLogContext()
     .WriteTo.Async(c => c.File("Logs/logs.txt"))
-    .WriteTo.Async(c => c.Console())
+    .WriteTo.Async(c => c.Console(), blockWhenFull: true)
     .CreateLogger();
 
+Log.Logger.Information("Starting DbMigrator...");
 
 Host.CreateDefaultBuilder(args)
     .AddAppSettingsSecretsJson()
-    .ConfigureLogging((context, logging) => logging.ClearProviders())
+    .ConfigureLogging(((context, builder) =>
+    {
+        builder.ClearProviders();
+        
+        builder.AddSerilog(Log.Logger);
+    }))
     .ConfigureServices(((context, services) =>
     {
         services.AddAuth(context.Configuration);
@@ -31,5 +37,8 @@ Host.CreateDefaultBuilder(args)
 
         services.AddHttpContextAccessor();
     }))
+    .AddDataSeedContributorService()
     .Build()
     .Run();
+    
+Log.Logger.Information("DbMigrator started.");

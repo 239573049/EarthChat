@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\..\framework\EarthChat.Core\EarthChat.Core.csproj" />
       <ProjectReference Include="..\..\framework\EarthChat.EntityFrameworkCore\EarthChat.EntityFrameworkCore.csproj" />
       <ProjectReference Include="..\auth\EarthChat.Auth.EntityFrameworkCore\EarthChat.Auth.EntityFrameworkCore.csproj" />
     </ItemGroup>

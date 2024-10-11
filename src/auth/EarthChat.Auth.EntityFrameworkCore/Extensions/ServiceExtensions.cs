@@ -1,4 +1,5 @@
 ﻿using EarthChat.Auth.Domains;
+using EarthChat.Auth.Domains.Extensions;
 using EarthChat.Auth.EntityFrameworkCore.Users.Repositories;
 using EarthChat.EntityFrameworkCore.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -18,6 +19,8 @@ public static class ServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        
         services.AddEarthChatDbContext<AuthDbContext>(options =>
         {
             options.UseNpgsql(configuration.GetConnectionString("Default"))
@@ -32,6 +35,8 @@ public static class ServiceExtensions
 
         services.AddScoped<IEarthUserRepository, EarthUserRepository>();
 
+        services.AddAuthDomains();
+        
         return services;
     }
 }
