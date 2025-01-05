@@ -1,4 +1,5 @@
 using EarthChat.Gateway.Sdk;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,7 @@ builder.AddServiceDefaults();
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddGatewayService(builder.Configuration);
 
@@ -15,13 +16,19 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    app.MapOpenApi();
 
+    app.MapScalarApiReference((options =>
+    {
+        options.Title = "EarthChat Auth Server";
+        options.Authentication = new ScalarAuthenticationOptions()
+        {
+            PreferredSecurityScheme = "Bearer",
+        };
+    }));
+}
 app.UseHttpsRedirection();
 
 var summaries = new[]

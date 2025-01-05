@@ -25,35 +25,50 @@ public class GatewayClient : IGatewayClient
 
     public async Task RegisterAsync(CancellationToken cancellationToken)
     {
-        if (_options.Ip.IsNullOrWhiteSpace()) _options.Ip = IpHelper.GetLocalIp();
-
-        // 发送注册请求
-        var response = await _client.PostAsJsonAsync("/api/v1/node/register", new NodeClient
+        for (var i = 0; i < 3; i++)
         {
-            Service = _options.Service,
-            Token = _options.Token,
-            Ip = _options.Ip,
-            Port = _options.Port,
-            HealthCheck = _options.HealthCheck
-        }, cancellationToken);
+            try
+            {
+                if (_options.Ip.IsNullOrWhiteSpace()) _options.Ip = IpHelper.GetLocalIp();
 
-        // 注册成功
-        var result = await response.Content.ReadFromJsonAsync<ResultDto<string>>(cancellationToken)
-            .ConfigureAwait(false);
+                // 发送注册请求
+                var response = await _client.PostAsJsonAsync("/api/v1/node/register", new NodeClient
+                {
+                    Service = _options.Service,
+                    Token = _options.Token,
+                    Ip = _options.Ip,
+                    Port = _options.Port,
+                    HealthCheck = _options.HealthCheck
+                }, cancellationToken);
 
-        if (result is not { Success: true }) throw new Exception(result?.Message);
+                // 注册成功
+                var result = await response.Content.ReadFromJsonAsync<ResultDto<string>>(cancellationToken)
+                    .ConfigureAwait(false);
 
-        _logger.LogInformation("服务注册成功 id:{id}", result.Data);
+                if (result is not { Success: true }) throw new Exception(result?.Message);
 
-        _id = result.Data ?? throw new Exception("注册失败 id 为空");
+                _logger.LogInformation("服务注册成功 id:{id}", result.Data);
 
-        try
-        {
-            await InspectService(cancellationToken);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "服务检查失败");
+                _id = result.Data ?? throw new Exception("注册失败 id 为空");
+
+                try
+                {
+                    await InspectService(cancellationToken);
+
+                    break;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "服务检查失败");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "服务注册失败");
+                
+                await Task.Delay(5000, cancellationToken);
+                
+            }
         }
     }
 

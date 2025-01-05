@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:8100",
+      "applicationUrl": "http://localhost:58100",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_SERVICE_NAME": "Gateway"
@@ -25,7 +25,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:8101;http://localhost:8100",
+      "applicationUrl": "https://localhost:58101;http://localhost:58100",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_SERVICE_NAME": "Gateway"

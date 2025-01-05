@@ -1,16 +1,9 @@
-using Projects;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
-var instantMessage = builder.AddProject<EarthChat_InstantMessage_Service>("earthchat-instantmessage");
+builder.AddProject<Projects.EarthChat_Gateway>("earthchat-gateway");
 
-var gateway = builder.AddProject<EarthChat_Gateway>("earthchat-gateway")
-    .WithReference(instantMessage);
+builder.AddProject<Projects.EarthChat_InstantMessage_Service>("instantmessage");
 
-instantMessage
-    .WithReference(gateway);
-
-builder.AddProject<EarthChat_AuthServer>("earthchat-authserver")
-    .WithReference(gateway);
+builder.AddProject<Projects.EarthChat_AuthServer>("auth");
 
 builder.Build().Run();

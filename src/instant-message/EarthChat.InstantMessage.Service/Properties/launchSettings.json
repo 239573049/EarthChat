@@ -14,7 +14,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:8010",
+      "applicationUrl": "http://localhost:58110",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "OTEL_SERVICE_NAME": "InstantMessage"
@@ -25,7 +25,7 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7017;http://localhost:5128",
+      "applicationUrl": "https://localhost:58111;http://localhost:58110",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
