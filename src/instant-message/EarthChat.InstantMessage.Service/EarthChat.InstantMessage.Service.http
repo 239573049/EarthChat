@@ -1,6 +1,0 @@
-@EarthChat.InstantMessage.Service_HostAddress = http://localhost:5128
-
-GET {{EarthChat.InstantMessage.Service_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

@@ -1,0 +1,118 @@
+/* 页面背景和字体样式 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* 登录容器样式 */
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    padding: 40px 30px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* 更柔和的阴影 */
+    border-radius: 16px; /* 更大的圆角 */
+    text-align: center;
+}
+
+/* Logo样式 */
+.login-logo {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 120px;
+}
+
+/* 欢迎标题 */
+.welcome-title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+    user-select: none;
+}
+
+/* 表单项样式 */
+.ant-form-item {
+    margin-bottom: 20px;
+}
+
+/* 验证码图片样式 */
+.captcha-image {
+    display: block;
+    margin: 10px auto;
+    border-radius: 8px; /* 增加圆角 */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 添加阴影 */
+}
+
+/* 刷新按钮样式 */
+.refresh-button {
+    width: 100%;
+    border-radius: 8px; /* 增加圆角 */
+    transition: background-color 0.3s, transform 0.3s; /* 添加过渡效果 */
+    color: #333; /* 默认字体颜色 */
+}
+
+/* 响应式调整 */
+@media (max-width: 400px) {
+    .login-container {
+        padding: 30px 20px; /* 调整小屏幕下的内边距 */
+    }
+
+    .login-logo {
+        width: 100px; /* 调整小屏幕下的Logo大小 */
+    }
+
+    .welcome-title {
+        font-size: 20px; /* 调整小屏幕下的标题大小 */
+    }
+} 
+
+.third-party-login {
+    margin-top: 24px;
+}
+
+.divider {
+    position: relative;
+    text-align: center;
+    margin: 16px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 45%;
+    height: 1px;
+    background-color: #e8e8e8;
+}
+
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
+.divider-text {
+    padding: 0 8px;
+    color: #999;
+    background-color: #fff;
+}
+
+.login-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.login-buttons .ant-btn img {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}

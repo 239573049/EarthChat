@@ -7,6 +7,7 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\..\..\framework\EarthChat.Serilog\EarthChat.Serilog.csproj" />
         <ProjectReference Include="..\..\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj" />
     </ItemGroup>
 

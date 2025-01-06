@@ -1,5 +1,6 @@
 using EarthChat.Gateway.Sdk;
 using EarthChat.Gateway.Sdk.Extensions;
+using EarthChat.Serilog.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseGatewayNode();
 
 builder.AddServiceDefaults();
+
+builder.Services.AddSerilog(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();

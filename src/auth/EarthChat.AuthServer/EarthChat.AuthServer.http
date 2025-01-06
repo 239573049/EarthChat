@@ -1,6 +1,0 @@
-@EarthChat.AuthServer_HostAddress = http://localhost:5105
-
-GET {{EarthChat.AuthServer_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

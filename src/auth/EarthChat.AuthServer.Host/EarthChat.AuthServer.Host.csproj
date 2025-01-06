@@ -8,6 +8,7 @@
     </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Gnarly" Version="1.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
     <PackageReference Include="Scalar.AspNetCore" Version="1.2.72" />
   </ItemGroup>
@@ -20,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\..\..\framework\EarthChat.Serilog\EarthChat.Serilog.csproj" />
         <ProjectReference Include="..\..\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj" />
     </ItemGroup>
 

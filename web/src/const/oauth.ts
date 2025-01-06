@@ -1,0 +1,2 @@
+export const GITHUB_CLIENT_ID = '1234567890';
+export const GITEE_CLIENT_ID = '1234567890';

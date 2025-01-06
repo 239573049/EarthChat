@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using EarthChat.Infrastructure.Gateway;
+using EarthChat.Serilog.Extensions;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Scalar.AspNetCore;
 using Yarp.ReverseProxy.Configuration;
@@ -8,6 +9,8 @@ using Yarp.ReverseProxy.Transforms;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
+builder.Services.AddSerilog(builder.Configuration);
 
 builder.Services.AddReverseProxy()
     .LoadFromMemory(new Collection<RouteConfig>(), new Collection<ClusterConfig>())

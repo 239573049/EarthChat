@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Gnarly.Data" Version="1.0.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\framework\EarthChat.Domain\EarthChat.Domain.csproj" />
+      <ProjectReference Include="..\EarthChat.AuthServer.Application.Contract\EarthChat.AuthServer.Application.Contract.csproj" />
+    </ItemGroup>
+
+</Project>
