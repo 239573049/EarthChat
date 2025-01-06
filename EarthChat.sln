@@ -62,6 +62,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.AuthServer.Domain
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.AuthServer.EntityFrameworkCore", "src\auth\EarthChat.AuthServer.EntityFrameworkCore\EarthChat.AuthServer.EntityFrameworkCore.csproj", "{F5837617-CCB4-4C69-A2C3-4128C591A237}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Redis", "framework\EarthChat.Redis\EarthChat.Redis.csproj", "{606532AB-F8BB-4EC2-971F-95CA22EAA033}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -148,6 +150,10 @@ Global
 		{F5837617-CCB4-4C69-A2C3-4128C591A237}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5837617-CCB4-4C69-A2C3-4128C591A237}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5837617-CCB4-4C69-A2C3-4128C591A237}.Release|Any CPU.Build.0 = Release|Any CPU
+		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -175,5 +181,6 @@ Global
 		{FF0778C7-8A79-4B50-A739-BF54301CC2A7} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 		{6E2332CB-2B58-4F81-8D60-594BD3666317} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
 		{F5837617-CCB4-4C69-A2C3-4128C591A237} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
+		{606532AB-F8BB-4EC2-971F-95CA22EAA033} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 	EndGlobalSection
 EndGlobal

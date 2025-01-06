@@ -23,6 +23,7 @@
         <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
         <ProjectReference Include="..\..\..\framework\EarthChat.Serilog\EarthChat.Serilog.csproj" />
         <ProjectReference Include="..\..\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj" />
+        <ProjectReference Include="..\EarthChat.AuthServer.EntityFrameworkCore\EarthChat.AuthServer.EntityFrameworkCore.csproj" />
     </ItemGroup>
 
 </Project>
