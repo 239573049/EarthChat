@@ -1,6 +1,8 @@
-﻿using EarthChat.Infrastructure.Gateway.Gateway;
-using EarthChat.Infrastructure.Gateway.Node;
-using EarthChat.Infrastructure.Gateway.Options;
+﻿using EarthChat.Infrastructure.Gateway.Options;
+using EarthChat.Infrastructure.Gateway.Tunnels;
+using Yarp.ReverseProxy.Forwarder;
+
+// ReSharper disable All
 
 namespace EarthChat.Infrastructure.Gateway;
 
@@ -8,19 +10,18 @@ public static class ServiceExtensions
 {
     public static IServiceCollection AddGateway(this IServiceCollection services)
     {
-        services.AddSingleton<GatewayMemory>();
-        services.AddHttpClient()
-            .ConfigureHttpClientDefaults(builder =>
-            {
-                builder.ConfigureHttpClient((provider, client) =>
-                {
-                    client.DefaultRequestHeaders.Add("User-Agent", "EarthChat-Gateway");
 
-                    client.Timeout = TimeSpan.FromSeconds(10);
-                });
-            });
-        services.AddSingleton<NodeClientManager>();
+        services.AddSingleton<YarpMemoryService>();
 
+        services.AddSingleton<NodeMiddleware>();
+        services.AddSingleton<TunnelMiddleware>();
+        services.AddSingleton<GatewayClientManager>();
+        services.AddSingleton<GatewayClientStateChannel>();
+        services.AddSingleton<HttpTunnelFactory>();
+        services.AddSingleton<TunnelClientFactory>();
+
+        services.AddSingleton<IForwarderHttpClientFactory>((s) => s.GetRequiredService<TunnelClientFactory>());     
+        
         return services;
     }
 
@@ -33,9 +34,17 @@ public static class ServiceExtensions
         return services;
     }
 
-    public static IEndpointRouteBuilder UseGatewayMiddleware(this IEndpointRouteBuilder app)
+    public static WebApplication UseGatewayMiddleware(this WebApplication app)
     {
         app.MapReverseProxy();
+        
+        app.Map("/gateway/node",(builder =>
+        {
+            // 注意这里的顺序，先添加NodeMiddleware再添加TunnelMiddleware
+            builder.UseMiddleware<NodeMiddleware>();
+            builder.UseMiddleware<TunnelMiddleware>();
+        }));
+        
         return app;
     }
 }

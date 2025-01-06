@@ -1,14 +1,17 @@
 using EarthChat.Gateway.Sdk;
+using EarthChat.Gateway.Sdk.Extensions;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.WebHost.UseGatewayNode();
 
 builder.AddServiceDefaults();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
-builder.Services.AddGatewayService(builder.Configuration);
+builder.Services.AddGatewayNode(builder.Configuration);
 
 var app = builder.Build();
 

@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using EarthChat.Infrastructure.Gateway;
-using EarthChat.Infrastructure.Gateway.Services;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Scalar.AspNetCore;
 using Yarp.ReverseProxy.Configuration;
+using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,12 +11,28 @@ builder.AddServiceDefaults();
 
 builder.Services.AddReverseProxy()
     .LoadFromMemory(new Collection<RouteConfig>(), new Collection<ClusterConfig>())
+    .AddTransforms((context =>
+    {
+        var prefix = context.Route.Match.Path?.Replace("/{**catch-all}", "");
+        if (!string.IsNullOrEmpty(prefix))
+        {
+            if (prefix.StartsWith('/'))
+                context.AddPathRemovePrefix(prefix);
+        }
+        
+        // 添加原始主机
+        context.AddOriginalHost(true);
+        
+    }))
     .ConfigureHttpClient(((context, handler) =>
     {
         handler.SslOptions.RemoteCertificateValidationCallback =
             (sender, certificate, chain, errors) => true;
-    }))
-    .AddServiceDiscoveryDestinationResolver();
+        // 尽可能复用
+        handler.EnableMultipleHttp2Connections = true;
+        handler.MaxConnectionsPerServer = 10;
+        handler.InitialHttp2StreamWindowSize = 5;
+    }));
 
 builder.WebHost.UseKestrel(options =>
 {
@@ -26,7 +42,7 @@ builder.WebHost.UseKestrel(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
-builder.Services.AddNodeService();
+
 builder.Services.AddGateway(builder.Configuration);
 
 var app = builder.Build();
@@ -47,8 +63,9 @@ if (app.Environment.IsDevelopment())
     }));
 }
 
+app.MapReverseProxy();
 
 app.UseGatewayMiddleware();
-app.MapNodeService();
+
 
 app.Run();

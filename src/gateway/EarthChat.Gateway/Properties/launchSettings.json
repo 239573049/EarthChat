@@ -28,7 +28,8 @@
       "applicationUrl": "https://localhost:58101;http://localhost:58100",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "OTEL_SERVICE_NAME": "Gateway"
+        "OTEL_SERVICE_NAME": "Gateway",
+        "Urls": "https://localhost:58101;http://localhost:58100"
       }
     }
   }

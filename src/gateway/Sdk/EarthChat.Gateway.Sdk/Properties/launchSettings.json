@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "EarthChat.Gateway.Sdk": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:52510;http://localhost:52511"
+    }
+  }
+}

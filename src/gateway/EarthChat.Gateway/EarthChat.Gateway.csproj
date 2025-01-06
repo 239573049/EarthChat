@@ -12,10 +12,6 @@
         <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />      
         <PackageReference Include="Scalar.AspNetCore" Version="1.2.72" />
-        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Abstractions" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="9.0.0" />
-        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Dns" Version="9.0.0" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +24,18 @@
         <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
         <ProjectReference Include="..\..\..\framework\EarthChat.Core\EarthChat.Core.csproj" />
         <ProjectReference Include="..\Sdk\EarthChat.Gateway.Sdk.Data\EarthChat.Gateway.Sdk.Data.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="cert\certificate.crt">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="cert\certificate.key">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="cert\certificate.pfx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
