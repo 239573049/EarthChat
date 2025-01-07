@@ -2,10 +2,13 @@
 using EarthChat.Domain.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace EarthChat.EntityFrameworkCore;
 
-public abstract class MasterDbContext<TDbContext>(DbContextOptions<TDbContext> options, IUserContext userContext)
+public abstract class MasterDbContext<TDbContext>(
+    DbContextOptions<TDbContext> options,
+    IServiceProvider serviceProvider)
     : DbContext(options) where TDbContext :
     DbContext
 {
@@ -37,6 +40,7 @@ public abstract class MasterDbContext<TDbContext>(DbContextOptions<TDbContext> o
             .Where(x => x.State is EntityState.Added or EntityState.Modified);
         foreach (var entry in entries)
         {
+            var userContext = serviceProvider.GetService<IUserContext>();
             if (entry.State == EntityState.Added)
             {
                 if (entry.Entity is ICreatable entity)
@@ -46,11 +50,11 @@ public abstract class MasterDbContext<TDbContext>(DbContextOptions<TDbContext> o
 
                 if (entry.Entity is ICreatable<Guid?> creatable)
                 {
-                    creatable.CreatableId = userContext.CurrentUserId;
+                    creatable.CreatableId = userContext?.CurrentUserId;
                 }
                 else if (entry.Entity is ICreatable<Guid> creatableValue)
                 {
-                    creatableValue.CreatableId = userContext.CurrentUserId;
+                    creatableValue.CreatableId = userContext?.CurrentUserId ?? Guid.Empty;
                 }
             }
             else
@@ -62,11 +66,11 @@ public abstract class MasterDbContext<TDbContext>(DbContextOptions<TDbContext> o
 
                 if (entry.Entity is IUpdatable<Guid?> updatable)
                 {
-                    updatable.UpdatableId = userContext.CurrentUserId;
+                    updatable.UpdatableId = userContext?.CurrentUserId;
                 }
                 else if (entry.Entity is IUpdatable<Guid> updatableValue)
                 {
-                    updatableValue.UpdatableId = userContext.CurrentUserId;
+                    updatableValue.UpdatableId = userContext?.CurrentUserId ?? Guid.Empty;
                 }
             }
         }

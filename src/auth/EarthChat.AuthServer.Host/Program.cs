@@ -15,15 +15,7 @@ builder.AddServiceDefaults();
 
 builder.Services.AddJwt(builder.Configuration);
 
-builder.Services.WithAuthDbAccess((optionsBuilder =>
-{
-	optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
-
-#if DEBUG
-	optionsBuilder.EnableSensitiveDataLogging();
-	optionsBuilder.EnableDetailedErrors();
-#endif
-}));
+builder.Services.WithAuthDbAccess(builder.Configuration);
 
 builder.Services.AddSerilog(builder.Configuration);
 
@@ -39,6 +31,7 @@ app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-	app.UseScalar("EarthChat Auth Server");
+    app.UseScalar("EarthChat Auth Server");
 }
+
 await app.RunAsync();

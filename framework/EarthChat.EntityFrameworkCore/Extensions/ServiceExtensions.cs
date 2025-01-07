@@ -17,6 +17,10 @@ public static class ServiceExtensions
         Action<DbContextOptionsBuilder> optionsAction)
         where TDbContext : MasterDbContext<TDbContext>
     {
+        
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+        AppContext.SetSwitch("Npgsql.DisableDateTimeInfinityConversions", true);
+        
         services.AddDbContext<TDbContext>(optionsAction);
 
         services.AddScoped<IUnitOfWork, UnitOfWork<TDbContext>>();

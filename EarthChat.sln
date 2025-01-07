@@ -72,6 +72,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C
 		docs\gateway.md = docs\gateway.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Migration", "src\EarthChat.Migration\EarthChat.Migration.csproj", "{20D68CEC-39F0-4384-B4BF-576BF41A3753}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Migrations.EntityFrameworkCore", "src\EarthChat.Migrations.EntityFrameworkCore\EarthChat.Migrations.EntityFrameworkCore.csproj", "{409E23DD-C997-4271-B056-B2138118DA42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -166,6 +170,14 @@ Global
 		{D146F2B8-9A76-4A68-A019-725E2989255C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D146F2B8-9A76-4A68-A019-725E2989255C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D146F2B8-9A76-4A68-A019-725E2989255C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20D68CEC-39F0-4384-B4BF-576BF41A3753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20D68CEC-39F0-4384-B4BF-576BF41A3753}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20D68CEC-39F0-4384-B4BF-576BF41A3753}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20D68CEC-39F0-4384-B4BF-576BF41A3753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{409E23DD-C997-4271-B056-B2138118DA42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{409E23DD-C997-4271-B056-B2138118DA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{409E23DD-C997-4271-B056-B2138118DA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{409E23DD-C997-4271-B056-B2138118DA42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -195,6 +207,8 @@ Global
 		{F5837617-CCB4-4C69-A2C3-4128C591A237} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
 		{606532AB-F8BB-4EC2-971F-95CA22EAA033} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 		{D146F2B8-9A76-4A68-A019-725E2989255C} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
+		{20D68CEC-39F0-4384-B4BF-576BF41A3753} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{409E23DD-C997-4271-B056-B2138118DA42} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF02E440-D052-4926-8122-8B1051B34910}
