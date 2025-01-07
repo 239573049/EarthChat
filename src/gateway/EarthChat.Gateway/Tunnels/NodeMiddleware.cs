@@ -31,6 +31,7 @@ public class NodeMiddleware(
         }
 
         var token = context.Request.Query["token"].ToString();
+        var prefix = context.Request.Query["prefix"].ToString();
 
         var key = $"{nodeName}:{nodeId}:{token}";
 
@@ -39,7 +40,7 @@ public class NodeMiddleware(
             // 创建连接
             var stream = await feature.AcceptAsSafeWriteStreamAsync();
 
-            var connection = new GatewayClientConnection(key, nodeName, stream, new ConnectionConfig(), logger);
+            var connection = new GatewayClientConnection(key, nodeName, prefix, stream, new ConnectionConfig(), logger);
 
             var disconnected = false;
 
@@ -48,14 +49,14 @@ public class NodeMiddleware(
             {
                 // 每当有新的客户端连接时，更新路由表
                 yarpMemoryService.UpdateRoutes();
-                
+
                 await connection.WaitForCloseAsync();
 
                 disconnected = await clientManager.RemoveAsync(client, default);
 
-				// 每当客户端端口则更新
-				yarpMemoryService.UpdateRoutes();
-			}
+                // 每当客户端端口则更新
+                yarpMemoryService.UpdateRoutes();
+            }
         }
         catch (Exception e)
         {

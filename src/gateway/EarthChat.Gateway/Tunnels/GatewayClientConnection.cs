@@ -19,17 +19,21 @@ public sealed partial class GatewayClientConnection : IAsyncDisposable
     private static readonly ReadOnlyMemory<byte> PongLine = "PONG\r\n"u8.ToArray();
 
     public string ClientId { get; }
-    
+
     public string NodeName { get; }
+
+    public string Prefix { get; }
 
     public int HttpTunnelCount => _httpTunnelCount;
 
-    public GatewayClientConnection(string clientId,string nodeName, Stream stream, ConnectionConfig config, ILogger logger)
+    public GatewayClientConnection(string clientId, string nodeName, string prefix, Stream stream,
+        ConnectionConfig config, ILogger logger)
     {
         this.ClientId = clientId;
         this.NodeName = nodeName;
         this._stream = stream;
         this._logger = logger;
+        this.Prefix = prefix;
 
         var keepAliveInterval = config.KeepAliveInterval;
         if (config.KeepAlive && keepAliveInterval > TimeSpan.Zero)

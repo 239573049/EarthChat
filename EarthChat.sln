@@ -76,6 +76,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Migration", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Migrations.EntityFrameworkCore", "src\EarthChat.Migrations.EntityFrameworkCore\EarthChat.Migrations.EntityFrameworkCore.csproj", "{409E23DD-C997-4271-B056-B2138118DA42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Mapster", "framework\EarthChat.Mapster\EarthChat.Mapster.csproj", "{CFD8E211-A2E1-4343-A477-BDD7881329E1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,6 +180,10 @@ Global
 		{409E23DD-C997-4271-B056-B2138118DA42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{409E23DD-C997-4271-B056-B2138118DA42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{409E23DD-C997-4271-B056-B2138118DA42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +215,7 @@ Global
 		{D146F2B8-9A76-4A68-A019-725E2989255C} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 		{20D68CEC-39F0-4384-B4BF-576BF41A3753} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 		{409E23DD-C997-4271-B056-B2138118DA42} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{CFD8E211-A2E1-4343-A477-BDD7881329E1} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF02E440-D052-4926-8122-8B1051B34910}

@@ -16,7 +16,7 @@ public static class ServiceExtensions
 	/// <param name="services"></param>
 	/// <param name="configuration"></param>
 	/// <returns></returns>
-	public static IServiceCollection AddJwt(this IServiceCollection services, IConfiguration configuration)
+	public static IServiceCollection WithJwt(this IServiceCollection services, IConfiguration configuration)
 	{
 		services.AddHttpContextAccessor();
 		services.AddSingleton<IJwtContext, JwtContext>();

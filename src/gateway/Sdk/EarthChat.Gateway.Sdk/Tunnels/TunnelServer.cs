@@ -112,7 +112,7 @@ public class TunnelServer(HttpClient httpClient)
         if (tunnelId == null)
         {
             serverUri = new Uri(
-                $"{server.TrimEnd('/')}/Gateway/node?nodeId={NodeId}&nodeName={nodeName}&token={clients?.Token}");
+                $"{server.TrimEnd('/')}/Gateway/node?nodeId={NodeId}&nodeName={nodeName}&token={clients?.Token}&prefix={clients?.Prefix}");
         }
         else
         {

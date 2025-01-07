@@ -16,6 +16,7 @@ public abstract class MasterDbContext<TDbContext>(
     {
         base.OnConfiguring(optionsBuilder);
 
+        // 忽略未应用的模型更改警告，这个是.net9出现的新警告，不忽略会影响迁移记录应用
         optionsBuilder.ConfigureWarnings(warnings =>
             warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
     }
@@ -28,7 +29,7 @@ public abstract class MasterDbContext<TDbContext>(
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
-        CancellationToken cancellationToken = new CancellationToken())
+        CancellationToken cancellationToken = new())
     {
         BeforeSaveChanges();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);

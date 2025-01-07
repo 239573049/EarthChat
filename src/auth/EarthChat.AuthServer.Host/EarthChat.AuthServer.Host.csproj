@@ -19,10 +19,12 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\..\EarthChat.ServiceDefaults\EarthChat.ServiceDefaults.csproj" />
+        <ProjectReference Include="..\..\..\framework\EarthChat.EventBus.RabbitMQ\EarthChat.EventBus.RabbitMQ.csproj" />
         <ProjectReference Include="..\..\..\framework\EarthChat.Jwt\EarthChat.Jwt.csproj" />
         <ProjectReference Include="..\..\..\framework\EarthChat.Scalar\EarthChat.Scalar.csproj" />
         <ProjectReference Include="..\..\..\framework\EarthChat.Serilog\EarthChat.Serilog.csproj" />
         <ProjectReference Include="..\..\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj" />
+        <ProjectReference Include="..\EarthChat.AuthServer.Application\EarthChat.AuthServer.Application.csproj" />
         <ProjectReference Include="..\EarthChat.AuthServer.EntityFrameworkCore\EarthChat.AuthServer.EntityFrameworkCore.csproj" />
     </ItemGroup>
 

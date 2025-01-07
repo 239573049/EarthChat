@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.Services.AddSerilog(builder.Configuration);
+builder.Services.WithSerilog(builder.Configuration);
 
 builder.Services.AddReverseProxy()
     .LoadFromMemory([], [])

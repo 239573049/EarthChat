@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMqEventBus(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection WithRabbitMqEventBus(this IServiceCollection services, IConfiguration configuration)
     {
         // 是否启用RabbitMQ
         var connection = configuration["RabbitMQ:ConnectionString"];
@@ -55,7 +55,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddRabbitMqJsonSerializer(this IServiceCollection services)
+    public static IServiceCollection WithRabbitMqJsonSerializer(this IServiceCollection services)
     {
         services.AddSingleton<IHandlerSerializer, JsonHandlerSerializer>();
 

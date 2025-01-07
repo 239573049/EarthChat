@@ -1,5 +1,8 @@
 namespace EarthChat.Rabbit;
 
+/// <summary>
+/// RabbitClientBus
+/// </summary>
 public class RabbitClientBus : RabbitClient
 {
     private readonly IServiceProvider _sp;

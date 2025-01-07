@@ -4,12 +4,12 @@ using EarthChat.Serilog.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseGatewayNode();
+builder.WebHost.WithGatewayNode();
 
 builder.Services.WithScalar();
 builder.AddServiceDefaults();
 
-builder.Services.AddSerilog(builder.Configuration);
+builder.Services.WithSerilog(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();

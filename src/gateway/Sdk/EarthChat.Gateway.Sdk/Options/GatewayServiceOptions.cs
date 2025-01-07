@@ -14,16 +14,6 @@ public class GatewayServiceOptions
     public string Address { get; set; }
 
     /// <summary>
-    ///     服务IP
-    /// </summary>
-    public string Ip { get; set; }
-
-    /// <summary>
-    ///     服务端口
-    /// </summary>
-    public int Port { get; set; }
-
-    /// <summary>
     ///     健康检查地址
     /// </summary>
     public string HealthCheck { get; set; } = "/health";
@@ -33,6 +23,8 @@ public class GatewayServiceOptions
     /// </summary>
     public string Token { get; set; }
 
+    public string Prefix { get; set; } = "/api";
+
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(Service)) throw new ArgumentNullException(nameof(Service));
@@ -40,7 +32,5 @@ public class GatewayServiceOptions
         if (string.IsNullOrWhiteSpace(Address)) throw new ArgumentNullException(nameof(Address));
 
         if (string.IsNullOrWhiteSpace(Token)) throw new ArgumentNullException(nameof(Token));
-
-        if (Port <= 0) throw new ArgumentNullException(nameof(Port));
     }
 }

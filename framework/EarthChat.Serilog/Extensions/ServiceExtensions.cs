@@ -6,7 +6,7 @@ namespace EarthChat.Serilog.Extensions;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddSerilog(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection WithSerilog(this IServiceCollection services, IConfiguration configuration)
     {
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)

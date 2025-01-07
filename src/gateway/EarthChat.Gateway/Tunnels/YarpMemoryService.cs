@@ -41,13 +41,16 @@ public class YarpMemoryService(InMemoryConfigProvider inMemoryConfigProvider, Ga
                 Destinations = destinations
             };
 
-            // 不需要在这里负载均衡
-			destinations.Add(Guid.NewGuid().ToString("N"), new DestinationConfig
-			{
-				Address = "http://" + host,
-			});
+            // 获取prefix 
+            var prefix = clients.FirstOrDefault().Value.Connection.Prefix;
 
-			clusters.Add(clusterConfig);
+            // 不需要在这里负载均衡
+            destinations.Add(Guid.NewGuid().ToString("N"), new DestinationConfig
+            {
+                Address = $"http://{host}{prefix}",
+            });
+
+            clusters.Add(clusterConfig);
 
             routes.Add(route);
         }

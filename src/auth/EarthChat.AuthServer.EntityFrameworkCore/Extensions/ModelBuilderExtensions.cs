@@ -1,4 +1,5 @@
-﻿using EarthChat.AuthServer.Domain.Users;
+﻿using EarthChat.AuthServer.Domain.LoginLogs;
+using EarthChat.AuthServer.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace EarthChat.AuthServer.EntityFrameworkCore.Extensions;
@@ -66,6 +67,33 @@ public static class ModelBuilderExtensions
                 .IsUnique();
 
             builder.HasIndex(x => new { x.Provider, x.ProviderUserId, x.UserId });
+        });
+
+        model.Entity<LoginLog>(entity =>
+        {
+            entity.ToTable("login-logs");
+
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(x => x.UserId)
+                .IsRequired();
+
+            entity.Property(x => x.LoginTime)
+                .IsRequired();
+
+            entity.Property(x => x.Ip)
+                .HasMaxLength(64);
+
+            entity.Property(x => x.UserAgent)
+                .HasMaxLength(256);
+
+            entity.HasIndex(x => x.UserId);
+
+            entity.HasIndex(x => x.LoginTime);
+
+            entity.HasIndex(x => x.Ip);
         });
 
         return model;

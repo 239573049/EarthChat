@@ -13,7 +13,7 @@ public static class ServiceExtension
 		return services;
 	}
 
-	public static IWebHostBuilder UseGatewayNode(this IWebHostBuilder builder)
+	public static IWebHostBuilder WithGatewayNode(this IWebHostBuilder builder)
 	{
 		builder.ConfigureKestrel(((context, options) =>
 		{

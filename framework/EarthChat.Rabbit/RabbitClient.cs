@@ -7,7 +7,6 @@ public abstract class RabbitClient(
     RabbitOptions rabbitOptions,
     IServiceProvider serviceProvider)
 {
-    private readonly ILogger _logger = logger;
 
     protected ConcurrentDictionary<IConnection, int> Connections = new();
     protected ConcurrentDictionary<string, Lazy<Task<IChannel>>> Channels = new();
@@ -36,6 +35,7 @@ public abstract class RabbitClient(
 
                 if ((rabbitOptions.Consumes?.Count ?? 0) > 0)
                 {
+                    // 根据定义的消费者创建多个消费者通道
                     foreach (var opt in rabbitOptions.Consumes)
                     {
                         await SubscribeAsync(opt).ConfigureAwait(false);
@@ -44,7 +44,7 @@ public abstract class RabbitClient(
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Connection attempt {retryCount + 1} failed: {ex.Message}");
+                logger.LogError($"Connection attempt {retryCount + 1} failed: {ex.Message}");
                 retryCount++;
                 await Task.Delay(3000 + retryCount * 5000, cancellationToken); // Delay 3000ms + 5s per retry
             }
@@ -59,6 +59,12 @@ public abstract class RabbitClient(
             .ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// 创建并配置通道
+    /// </summary>
+    /// <param name="queue"></param>
+    /// <param name="consumeOptions"></param>
+    /// <returns></returns>
     private async Task<IChannel> CreateAndConfigureChannel(string queue, ConsumeOptions consumeOptions)
     {
         var opt = consumeOptions;
@@ -68,6 +74,7 @@ public abstract class RabbitClient(
 
         if (opt.FetchCount > 0)
         {
+            // 根据FetchCount设置Qos Qos的作用是限制消费者每次最多接收多少条消息
             await channel.BasicQosAsync(0, opt.FetchCount, false);
         }
 
@@ -95,11 +102,12 @@ public abstract class RabbitClient(
                         {
                             var bus = scope.ServiceProvider.GetRequiredService<IRabbitEventBus>();
                             await bus.Trigger(scope.ServiceProvider, arg, opt);
+                            // 手动确认
                             await channel.BasicAckAsync(arg.DeliveryTag, false);
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"rabbit on queue({opt.Queue}) received error: {ex}");
+                            logger.LogError($"rabbit on queue({opt.Queue}) received error: {ex}");
                             await channel.BasicNackAsync(arg.DeliveryTag, false, opt.FailedRequeue);
                         }
                         finally
@@ -121,12 +129,11 @@ public abstract class RabbitClient(
                 {
                     var bus = asyncServiceScope.ServiceProvider.GetRequiredService<IRabbitEventBus>();
                     await bus.Trigger(asyncServiceScope.ServiceProvider, arg, opt);
-                    await channel.BasicAckAsync(arg.DeliveryTag, false);
                     await channel.BasicAckAsync(arg.DeliveryTag, false).ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"rabbit on queue({opt.Queue}) received error: {ex}");
+                    logger.LogError($"rabbit on queue({opt.Queue}) received error: {ex}");
                     await channel.BasicNackAsync(arg.DeliveryTag, false, opt.FailedRequeue).ConfigureAwait(false);
                 }
             };
@@ -136,16 +143,23 @@ public abstract class RabbitClient(
         // 当通道调用的回调中发生异常时发出信号
         channel.CallbackExceptionAsync += async (_, args) =>
         {
-            _logger.LogError(args.Exception, args.Exception.Message);
+            logger.LogError(args.Exception, args.Exception.Message);
 
             await Task.CompletedTask;
         };
+        
         await channel.BasicConsumeAsync(queue, opt.AutoAck, consumer).ConfigureAwait(false);
 
         return channel;
     }
 
-
+    /// <summary>
+    /// 取消订阅
+    /// </summary>
+    /// <param name="queue"></param>
+    /// <param name="exchange"></param>
+    /// <param name="routingKey"></param>
+    /// <param name="deleteQueue"></param>
     public async Task UnSubscribe(string queue, string exchange, string routingKey, bool deleteQueue = false)
     {
         if (!Channels.TryGetValue(queue, out var valueTask))
@@ -155,13 +169,13 @@ public abstract class RabbitClient(
 
         var channel = await valueTask.Value;
 
-        _logger.LogInformation($"尝试解除rabbit绑定 queue:{queue}, exchange:{exchange}, routingKey:{routingKey}");
+        logger.LogInformation($"尝试解除rabbit绑定 queue:{queue}, exchange:{exchange}, routingKey:{routingKey}");
         await channel.QueueUnbindAsync(queue, exchange, routingKey);
 
         if (deleteQueue)
         {
             var passive = await channel.QueueDeclarePassiveAsync(queue).ConfigureAwait(false);
-            _logger.LogInformation(
+            logger.LogInformation(
                 $"尝试删除rabbit queue:{passive.QueueName} consumerCount:{passive.ConsumerCount} messageCount:{passive.MessageCount}");
             await channel.QueueDeleteAsync(queue).ConfigureAwait(false);
         }
