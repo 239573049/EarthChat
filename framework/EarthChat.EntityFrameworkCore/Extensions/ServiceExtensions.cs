@@ -17,10 +17,11 @@ public static class ServiceExtensions
         Action<DbContextOptionsBuilder> optionsAction)
         where TDbContext : MasterDbContext<TDbContext>
     {
-        services.AddDbContext<MasterDbContext<TDbContext>>(optionsAction);
+        services.AddDbContext<TDbContext>(optionsAction);
 
         services.AddScoped<IUnitOfWork, UnitOfWork<TDbContext>>();
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<,>));
+
+        services.AddScoped(typeof(IRepository<,>),typeof(Repository<,>));
 
         return services;
     }

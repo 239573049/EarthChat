@@ -4,8 +4,8 @@ using Gnarly.Data;
 
 namespace EarthChat.AuthServer.EntityFrameworkCore.Users;
 
-[Registration(typeof(IUserRepository))]
-public class UserRepository(MasterDbContext<AuthDbContext> dbContext)
-    : Repository<AuthDbContext, User>(dbContext), IUserRepository, IScopeDependency
+[Registration(typeof(IUserRepository<AuthDbContext>))]
+public class UserRepository(AuthDbContext dbContext)
+    : Repository<AuthDbContext, User>(dbContext), IUserRepository<AuthDbContext>, IScopeDependency
 {
 }

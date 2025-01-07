@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EarthChat.EntityFrameworkCore;
 
-public class UnitOfWork<TDbContext>(MasterDbContext<TDbContext> dbContext) : IUnitOfWork where TDbContext : DbContext
+public class UnitOfWork<TDbContext>(TDbContext dbContext) : IUnitOfWork where TDbContext : DbContext
 {
     public async Task BeginTransactionAsync()
     {

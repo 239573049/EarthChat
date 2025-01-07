@@ -2,7 +2,7 @@
 
 namespace EarthChat.AuthServer.Domain.Users;
 
-public interface IUserRepository : IRepository<User>
+public interface IUserRepository<TDbContext> : IRepository<TDbContext, User>
 {
     
 }

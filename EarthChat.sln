@@ -18,6 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		design.xmind = design.xmind
 		Directory.Build.props = Directory.Build.props
 		docker-compose.yml = docker-compose.yml
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarthChat.Core", "framework\EarthChat.Core\EarthChat.Core.csproj", "{0EAC0F4D-09E5-4C7E-BD73-4FE6E4223178}"
@@ -63,6 +64,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.AuthServer.EntityFrameworkCore", "src\auth\EarthChat.AuthServer.EntityFrameworkCore\EarthChat.AuthServer.EntityFrameworkCore.csproj", "{F5837617-CCB4-4C69-A2C3-4128C591A237}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Redis", "framework\EarthChat.Redis\EarthChat.Redis.csproj", "{606532AB-F8BB-4EC2-971F-95CA22EAA033}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Scalar", "framework\EarthChat.Scalar\EarthChat.Scalar.csproj", "{D146F2B8-9A76-4A68-A019-725E2989255C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		docs\gateway.md = docs\gateway.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -154,6 +162,10 @@ Global
 		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{606532AB-F8BB-4EC2-971F-95CA22EAA033}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D146F2B8-9A76-4A68-A019-725E2989255C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D146F2B8-9A76-4A68-A019-725E2989255C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D146F2B8-9A76-4A68-A019-725E2989255C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D146F2B8-9A76-4A68-A019-725E2989255C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,5 +194,9 @@ Global
 		{6E2332CB-2B58-4F81-8D60-594BD3666317} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
 		{F5837617-CCB4-4C69-A2C3-4128C591A237} = {2545391C-0A7A-48F8-943E-CBA3905CF043}
 		{606532AB-F8BB-4EC2-971F-95CA22EAA033} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
+		{D146F2B8-9A76-4A68-A019-725E2989255C} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF02E440-D052-4926-8122-8B1051B34910}
 	EndGlobalSection
 EndGlobal

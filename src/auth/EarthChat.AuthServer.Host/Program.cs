@@ -1,29 +1,33 @@
 using EarthChat.AuthServer.EntityFrameworkCore.Extensions;
 using EarthChat.Gateway.Sdk.Extensions;
+using EarthChat.Jwt.Extensions;
+using EarthChat.Scalar.Extensions;
 using EarthChat.Serilog.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.WithScalar();
 
 builder.WebHost.UseGatewayNode();
 
 builder.AddServiceDefaults();
 
+builder.Services.AddJwt(builder.Configuration);
+
 builder.Services.WithAuthDbAccess((optionsBuilder =>
 {
-    optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
+	optionsBuilder.UseNpgsql(builder.Configuration.GetConnectionString("Default"));
 
 #if DEBUG
-    optionsBuilder.EnableSensitiveDataLogging();
-    optionsBuilder.EnableDetailedErrors();
+	optionsBuilder.EnableSensitiveDataLogging();
+	optionsBuilder.EnableDetailedErrors();
 #endif
 }));
 
 builder.Services.AddSerilog(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
 
 builder.Services.AddAutoGnarly();
 
@@ -35,17 +39,6 @@ app.MapDefaultEndpoints();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-
-    app.MapScalarApiReference((options =>
-    {
-        options.Title = "EarthChat Auth Server";
-        options.Authentication = new ScalarAuthenticationOptions()
-        {
-            PreferredSecurityScheme = "Bearer",
-        };
-    }));
+	app.UseScalar("EarthChat Auth Server");
 }
-
-
 await app.RunAsync();

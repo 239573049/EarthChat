@@ -1,12 +1,12 @@
-using EarthChat.Gateway.Sdk;
 using EarthChat.Gateway.Sdk.Extensions;
+using EarthChat.Scalar.Extensions;
 using EarthChat.Serilog.Extensions;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.UseGatewayNode();
 
+builder.Services.WithScalar();
 builder.AddServiceDefaults();
 
 builder.Services.AddSerilog(builder.Configuration);
@@ -20,16 +20,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-
-    app.MapScalarApiReference((options =>
-    {
-        options.Title = "EarthChat Instant Message Service";
-        options.Authentication = new ScalarAuthenticationOptions()
-        {
-            PreferredSecurityScheme = "Bearer",
-        };
-    }));
+	app.UseScalar("EarthChat Instant Message Service");
 }
 
 app.MapDefaultEndpoints();

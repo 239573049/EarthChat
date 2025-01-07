@@ -1,11 +1,16 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var gateway = builder.AddProject<Projects.EarthChat_Gateway>("earthchat-gateway");
+var postgres = builder.AddConnectionString("postgres", "ConnectionStrings:Default");
 
-builder.AddProject<Projects.EarthChat_InstantMessage_Service>("instantmessage")
-	.WithReference(gateway);
+var gateway = builder.AddProject<Projects.EarthChat_Gateway>("earthchat-gateway")
+    .WithReference(postgres);
 
-builder.AddProject<Projects.EarthChat_AuthServer>("auth")
-	.WithReference(gateway);
+builder.AddProject<Projects.EarthChat_AuthServer_Host>("instantmessage")
+    .WithReference(postgres)
+    .WithReference(gateway);
+
+builder.AddProject<Projects.EarthChat_AuthServer_Host>("auth")
+    .WithReference(postgres)
+    .WithReference(gateway);
 
 builder.Build().Run();
