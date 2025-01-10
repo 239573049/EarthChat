@@ -5,6 +5,7 @@ on:
       - master 
     paths: 
       - 'Directory.Build.props'
+      - '.github/workflows/dotnet.yml'
 
 jobs:
   deploy-nuget:
