@@ -16,10 +16,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       
-      - name: 安装DotNet
-        run: sudo add-apt-repository ppa:dotnet/backports &&  sudo apt-get update &&  sudo apt-get install -y dotnet-sdk-9.0
+      - name: Setup .Net SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore Dependencies
         run: dotnet restore --configuration:Release
