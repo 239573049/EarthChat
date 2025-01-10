@@ -1,0 +1,6 @@
+@EarthChat.FileStorage.Host_HostAddress = http://localhost:5149
+
+GET {{EarthChat.FileStorage.Host_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
