@@ -1,8 +1,8 @@
-name: main
+name: master
 on:
   push:
     branches:
-      - main 
+      - master 
     paths: 
       - 'Directory.Build.props'
 
