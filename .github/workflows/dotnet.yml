@@ -19,13 +19,13 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Restore Dependencies
-        run: dotnet restore --configuration:Release
+        run: dotnet restore -c Release 
 
       - name: Build
-        run: dotnet build --configuration:Release --no-restore
+        run: dotnet build -c Release --no-restore
 
       - name: Pack
-        run: dotnet pack --no-build --configuration Release
+        run: dotnet pack --no-build -c Release 
 
       - name: Push NuGet package
         run: |
