@@ -8,7 +8,7 @@
         <Product>$(AssemblyName)</Product>
         <AssemblyVersion>$(Version)</AssemblyVersion>
         <Title>EarthChat</Title>
-        <Description>EarthChat 一个微服务架构设计的项目，提供微服务基础设施</Description>
+        <Description>EarthChat 一个微服务架构设计的项目，提供微服务基础设施。</Description>
         <PackageProjectUrl>https://github.com/239573049/EarthChat</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/239573049/EarthChat/blob/master/LICENSE</PackageLicenseUrl>
         <RepositoryUrl>https://github.com/239573049/EarthChat</RepositoryUrl>
