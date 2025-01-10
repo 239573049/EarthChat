@@ -2,7 +2,7 @@
     <PropertyGroup>
         <PackageId>$(AssemblyName)</PackageId>
         <Copyright>© Token Corporation. All rights reserved.</Copyright>
-        <Version>0.1.1</Version>
+        <Version>0.1.0</Version>
         <Authors>EarthChat</Authors>
         <Company>TokenAI</Company>
         <Product>$(AssemblyName)</Product>
