@@ -13,11 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: ${{ matrix.dotnet-version }}  # 使用矩阵中的 .NET 版本
-
       - name: Restore Dependencies
         run: dotnet restore --configuration Release
 
