@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: [7.0.x, 8.0.x, 9.0.x]  # 指定需要的 .NET 版本
+        dotnet-version: [9.0.x]  # 指定需要的 .NET 版本
     steps:
       - uses: actions/checkout@v3
 
