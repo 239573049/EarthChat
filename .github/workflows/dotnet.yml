@@ -6,10 +6,6 @@ on:
     paths: 
       - 'Directory.Build.props'
       - '.github/workflows/dotnet.yml'
-
-env:
-  DOTNET_VERSION: "9.0.x"
-  
   
 jobs:
   deploy-nuget:
@@ -20,7 +16,7 @@ jobs:
       - name: Setup .Net SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
+          dotnet-version: "9.0.x"
 
       - name: Restore Dependencies
         run: dotnet restore --configuration:Release
