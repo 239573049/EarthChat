@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\framework\EarthChat.EntityFrameworkCore\EarthChat.EntityFrameworkCore.csproj" />
-      <ProjectReference Include="..\EarthChat.AuthServer.Domain\EarthChat.AuthServer.Domain.csproj" />
+        <ProjectReference Include="..\..\..\framework\EarthChat.EntityFrameworkCore\EarthChat.EntityFrameworkCore.csproj"/>
+        <ProjectReference Include="..\EarthChat.AuthServer.Domain\EarthChat.AuthServer.Domain.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0"/>
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.2"/>
     </ItemGroup>
 
 </Project>
