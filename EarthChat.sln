@@ -78,6 +78,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Migrations.Entity
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.Mapster", "framework\EarthChat.Mapster\EarthChat.Mapster.csproj", "{CFD8E211-A2E1-4343-A477-BDD7881329E1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "file", "file", "{DB3AE4C5-9181-45BD-BB8A-7F329334D897}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.FileStorage.Host", "src\file\EarthChat.FileStorage.Host\EarthChat.FileStorage.Host.csproj", "{3F40098F-7007-4F54-80BC-AA77AB603C34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.FileStorage.Application", "src\file\EarthChat.FileStorage.Application\EarthChat.FileStorage.Application.csproj", "{C32C0AE0-A13A-4EA8-8FC1-48899F6412B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.FileStorage.Application.Contract", "src\file\EarthChat.FileStorage.Application.Contract\EarthChat.FileStorage.Application.Contract.csproj", "{3A8E55D7-6491-4B6E-8F2D-2E227976C772}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.FileStorage.Domain", "src\file\EarthChat.FileStorage.Domain\EarthChat.FileStorage.Domain.csproj", "{F9BC9F34-C259-4D1B-AD8E-37367CE2FFF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarthChat.FileStorage.EntityFrameworkCore", "src\file\EarthChat.FileStorage.EntityFrameworkCore\EarthChat.FileStorage.EntityFrameworkCore.csproj", "{E91131F8-B594-4EE7-A7BB-C9972533A423}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,6 +196,26 @@ Global
 		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFD8E211-A2E1-4343-A477-BDD7881329E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F40098F-7007-4F54-80BC-AA77AB603C34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F40098F-7007-4F54-80BC-AA77AB603C34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F40098F-7007-4F54-80BC-AA77AB603C34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F40098F-7007-4F54-80BC-AA77AB603C34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C32C0AE0-A13A-4EA8-8FC1-48899F6412B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C32C0AE0-A13A-4EA8-8FC1-48899F6412B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C32C0AE0-A13A-4EA8-8FC1-48899F6412B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C32C0AE0-A13A-4EA8-8FC1-48899F6412B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A8E55D7-6491-4B6E-8F2D-2E227976C772}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A8E55D7-6491-4B6E-8F2D-2E227976C772}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A8E55D7-6491-4B6E-8F2D-2E227976C772}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A8E55D7-6491-4B6E-8F2D-2E227976C772}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9BC9F34-C259-4D1B-AD8E-37367CE2FFF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9BC9F34-C259-4D1B-AD8E-37367CE2FFF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9BC9F34-C259-4D1B-AD8E-37367CE2FFF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9BC9F34-C259-4D1B-AD8E-37367CE2FFF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E91131F8-B594-4EE7-A7BB-C9972533A423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E91131F8-B594-4EE7-A7BB-C9972533A423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E91131F8-B594-4EE7-A7BB-C9972533A423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E91131F8-B594-4EE7-A7BB-C9972533A423}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -216,6 +248,12 @@ Global
 		{20D68CEC-39F0-4384-B4BF-576BF41A3753} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 		{409E23DD-C997-4271-B056-B2138118DA42} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
 		{CFD8E211-A2E1-4343-A477-BDD7881329E1} = {FD6393C5-ACC7-487D-8DBD-8632606ECEFB}
+		{DB3AE4C5-9181-45BD-BB8A-7F329334D897} = {D77433BB-94DE-4380-BDD4-1544323A90C8}
+		{3F40098F-7007-4F54-80BC-AA77AB603C34} = {DB3AE4C5-9181-45BD-BB8A-7F329334D897}
+		{C32C0AE0-A13A-4EA8-8FC1-48899F6412B9} = {DB3AE4C5-9181-45BD-BB8A-7F329334D897}
+		{3A8E55D7-6491-4B6E-8F2D-2E227976C772} = {DB3AE4C5-9181-45BD-BB8A-7F329334D897}
+		{F9BC9F34-C259-4D1B-AD8E-37367CE2FFF2} = {DB3AE4C5-9181-45BD-BB8A-7F329334D897}
+		{E91131F8-B594-4EE7-A7BB-C9972533A423} = {DB3AE4C5-9181-45BD-BB8A-7F329334D897}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF02E440-D052-4926-8122-8B1051B34910}

@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+		<PackageReference Include="Gnarly" Version="1.0.7" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\framework\EarthChat.Scalar\EarthChat.Scalar.csproj" />
+		<ProjectReference Include="..\..\..\framework\EarthChat.Serilog\EarthChat.Serilog.csproj" />
+		<ProjectReference Include="..\..\gateway\Sdk\EarthChat.Gateway.Sdk\EarthChat.Gateway.Sdk.csproj" />
+		<ProjectReference Include="..\EarthChat.FileStorage.Application\EarthChat.FileStorage.Application.csproj" />
+		<ProjectReference Include="..\EarthChat.FileStorage.EntityFrameworkCore\EarthChat.FileStorage.EntityFrameworkCore.csproj" />
+	</ItemGroup>
+
+</Project>

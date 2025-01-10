@@ -2,10 +2,10 @@ import { memo, useState, useEffect } from "react";
 import { Form, Input, Button, message } from "antd";
 import { Logo } from '@lobehub/ui';
 import './index.css';
-import { getVerificationCode } from "@/apis/verification"; // 引入获取验证码的方法
-import { getToken } from "@/apis/authorize"; // 引入获取 token 的方法
+// import { getVerificationCode } from "@/apis/verification"; // 引入获取验证码的方法
+// import { getToken } from "@/apis/authorize"; // 引入获取 token 的方法
 import { useNavigate, useLocation} from "react-router-dom";
-import { useUserStore } from "@/store/user";
+// import { useUserStore } from "@/store/user";
 import { Card } from "antd";
 import { Github } from 'lucide-react';
 import Divider from "@lobehub/ui/es/Form/components/FormDivider";
@@ -15,7 +15,7 @@ import { GiteeAI } from '@lobehub/icons';
 const Login = memo(() => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [signIn] = useUserStore((s) => [s.signIn]);
+    // const [signIn] = useUserStore((s) => [s.signIn]);
     const [loading, setLoading] = useState(false);
     const [captcha, setCaptcha] = useState<{
         key: string;
@@ -30,24 +30,24 @@ const Login = memo(() => {
 
         try {
             setLoading(true);
-            const token = await getToken({
-                username: values.username,
-                password: values.password,
-                captchaKey: captcha!.key, // 传递验证码 key
-                captchaCode: values.captcha, // 传递用户输入的验证码
-            });
-            if (token.code === 200) {
-                message.success('登录成功！');
-                signIn(token.data);
-                // 使用重定向URL
-                if (redirectUrl) {
-                    window.location.href = redirectUrl + "?token=" + token.data;
-                } else {
-                    navigate('/');
-                }
-            } else {
-                message.error(token.message);
-            }
+            // const token = await getToken({
+            //     username: values.username,
+            //     password: values.password,
+            //     captchaKey: captcha!.key, // 传递验证码 key
+            //     captchaCode: values.captcha, // 传递用户输入的验证码
+            // });
+            // if (token.code === 200) {
+            //     message.success('登录成功！');
+            //     signIn(token.data);
+            //     // 使用重定向URL
+            //     if (redirectUrl) {
+            //         window.location.href = redirectUrl + "?token=" + token.data;
+            //     } else {
+            //         navigate('/');
+            //     }
+            // } else {
+            //     message.error(token.message);
+            // }
         } catch (error) {
             message.error('登录失败，请检查您的信息是否正确！');
         } finally {
@@ -57,8 +57,8 @@ const Login = memo(() => {
 
     const refreshCaptcha = async () => {
         try {
-            const { data } = await getVerificationCode("login"); // 
-            setCaptcha(data); // 更新验证码
+            // const { data } = await getVerificationCode("login"); // 
+            // setCaptcha(data); // 更新验证码
         } catch (error) {
             message.error("获取验证码失败，请稍后重试！"); // 错误提示
         }
