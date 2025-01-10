@@ -9,9 +9,6 @@ on:
 jobs:
   deploy-nuget:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        dotnet-version: [9.0.x]  # 指定需要的 .NET 版本
     steps:
       - uses: actions/checkout@v3
 
