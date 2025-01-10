@@ -19,7 +19,7 @@ jobs:
           dotnet-version: "9.0.x"
 
       - name: Restore Dependencies
-        run: dotnet restore -c Release 
+        run: dotnet restore
 
       - name: Build
         run: dotnet build -c Release --no-restore
