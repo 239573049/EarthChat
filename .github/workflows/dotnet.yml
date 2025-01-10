@@ -17,7 +17,7 @@ jobs:
         run: dotnet restore --configuration Release
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration:Release --no-restore
 
       - name: Pack
         run: dotnet pack --no-build --configuration Release
