@@ -1,7 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Net.Http.Json;
-using System.Text.Json;
-using EarthChat.AuthServer.Application.Contract.Authorize;
+﻿using EarthChat.AuthServer.Application.Contract.Authorize;
 using EarthChat.AuthServer.Application.Contract.Authorize.Dto;
 using EarthChat.AuthServer.Application.Contract.Authorize.Input;
 using EarthChat.AuthServer.Domain.Events;
@@ -10,13 +7,17 @@ using EarthChat.BuildingBlocks.Event;
 using EarthChat.Core.Contract;
 using EarthChat.Core.Exceptions;
 using EarthChat.Domain;
-using Gnarly.Data;
+using FastService;
 using Lazy.Captcha.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace TokenAI.Site.Application.Authorize;
 
+[RouteAttribute("/api/v1/Authorize")]
 public class AuthorizeService(
     IHttpContextAccessor httpContextAccessor,
     IRepository<User> userRepository,
@@ -27,7 +28,7 @@ public class AuthorizeService(
     IConfiguration configuration,
     IJwtContext jwtContext,
     ICaptcha captcha)
-    : IAuthorizeService, IScopeDependency
+    : FastApi,IAuthorizeService
 {
     public async Task<string> TokenAsync(TokenInput input)
     {

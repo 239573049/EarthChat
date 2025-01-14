@@ -1,5 +1,6 @@
 ﻿using EarthChat.AuthServer.Application.Contract.Verification;
 using EarthChat.AuthServer.Application.Contract.Verification.Dto;
+using FastService;
 using Gnarly.Data;
 using Lazy.Captcha.Core;
 
@@ -9,7 +10,8 @@ namespace TokenAI.Site.Application.Verification;
 /// 验证码服务实现
 /// </summary>
 /// <param name="captcha"></param>
-public class VerificationService(ICaptcha captcha) : IVerificationService, ITransientDependency
+[RouteAttribute("/api/v1/verification")]
+public class VerificationService(ICaptcha captcha) : FastApi, IVerificationService
 {
     /// <summary>
     /// 获取验证码, 返回验证码图片base64

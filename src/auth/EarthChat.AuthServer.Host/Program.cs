@@ -6,12 +6,15 @@ using EarthChat.Jwt.Extensions;
 using EarthChat.Scalar.Extensions;
 using EarthChat.Serilog.Extensions;
 using Token.RabbitMQEvent;
+using FastService.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.WithGatewayNode();
 
 builder.AddServiceDefaults();
+
+builder.Services.WithFast();
 
 builder.Services
     .WithScalar()
@@ -35,6 +38,8 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 
 app.MapVerificationApis();
+
+app.MapFast();
 
 if (app.Environment.IsDevelopment())
 {

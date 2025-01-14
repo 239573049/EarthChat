@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Gnarly.Data" Version="1.0.7" />
+      <PackageReference Include="FastService" Version="0.1.0" />
       <PackageReference Include="Lazy.Captcha.Core" Version="2.1.0" />
       <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
       <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
