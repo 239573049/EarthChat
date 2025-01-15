@@ -8,7 +8,7 @@
     </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FastService.Analyzers" Version="0.1.0" />
+    <PackageReference Include="FastService.Analyzers" Version="0.1.1" />
     <PackageReference Include="Gnarly" Version="1.0.7" />
   </ItemGroup>
 

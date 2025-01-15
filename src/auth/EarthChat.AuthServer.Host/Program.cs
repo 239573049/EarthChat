@@ -14,9 +14,8 @@ builder.WebHost.WithGatewayNode();
 
 builder.AddServiceDefaults();
 
-builder.Services.WithFast();
-
 builder.Services
+    .WithFast()
     .WithScalar()
     .WithAuthApplicationServices(builder.Configuration)
     .WithRabbitMqEventBus(builder.Configuration)
