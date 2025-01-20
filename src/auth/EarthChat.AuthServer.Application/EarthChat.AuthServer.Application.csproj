@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FastService" Version="0.1.0" />
+      <PackageReference Include="FastService" Version="0.1.2" />
       <PackageReference Include="Lazy.Captcha.Core" Version="2.1.0" />
-      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-      <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
-      <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+      <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.1" />
+      <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.1" />
       <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.118.0-preview.2.3" />
     </ItemGroup>
 

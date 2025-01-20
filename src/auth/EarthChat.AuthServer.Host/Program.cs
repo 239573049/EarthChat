@@ -1,12 +1,10 @@
 using EarthChat.AuthServer.Application.Extensions;
 using EarthChat.AuthServer.EntityFrameworkCore.Extensions;
-using EarthChat.AuthServer.Host.Apis;
 using EarthChat.Gateway.Sdk.Extensions;
 using EarthChat.Jwt.Extensions;
 using EarthChat.Scalar.Extensions;
 using EarthChat.Serilog.Extensions;
 using Token.RabbitMQEvent;
-using FastService.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,8 +33,6 @@ builder.Services.AddGatewayNode(builder.Configuration);
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
-
-app.MapVerificationApis();
 
 app.MapFast();
 
